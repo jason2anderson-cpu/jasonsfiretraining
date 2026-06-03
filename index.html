@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orem Fire — Vehicle Extrication SOP</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+  :root {
+    --bg:        #16181c;
+    --bg-2:      #1b1e24;
+    --card:      #20242b;
+    --card-2:    #262b33;
+    --border:    #2e333c;
+    --border-2:  #3a414c;
+    --text:      #e8eaef;
+    --muted:     #9aa1ad;
+    --faint:     #5b626d;
+    --red:       #dc2626;
+    --red-acc:   #e2342b;
+    --red-bright:#ef4444;
+    --amber:     #f59e0b;
+    --blue:      #3b82f6;
+    --green:     #22c55e;
+    --nav-h:     64px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 18px 64px;
+  }
+
+  /* ============ HEADER ============ */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 0 18px;
+  }
+
+  .emblem {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: linear-gradient(160deg, var(--red-acc), #9b1c14);
+    border: 1px solid #f0726b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    color: #fff;
+    text-align: center;
+    line-height: 1.05;
+    box-shadow: 0 4px 14px rgba(226,52,43,0.35);
+  }
+  /* To use a real crest: replace the .emblem div with
+     <img class="emblem" src="orem-fire-logo.png" alt="Orem Fire"> */
+
+  .header h1 { font-size: 23px; font-weight: 800; color: #fff; letter-spacing: -0.2px; }
+  .header .sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+  .header .ver {
+    display: inline-block;
+    margin-top: 7px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--amber);
+    background: rgba(245,158,11,0.12);
+    border: 1px solid rgba(245,158,11,0.35);
+    padding: 2px 8px;
+    border-radius: 5px;
+  }
+
+  /* ============ STICKY NAV ============ */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(22,24,28,0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 2px solid var(--red);
+    margin: 0 -18px 22px;
+    padding: 0 18px;
+  }
+  .nav-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    height: var(--nav-h);
+    align-items: center;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+
+  .nav-chip {
+    flex-shrink: 0;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 15px;
+    border-radius: 999px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .nav-chip .dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--border-2);
+    color: var(--text);
+    font-size: 10px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-chip:hover { border-color: var(--border-2); color: var(--text); }
+  .nav-chip.active {
+    background: rgba(226,52,43,0.16);
+    border-color: var(--red);
+    color: #fff;
+  }
+  .nav-chip.active .dot { background: var(--red); }
+
+  /* ============ FLOW BAR ============ */
+  .flow-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+  .flow-bar span.step { font-size: 12.5px; font-weight: 700; color: var(--text); }
+  .flow-bar .arrow { color: var(--red); font-size: 15px; font-weight: 800; }
+
+  /* ============ ROLE SECTIONS ============ */
+  .role-section { scroll-margin-top: calc(var(--nav-h) + 14px); margin-bottom: 40px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 16px;
+  }
+  .role-num {
+    width: 42px; height: 42px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: var(--red);
+    color: #fff;
+    font-size: 20px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 3px 10px rgba(220,38,38,0.4);
+  }
+  .section-header h2 { font-size: 21px; font-weight: 800; color: #fff; letter-spacing: -0.2px; }
+  .section-header .role-tag { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+  .section-divider { border: none; border-top: 1px solid var(--border); margin: 0 0 26px; }
+
+  /* ============ CARDS / GROUPS ============ */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--red-bright);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .letter {
+    width: 22px; height: 22px; border-radius: 6px;
+    background: rgba(226,52,43,0.16);
+    border: 1px solid rgba(226,52,43,0.4);
+    color: var(--red-bright);
+    font-size: 12px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* checklist */
+  ul.check { list-style: none; }
+  ul.check li {
+    display: flex; gap: 11px; align-items: flex-start;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 16px; color: var(--text);
+  }
+  ul.check li:last-child { border-bottom: none; }
+  ul.check li .mark {
+    flex-shrink: 0; margin-top: 3px;
+    width: 9px; height: 9px; border-radius: 50%;
+    border: 2px solid var(--red); background: transparent;
+  }
+  ul.check li strong { color: #fff; font-weight: 700; }
+  ul.check li .q { color: var(--muted); font-weight: 500; }
+
+  /* hazard / pill badges */
+  .pills { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+  .pill {
+    font-size: 12.5px; font-weight: 700;
+    padding: 5px 12px; border-radius: 999px;
+    background: rgba(239,68,68,0.13);
+    border: 1px solid rgba(239,68,68,0.4);
+    color: #fda4a0;
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .pill.soft {
+    background: var(--card-2);
+    border-color: var(--border-2);
+    color: var(--muted);
+  }
+
+  /* entrapment decision grid */
+  .decision-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .decision {
+    background: var(--card-2);
+    border: 1px solid var(--border-2);
+    border-radius: 9px;
+    padding: 11px 13px;
+  }
+  .decision .d-q { font-size: 15px; font-weight: 700; color: #fff; }
+  .decision .d-note { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+  /* ============ CALLOUTS ============ */
+  .callout {
+    border-radius: 0 8px 8px 0;
+    padding: 11px 15px;
+    margin-top: 12px;
+    font-size: 15px;
+    border-left: 4px solid var(--blue);
+    background: rgba(59,130,246,0.1);
+    color: #bcd4ff;
+  }
+  .callout strong { color: #fff; }
+
+  .callout-amber {
+    border-left-color: var(--amber);
+    background: rgba(245,158,11,0.1);
+    color: #ffe0a8;
+  }
+  .callout-green {
+    border-left-color: var(--green);
+    background: rgba(34,197,94,0.1);
+    color: #b6f0c8;
+  }
+
+  .callout .c-label {
+    display: block;
+    font-size: 10.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.7px;
+    margin-bottom: 3px;
+  }
+
+  /* HARD RULE — the loudest element */
+  .hardrule {
+    background: rgba(239,68,68,0.13);
+    border: 1px solid rgba(239,68,68,0.55);
+    border-left: 5px solid var(--red-bright);
+    border-radius: 0 9px 9px 0;
+    padding: 12px 15px;
+    margin-top: 12px;
+  }
+  .hardrule .hr-label {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 11.5px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: var(--red-bright);
+    margin-bottom: 4px;
+  }
+  .hardrule .hr-label .warn { font-size: 15px; }
+  .hardrule .hr-text { font-size: 16.5px; font-weight: 600; color: #ffd9d6; }
+  .hardrule .hr-text strong { color: #fff; font-weight: 800; }
+
+  /* Declaration of needs — closing block */
+  .declare {
+    background: linear-gradient(135deg, rgba(226,52,43,0.18), rgba(226,52,43,0.07));
+    border: 1px solid rgba(226,52,43,0.45);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-top: 16px;
+  }
+  .declare .d-head {
+    font-size: 16.5px; font-weight: 800; color: #fff;
+    display: flex; align-items: center; gap: 8px; margin-bottom: 7px;
+  }
+  .declare p { font-size: 14.5px; color: #f0d6d3; margin-bottom: 9px; }
+  .declare .declare-note {
+    margin: 11px 0 0;
+    font-size: 13.5px; font-style: italic; font-weight: 600;
+    color: #ffd9a8;
+  }
+  .declare .declare-points {
+    list-style: none;
+    margin-top: 12px;
+  }
+  .declare .declare-points li {
+    display: flex; gap: 9px; align-items: flex-start;
+    padding: 4px 0;
+    font-size: 14.5px; font-weight: 600; color: #fff;
+  }
+  .declare .declare-points li::before {
+    content: '';
+    flex-shrink: 0; margin-top: 8px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--red-bright);
+  }
+  .declare .examples { display: flex; flex-wrap: wrap; gap: 8px; }
+  .declare .examples .ex {
+    font-size: 14.5px; font-style: italic; font-weight: 600; color: #fff;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px; padding: 5px 13px;
+  }
+
+  /* ============ COLLAPSIBLE DETAILS ============ */
+  .toolbar {
+    display: flex; gap: 8px; margin: 0 0 12px;
+    justify-content: center;
+  }
+  .toolbar button {
+    font-family: inherit;
+    font-size: 12px; font-weight: 700;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 7px 13px;
+    min-height: 36px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .toolbar button:hover { color: #fff; border-color: var(--border-2); }
+
+  details.collapse {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  details.collapse[open] { border-color: var(--border-2); }
+  details.collapse > summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 17px;
+    min-height: 56px;
+    user-select: none;
+  }
+  details.collapse > summary::-webkit-details-marker { display: none; }
+  details.collapse > summary:hover { background: var(--card-2); }
+
+  summary .s-num {
+    flex-shrink: 0;
+    width: 28px; height: 28px; border-radius: 8px;
+    background: rgba(226,52,43,0.16);
+    border: 1px solid rgba(226,52,43,0.4);
+    color: var(--red-bright);
+    font-size: 13px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  summary .s-letter {
+    flex-shrink: 0;
+    width: 28px; height: 28px; border-radius: 8px;
+    background: rgba(226,52,43,0.16);
+    border: 1px solid rgba(226,52,43,0.4);
+    color: var(--red-bright);
+    font-size: 13px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+  }
+  summary .s-text { flex: 1; }
+  summary .s-title { font-size: 17px; font-weight: 700; color: #fff; }
+  summary .s-sub { font-size: 13px; color: var(--muted); margin-top: 1px; }
+  summary .chev {
+    flex-shrink: 0;
+    color: var(--faint);
+    font-size: 20px;
+    transition: transform 0.2s ease;
+  }
+  details.collapse[open] > summary .chev { transform: rotate(90deg); color: var(--red-bright); }
+
+  .collapse-body {
+    padding: 4px 17px 17px;
+    border-top: 1px solid var(--border);
+  }
+  .collapse-body > *:first-child { margin-top: 12px; }
+
+  /* ordered steps inside stabilization sub-groups */
+  ol.steps { list-style: none; counter-reset: s; }
+  ol.steps > li {
+    counter-increment: s;
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 8px 0;
+    font-size: 16px;
+  }
+  ol.steps > li .t { flex: 1; }
+  ol.steps > li::before {
+    content: counter(s);
+    flex-shrink: 0;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--card-2); border: 1px solid var(--border-2);
+    color: var(--text);
+    font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  ol.steps > li strong { color: #fff; }
+
+  .goal-line {
+    font-size: 16.5px; font-weight: 800; color: var(--green);
+    margin-bottom: 2px;
+  }
+
+  /* ============ TACTIC PLACEHOLDER CARDS ============ */
+  .tactic-body .subtactic {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 15px;
+    margin-top: 12px;
+  }
+  .tactic-body .subtactic h4 {
+    font-size: 13px; font-weight: 800; color: #fff;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .tactic-body .subtactic h4::before {
+    content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--red);
+  }
+
+  .slot { margin-top: 14px; }
+  .slot-label {
+    font-size: 11px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.7px; color: var(--muted); margin-bottom: 7px;
+  }
+  .ph-steps { list-style: none; counter-reset: p; }
+  .ph-steps li {
+    counter-increment: p;
+    display: flex; align-items: center; gap: 11px;
+    padding: 7px 0;
+  }
+  .ph-steps li::before {
+    content: counter(p);
+    flex-shrink: 0;
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 1px dashed var(--faint);
+    color: var(--faint);
+    font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ph-line {
+    flex: 1; height: 0;
+    border-bottom: 1px dashed var(--border-2);
+  }
+  .ph-box {
+    border: 1px dashed var(--border-2);
+    border-radius: 8px;
+    padding: 10px 13px;
+    color: var(--faint);
+    font-size: 13px; font-style: italic;
+  }
+  .diagram-ph {
+    margin-top: 14px;
+    border: 1px dashed var(--border-2);
+    border-radius: 10px;
+    min-height: 92px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px;
+    color: var(--faint);
+    background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.012) 10px, rgba(255,255,255,0.012) 20px);
+  }
+  .diagram-ph .icon { font-size: 22px; opacity: 0.7; }
+  .diagram-ph .lbl { font-size: 12px; font-weight: 600; letter-spacing: 0.3px; }
+
+  .hardrule.placeholder { border-style: dashed; }
+  .hardrule.placeholder .hr-text { color: var(--faint); font-style: italic; font-weight: 500; }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 2px solid var(--red);
+    text-align: center;
+    font-size: 12px;
+    color: var(--faint);
+  }
+  .footer strong { color: var(--muted); }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 600px) {
+    body { font-size: 15px; }
+    .header h1 { font-size: 19px; }
+    .section-header h2 { font-size: 18px; }
+    .role-num { width: 38px; height: 38px; font-size: 18px; }
+    .decision-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ============ PRINT ============ */
+  @media print {
+    :root { --nav-h: 0px; }
+    html, body { background: #fff; color: #111; }
+    .nav, .toolbar { display: none !important; }
+    .page { max-width: 100%; }
+    .card, details.collapse, .decision, .subtactic {
+      background: #fff; border-color: #bbb;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    .section-header h2, .header h1, summary .s-title, ul.check li strong,
+    .decision .d-q { color: #111; }
+    ul.check li, ol.steps > li { color: #222; }
+    .muted, .role-tag, .s-sub { color: #555; }
+    details.collapse > summary .chev { display: none; }
+    .hardrule { background: #fdeaea; border-color: #d33; }
+    .hardrule .hr-text { color: #7a1410; }
+    .emblem { box-shadow: none; }
+    a { color: #111; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ STICKY NAV ============ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-chip" href="#sizeup"><span class="dot">1</span>Size-Up</a>
+    <a class="nav-chip" href="#stabilization"><span class="dot">2</span>Stabilization</a>
+    <a class="nav-chip" href="#peelpeek"><span class="dot">3</span>Peel &amp; Peek</a>
+    <a class="nav-chip" href="#tactics"><span class="dot">4</span>Tactics</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ============ HEADER ============ -->
+  <div class="header">
+    <div class="emblem">OREM<br>FIRE</div>
+    <div>
+      <h1>Vehicle Extrication</h1>
+      <div class="sub">Standard Operating Procedure &mdash; Orem Fire Department</div>
+      <span class="ver">Draft v0.1 &middot; 2026-06-02</span>
+    </div>
+  </div>
+
+  <!-- ============ FLOW BAR ============ -->
+  <div class="flow-bar">
+    <span class="step">Size-Up</span><span class="arrow">&rarr;</span>
+    <span class="step">Stabilization</span><span class="arrow">&rarr;</span>
+    <span class="step">Peel &amp; Peek</span><span class="arrow">&rarr;</span>
+    <span class="step">Tactics</span>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- SECTION 1 — VEHICLE SIZE-UP -->
+  <!-- ======================================================== -->
+  <section class="role-section" id="sizeup">
+    <div class="section-header">
+      <div class="role-num">1</div>
+      <div>
+        <h2>Vehicle Size-Up</h2>
+        <div class="role-tag">The size-up role &middot; happens as you walk up &middot; <strong>every</strong> accident, minor or serious</div>
+      </div>
+    </div>
+    <hr class="section-divider">
+
+    <!-- On approach -->
+    <div class="card">
+      <div class="card-title"><span class="letter">i</span> On Approach &mdash; Identify</div>
+      <ul class="check">
+        <li><span class="mark"></span><span><strong>Type of vehicle</strong> <span class="q">&mdash; car, truck, SUV, bus, commercial, EV?</span></span></li>
+        <li><span class="mark"></span><span><strong>Number of vehicles</strong> involved</span></li>
+        <li><span class="mark"></span><span><strong>Number of victims</strong></span></li>
+        <li><span class="mark"></span><span><strong>Ejected victims</strong> <span class="q">&mdash; look beyond the vehicle</span></span></li>
+        <li><span class="mark"></span><span><strong>Car seats</strong></span></li>
+        <li><span class="mark"></span><span><strong>Status of vehicle</strong> <span class="q">&mdash; running? in drive or park? position / orientation?</span></span></li>
+      </ul>
+    </div>
+
+    <!-- Hazards -->
+    <div class="card">
+      <div class="card-title"><span class="letter">!</span> Identify Hazards</div>
+      <div class="pills">
+        <span class="pill">Smoke</span>
+        <span class="pill">Sharp Metal</span>
+        <span class="pill">Debris</span>
+        <span class="pill">Fire</span>
+        <span class="pill">Powerlines</span>
+        <span class="pill">Hazmat</span>
+        <span class="pill">Traffic</span>
+      </div>
+    </div>
+
+    <!-- Entrapment type -->
+    <div class="card">
+      <div class="card-title"><span class="letter">?</span> Type of Entrapment</div>
+      <div class="decision-grid">
+        <div class="decision">
+          <div class="d-q">Just a door pop?</div>
+          <div class="d-note">Simple, fast access</div>
+        </div>
+        <div class="decision">
+          <div class="d-q">Serious damage?</div>
+          <div class="d-note">Prolonged extrication</div>
+        </div>
+        <div class="decision">
+          <div class="d-q">Upside down?</div>
+          <div class="d-note">Roof / inverted</div>
+        </div>
+        <div class="decision">
+          <div class="d-q">Crushing?</div>
+          <div class="d-note">Patient pinned / compressed</div>
+        </div>
+      </div>
+      <div class="callout callout-green">
+        <span class="c-label">Guiding Principle</span>
+        <strong>Try before you pry.</strong> Check the obvious first &mdash; doors and handles &mdash; before committing tools.
+      </div>
+    </div>
+
+    <!-- Declaration of needs -->
+    <div class="declare">
+      <div class="d-head">Declaration of Needs</div>
+      <p>The size-up role closes by calling out clear needs to the crew so everyone knows the plan.</p>
+      <div class="examples">
+        <span class="ex">&ldquo;We need floor dry.&rdquo;</span>
+        <span class="ex">&ldquo;We&rsquo;ll need to pop a door.&rdquo;</span>
+        <span class="ex">&ldquo;Prolonged extrication &mdash; we&rsquo;ll need cutters, spreaders and a saw.&rdquo;</span>
+      </div>
+      <ul class="declare-points">
+        <li>Call for additional ambulances</li>
+        <li>Call for additional heavy rescue units</li>
+      </ul>
+      <p class="declare-note">*Consider a helicopter for extended extrication times.</p>
+    </div>
+  </section>
+
+  <!-- ======================================================== -->
+  <!-- SECTION 2 — STABILIZATION -->
+  <!-- ======================================================== -->
+  <section class="role-section" id="stabilization">
+    <div class="section-header">
+      <div class="role-num">2</div>
+      <div>
+        <h2>Stabilization</h2>
+        <div class="role-tag">The stabilization role &middot; simple steps first &middot; gain control of the vehicle</div>
+      </div>
+    </div>
+    <hr class="section-divider">
+
+    <div class="toolbar">
+      <button type="button" data-expand>Expand all</button>
+      <button type="button" data-collapse>Collapse all</button>
+    </div>
+
+    <!-- A: Vehicle Controls -->
+    <details class="collapse" open>
+      <summary>
+        <span class="s-letter">A</span>
+        <span class="s-text">
+          <span class="s-title">Vehicle Controls</span>
+          <span class="s-sub">Put it in park, set the brake</span>
+        </span>
+        <span class="chev">&rsaquo;</span>
+      </summary>
+      <div class="collapse-body">
+        <ol class="steps">
+          <li><span class="t">Put the vehicle in <strong>Park</strong> if possible.</span></li>
+          <li><span class="t">Set the <strong>parking brake</strong> if possible.</span></li>
+        </ol>
+        <div class="hardrule">
+          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule</div>
+          <div class="hr-text">Never put your <strong>head inside the compartment</strong>.</div>
+        </div>
+      </div>
+    </details>
+
+    <!-- B: Electrical System -->
+    <details class="collapse" open>
+      <summary>
+        <span class="s-letter">B</span>
+        <span class="s-text">
+          <span class="s-title">Electrical System</span>
+          <span class="s-sub">Keys, power, and airbag awareness &mdash; in order</span>
+        </span>
+        <span class="chev">&rsaquo;</span>
+      </summary>
+      <div class="collapse-body">
+        <ol class="steps">
+          <li><span class="t">Turn the <strong>ignition off</strong> and remove the keys.</span></li>
+          <li><span class="t">Consider moving the <strong>occupant&rsquo;s electric seat</strong> back and reclining it for easier access.</span></li>
+          <li><span class="t"><strong>Disconnect / cut the battery</strong> power.</span></li>
+        </ol>
+        <div class="callout callout-amber">
+          <span class="c-label">Sequence Matters</span>
+          Electric seats won&rsquo;t move once power is gone &mdash; reposition the seat <strong>first</strong>, then cut power.
+        </div>
+        <div class="hardrule">
+          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule</div>
+          <div class="hr-text">Try not to reach <strong>directly over the steering wheel</strong> &mdash; undeployed airbag.</div>
+        </div>
+      </div>
+    </details>
+
+    <!-- C: Mechanical / Movement -->
+    <details class="collapse" open>
+      <summary>
+        <span class="s-letter">C</span>
+        <span class="s-text">
+          <span class="s-title">Mechanical Stabilization &mdash; Movement</span>
+        </span>
+        <span class="chev">&rsaquo;</span>
+      </summary>
+      <div class="collapse-body">
+        <div class="goal-line">Goal: stop ALL vehicle movement.</div>
+        <ol class="steps">
+          <li><span class="t"><strong>Stabilize the wheels</strong> &mdash; chock them, or deflate the tires (Halligan, or cut the valve stem).</span></li>
+          <li><span class="t">If off-balance / on its side / on its roof, <strong>vertically stabilize with struts</strong> &mdash; make the footprint <strong>wider and stronger</strong>.</span></li>
+        </ol>
+        <div class="hardrule">
+          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule</div>
+          <div class="hr-text">Never more than <strong>ONE knee on the ground</strong>. One knee only &mdash; stay ready to move.</div>
+        </div>
+      </div>
+    </details>
+
+    <!-- D: Stop the Crush -->
+    <details class="collapse" open>
+      <summary>
+        <span class="s-letter">D</span>
+        <span class="s-text">
+          <span class="s-title">Stop the Crush</span>
+          <span class="s-sub">When the vehicle is crushing an occupant</span>
+        </span>
+        <span class="chev">&rsaquo;</span>
+      </summary>
+      <div class="collapse-body">
+        <div class="goal-line">Goal: prevent any further crushing.</div>
+        <ol class="steps">
+          <li><span class="t"><strong>Chock and stabilize</strong> the vehicle to stop it settling or shifting onto the occupant.</span></li>
+          <li><span class="t">Capture the load before any lift so it can&rsquo;t drop back down.</span></li>
+        </ol>
+      </div>
+    </details>
+  </section>
+
+  <!-- ======================================================== -->
+  <!-- SECTION 3 — PEEL & PEEK -->
+  <!-- ======================================================== -->
+  <section class="role-section" id="peelpeek">
+    <div class="section-header">
+      <div class="role-num">3</div>
+      <div>
+        <h2>Peel &amp; Peek</h2>
+        <div class="role-tag">The peel &amp; peek role &middot; open it up and expose hazards before cutting</div>
+      </div>
+    </div>
+    <hr class="section-divider">
+
+    <!-- Glass -->
+    <div class="card">
+      <div class="card-title"><span class="letter">&#9632;</span> Take Glass Safely</div>
+      <ul class="check">
+        <li><span class="mark"></span><span><strong>Protect occupants</strong> <span class="q">&mdash; blankets, or tape the window if the patient is non-emergent</span></span></li>
+        <li><span class="mark"></span><span><strong>Cut / remove the front windshield</strong> out of the way</span></li>
+      </ul>
+      <div class="callout callout-amber">
+        <span class="c-label">Consider</span>
+        The windshield <strong>doesn&rsquo;t always have to be cut</strong> &mdash; on newer vehicles it adds to the structural integrity of the vehicle.
+      </div>
+      <div class="hardrule">
+        <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule</div>
+        <div class="hr-text">Use <strong>breathing protection and eye protection</strong> when cutting the front windshield &mdash; fine glass particles can damage the lungs and eyes.</div>
+      </div>
+    </div>
+
+    <!-- Interior -->
+    <div class="card">
+      <div class="card-title"><span class="letter">&#9636;</span> Pull &amp; Mark</div>
+      <ul class="check">
+        <li><span class="mark"></span><span><strong>Pull interior trim</strong></span></li>
+        <li><span class="mark"></span><span>Identify &amp; <strong>MARK airbag cylinders</strong></span></li>
+        <li><span class="mark"></span><span>Identify &amp; <strong>MARK seatbelt pretensioners</strong></span></li>
+        <li><span class="mark"></span><span><strong>Make all marks on the outside of the vehicle</strong> <span class="q">&mdash; so the whole crew can see them</span></span></li>
+        <li><span class="mark"></span><span>Cut seat belts at a <strong>45&deg; angle</strong> <span class="q">&mdash; cleaner cut</span></span></li>
+      </ul>
+      <div class="hardrule">
+        <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule &mdash; Cylinders</div>
+        <div class="hr-text"><strong>Cylinders</strong> must be identified and marked for the spreaders and cutters. They <strong>will explode and can kill</strong> if we damage them.</div>
+      </div>
+      <div class="callout callout-green">
+        <span class="c-label">Good to know</span>
+        <strong>Airbags themselves are safe to cut through</strong> &mdash; as long as you&rsquo;re not cutting through a cylinder.
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================== -->
+  <!-- SECTION 4 — TACTICAL OPERATIONS -->
+  <!-- ======================================================== -->
+  <section class="role-section" id="tactics">
+    <div class="section-header">
+      <div class="role-num">4</div>
+      <div>
+        <h2>Tactical Operations</h2>
+        <div class="role-tag">Pick the play the entrapment calls for &middot; each tactic is a standalone section</div>
+      </div>
+    </div>
+    <hr class="section-divider">
+
+    <div class="callout callout-amber" style="margin-top:0;">
+      <span class="c-label">Placeholder</span>
+      The cards below are scaffolded and ready to fill in &mdash; add steps, tools, cautions, and a diagram for each tactic.
+    </div>
+
+    <div class="toolbar">
+      <button type="button" data-expand>Expand all</button>
+      <button type="button" data-collapse>Collapse all</button>
+    </div>
+
+    <!-- TACTIC 1: Pop Door -->
+    <details class="collapse">
+      <summary>
+        <span class="s-num">1</span>
+        <span class="s-text">
+          <span class="s-title">Pop Door</span>
+          <span class="s-sub">Hinge Attack &middot; Pin Attack</span>
+        </span>
+        <span class="chev">&rsaquo;</span>
+      </summary>
+      <div class="collapse-body tactic-body">
+
+        <div class="subtactic">
+          <h4>Hinge Attack</h4>
+          <div class="slot">
+            <div class="slot-label">Steps</div>
+            <ul class="ph-steps">
+              <li><span class="ph-line"></span></li>
+              <li><span class="ph-line"></span></li>
+              <li><span class="ph-line"></span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="subtactic">
+          <h4>Pin Attack</h4>
+          <div class="slot">
+            <div class="slot-label">Steps</div>
+            <ul class="ph-steps">
+              <li><span class="ph-line"></span></li>
+              <li><span class="ph-line"></span></li>
+              <li><span class="ph-line"></span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="slot">
+          <div class="slot-label">Tools</div>
+          <div class="ph-box">Add tools&hellip;</div>
+        </div>
+
+        <div class="hardrule placeholder">
+          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rules / Cautions</div>
+          <div class="hr-text">Add cautions&hellip;</div>
+        </div>
+
+        <div class="diagram-ph"><span class="icon">&#128247;</span><span class="lbl">Diagram / photo</span></div>
+      </div>
+    </details>
+
+    <!-- TACTIC 2: B-Post Blow Out -->
+    <details class="collapse">
+      <summary>
+        <span class="s-num">2</span>
+        <span class="s-text">
+          <span class="s-title">B-Post Blow Out</span>
+          <span class="s-sub">&nbsp;</span>
+        </span>
+        <span class="chev">&rsaquo;</span>
+      </summary>
+      <div class="collapse-body tactic-body">
+        <div class="slot">
+          <div class="slot-label">Steps</div>
+          <ul class="ph-steps">
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+          </ul>
+        </div>
+        <div class="slot">
+          <div class="slot-label">Tools</div>
+          <div class="ph-box">Add tools&hellip;</div>
+        </div>
+        <div class="hardrule placeholder">
+          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rules / Cautions</div>
+          <div class="hr-text">Add cautions&hellip;</div>
+        </div>
+        <div class="diagram-ph"><span class="icon">&#128247;</span><span class="lbl">Diagram / photo</span></div>
+      </div>
+    </details>
+
+    <!-- TACTIC 3: Dash Jack -->
+    <details class="collapse">
+      <summary>
+        <span class="s-num">3</span>
+        <span class="s-text">
+          <span class="s-title">Dash Jack</span>
+          <span class="s-sub">&nbsp;</span>
+        </span>
+        <span class="chev">&rsaquo;</span>
+      </summary>
+      <div class="collapse-body tactic-body">
+        <div class="slot">
+          <div class="slot-label">Steps</div>
+          <ul class="ph-steps">
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+          </ul>
+        </div>
+        <div class="slot">
+          <div class="slot-label">Tools</div>
+          <div class="ph-box">Add tools&hellip;</div>
+        </div>
+        <div class="hardrule placeholder">
+          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rules / Cautions</div>
+          <div class="hr-text">Add cautions&hellip;</div>
+        </div>
+        <div class="diagram-ph"><span class="icon">&#128247;</span><span class="lbl">Diagram / photo</span></div>
+      </div>
+    </details>
+
+    <!-- TACTIC 4: Roll Dash -->
+    <details class="collapse">
+      <summary>
+        <span class="s-num">4</span>
+        <span class="s-text">
+          <span class="s-title">Roll Dash</span>
+          <span class="s-sub">&nbsp;</span>
+        </span>
+        <span class="chev">&rsaquo;</span>
+      </summary>
+      <div class="collapse-body tactic-body">
+        <div class="slot">
+          <div class="slot-label">Steps</div>
+          <ul class="ph-steps">
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+          </ul>
+        </div>
+        <div class="slot">
+          <div class="slot-label">Tools</div>
+          <div class="ph-box">Add tools&hellip;</div>
+        </div>
+        <div class="hardrule placeholder">
+          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rules / Cautions</div>
+          <div class="hr-text">Add cautions&hellip;</div>
+        </div>
+        <div class="diagram-ph"><span class="icon">&#128247;</span><span class="lbl">Diagram / photo</span></div>
+      </div>
+    </details>
+
+    <!-- TACTIC 5: Roof Removal -->
+    <details class="collapse">
+      <summary>
+        <span class="s-num">5</span>
+        <span class="s-text">
+          <span class="s-title">Roof Removal</span>
+          <span class="s-sub">&nbsp;</span>
+        </span>
+        <span class="chev">&rsaquo;</span>
+      </summary>
+      <div class="collapse-body tactic-body">
+        <div class="slot">
+          <div class="slot-label">Steps</div>
+          <ul class="ph-steps">
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+          </ul>
+        </div>
+        <div class="slot">
+          <div class="slot-label">Tools</div>
+          <div class="ph-box">Add tools&hellip;</div>
+        </div>
+        <div class="hardrule placeholder">
+          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rules / Cautions</div>
+          <div class="hr-text">Add cautions&hellip;</div>
+        </div>
+        <div class="diagram-ph"><span class="icon">&#128247;</span><span class="lbl">Diagram / photo</span></div>
+      </div>
+    </details>
+
+    <!-- TACTIC 6: Steering Wheel Displacement -->
+    <details class="collapse">
+      <summary>
+        <span class="s-num">6</span>
+        <span class="s-text">
+          <span class="s-title">Steering Wheel Displacement</span>
+          <span class="s-sub">&nbsp;</span>
+        </span>
+        <span class="chev">&rsaquo;</span>
+      </summary>
+      <div class="collapse-body tactic-body">
+        <div class="slot">
+          <div class="slot-label">Steps</div>
+          <ul class="ph-steps">
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+            <li><span class="ph-line"></span></li>
+          </ul>
+        </div>
+        <div class="slot">
+          <div class="slot-label">Tools</div>
+          <div class="ph-box">Add tools&hellip;</div>
+        </div>
+        <div class="hardrule placeholder">
+          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rules / Cautions</div>
+          <div class="hr-text">Add cautions&hellip;</div>
+        </div>
+        <div class="diagram-ph"><span class="icon">&#128247;</span><span class="lbl">Diagram / photo</span></div>
+      </div>
+    </details>
+
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <div class="footer">
+    <p><strong>Orem Fire Department</strong> &bull; Vehicle Extrication SOP &bull; Training / Internal Use</p>
+    <p style="margin-top:4px;">Draft v0.1 &middot; 2026-06-02</p>
+  </div>
+
+</div>
+
+<script>
+  (function () {
+    // Expand / collapse all
+    document.querySelectorAll('[data-expand]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('details.collapse').forEach(function (d) { d.open = true; });
+      });
+    });
+    document.querySelectorAll('[data-collapse]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('details.collapse').forEach(function (d) { d.open = false; });
+      });
+    });
+
+    // Active section highlight in nav
+    var chips = {};
+    document.querySelectorAll('.nav-chip').forEach(function (c) {
+      chips[c.getAttribute('href').slice(1)] = c;
+    });
+    if ('IntersectionObserver' in window) {
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            Object.values(chips).forEach(function (c) { c.classList.remove('active'); });
+            var chip = chips[e.target.id];
+            if (chip) chip.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+      document.querySelectorAll('.role-section').forEach(function (s) { obs.observe(s); });
+    }
+  })();
+</script>
+
+</body>
+</html>
