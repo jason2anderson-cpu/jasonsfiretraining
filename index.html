@@ -148,6 +148,54 @@
   }
   .nav-chip.active .dot { background: var(--red); }
 
+  /* ============ SIDE TABLE OF CONTENTS ============ */
+  .sidenav {
+    position: fixed; top: 84px; right: 8px; width: 184px;
+    max-height: calc(100vh - 100px); overflow-y: auto;
+    background: rgba(27,30,36,0.94);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 10px 10px 12px; z-index: 45;
+    transition: transform 0.25s ease, opacity 0.2s ease;
+    scrollbar-width: thin;
+  }
+  .sidenav-head {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--muted); padding: 2px 4px 8px; margin-bottom: 5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidenav-collapse { background: none; border: none; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 2px; }
+  .sidenav-collapse:hover { color: #fff; }
+  .sn-link {
+    display: flex; align-items: center; gap: 9px;
+    padding: 7px 8px; border-radius: 7px;
+    color: var(--text); text-decoration: none; font-size: 13.5px; font-weight: 700;
+  }
+  .sn-link .sn-n {
+    width: 18px; height: 18px; border-radius: 5px; flex-shrink: 0;
+    background: var(--card-2); border: 1px solid var(--border-2); color: var(--text);
+    font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+  }
+  .sn-link:hover { background: var(--card-2); }
+  .sn-link.active { background: rgba(226,52,43,0.16); color: #fff; }
+  .sn-link.active .sn-n { background: var(--red); border-color: var(--red); }
+  .sn-sub { margin: 2px 0 4px 13px; padding-left: 7px; border-left: 1px solid var(--border-2); display: flex; flex-direction: column; }
+  .sn-sublink { padding: 5px 7px; border-radius: 6px; color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 600; }
+  .sn-sublink:hover { background: var(--card-2); color: var(--text); }
+  .sn-sublink.active { color: #fff; background: rgba(226,52,43,0.13); }
+  .sidenav-tab {
+    position: fixed; top: 84px; right: 0; z-index: 45; display: none;
+    align-items: center; justify-content: center;
+    width: 34px; height: 42px; border-radius: 8px 0 0 8px;
+    background: var(--red); color: #fff; border: none; cursor: pointer;
+    font-size: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.45);
+  }
+  body.snav-collapsed .sidenav { transform: translateX(135%); opacity: 0; pointer-events: none; }
+  body.snav-collapsed .sidenav-tab { display: flex; }
+  details.collapse { scroll-margin-top: 72px; }
+  @media (max-width: 1279px) { .sidenav, .sidenav-tab { display: none !important; } }
+
   /* ============ FLOW BAR ============ */
   .flow-bar {
     display: flex;
@@ -580,6 +628,24 @@
     <a class="nav-chip" href="#stabilization"><span class="dot">2</span>Stabilization</a>
     <a class="nav-chip" href="#peelpeek"><span class="dot">3</span>Peel &amp; Peek</a>
     <a class="nav-chip" href="#tactics"><span class="dot">4</span>Tactics</a>
+  </div>
+</nav>
+
+<!-- ============ SIDE TABLE OF CONTENTS ============ -->
+<button class="sidenav-tab" id="sidenavOpen" aria-label="Open contents">&#9776;</button>
+<nav class="sidenav" id="sidenav" aria-label="Contents">
+  <div class="sidenav-head"><span>Contents</span><button class="sidenav-collapse" id="sidenavCollapse" aria-label="Hide contents" title="Hide">&times;</button></div>
+  <a class="sn-link" href="#sizeup" data-sec="sizeup"><span class="sn-n">1</span>Size-Up</a>
+  <a class="sn-link" href="#stabilization" data-sec="stabilization"><span class="sn-n">2</span>Stabilization</a>
+  <a class="sn-link" href="#peelpeek" data-sec="peelpeek"><span class="sn-n">3</span>Peel &amp; Peek</a>
+  <a class="sn-link" href="#tactics" data-sec="tactics"><span class="sn-n">4</span>Tactics</a>
+  <div class="sn-sub">
+    <a class="sn-sublink" href="#tactics" data-tactic="0">Pop Door</a>
+    <a class="sn-sublink" href="#tactics" data-tactic="1">B-Post Blow Out</a>
+    <a class="sn-sublink" href="#tactics" data-tactic="2">Dash Jack</a>
+    <a class="sn-sublink" href="#tactics" data-tactic="3">Roll Dash</a>
+    <a class="sn-sublink" href="#tactics" data-tactic="4">Roof Removal</a>
+    <a class="sn-sublink" href="#tactics" data-tactic="5">Steering Wheel</a>
   </div>
 </nav>
 
@@ -1038,35 +1104,60 @@
 
 <script>
   (function () {
-    // Expand / collapse all
-    document.querySelectorAll('[data-expand]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        document.querySelectorAll('details.collapse').forEach(function (d) { d.open = true; });
-      });
-    });
-    document.querySelectorAll('[data-collapse]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        document.querySelectorAll('details.collapse').forEach(function (d) { d.open = false; });
+    var qa = function (s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+    // Expand / collapse all (tactics + stabilization sub-groups)
+    qa('[data-expand]').forEach(function (b){ b.addEventListener('click', function(){ qa('details.collapse').forEach(function(d){ d.open = true; }); }); });
+    qa('[data-collapse]').forEach(function (b){ b.addEventListener('click', function(){ qa('details.collapse').forEach(function(d){ d.open = false; }); }); });
+
+    // Side nav: collapse / reopen
+    var body = document.body;
+    var col = document.getElementById('sidenavCollapse');
+    var op = document.getElementById('sidenavOpen');
+    if (col) col.addEventListener('click', function(){ body.classList.add('snav-collapsed'); });
+    if (op) op.addEventListener('click', function(){ body.classList.remove('snav-collapsed'); });
+
+    // Tactic sub-links: open that tactic and scroll to it
+    var tactics = qa('#tactics details.collapse');
+    qa('.sn-sublink').forEach(function (a){
+      a.addEventListener('click', function (e){
+        e.preventDefault();
+        var d = tactics[+a.getAttribute('data-tactic')];
+        if (!d) return;
+        d.open = true;
+        d.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
 
-    // Active section highlight in nav
-    var chips = {};
-    document.querySelectorAll('.nav-chip').forEach(function (c) {
-      chips[c.getAttribute('href').slice(1)] = c;
-    });
-    if ('IntersectionObserver' in window) {
-      var obs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) {
-            Object.values(chips).forEach(function (c) { c.classList.remove('active'); });
-            var chip = chips[e.target.id];
-            if (chip) chip.classList.add('active');
-          }
-        });
-      }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
-      document.querySelectorAll('.role-section').forEach(function (s) { obs.observe(s); });
-    }
+    if (!('IntersectionObserver' in window)) return;
+
+    // Scroll-spy: sections highlight top nav + side nav
+    var chips = {}, snlinks = {};
+    qa('.nav-chip').forEach(function (c){ chips[c.getAttribute('href').slice(1)] = c; });
+    qa('.sn-link').forEach(function (c){ snlinks[c.getAttribute('data-sec')] = c; });
+    var obs = new IntersectionObserver(function (entries){
+      entries.forEach(function (e){
+        if (!e.isIntersecting) return;
+        for (var k in chips) chips[k].classList.remove('active');
+        for (var j in snlinks) snlinks[j].classList.remove('active');
+        if (chips[e.target.id]) chips[e.target.id].classList.add('active');
+        if (snlinks[e.target.id]) snlinks[e.target.id].classList.add('active');
+      });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    qa('.role-section').forEach(function (s){ obs.observe(s); });
+
+    // Scroll-spy: active tactic in side nav
+    var subs = qa('.sn-sublink');
+    var tobs = new IntersectionObserver(function (entries){
+      entries.forEach(function (e){
+        if (!e.isIntersecting) return;
+        var idx = tactics.indexOf(e.target);
+        if (idx < 0) return;
+        subs.forEach(function (s){ s.classList.remove('active'); });
+        if (subs[idx]) subs[idx].classList.add('active');
+      });
+    }, { rootMargin: '-25% 0px -65% 0px', threshold: 0 });
+    tactics.forEach(function (d){ tobs.observe(d); });
   })();
 </script>
 
