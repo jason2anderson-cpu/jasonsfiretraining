@@ -516,6 +516,16 @@
   .diagram-ph .icon { font-size: 22px; opacity: 0.7; }
   .diagram-ph .lbl { font-size: 12px; font-weight: 600; letter-spacing: 0.3px; }
 
+  /* filled-tactic helpers */
+  .steps .sub { display: block; font-size: 13px; font-weight: 400; color: var(--muted); margin-top: 4px; }
+  .substeps { list-style: none; margin: 8px 0 2px; display: flex; flex-direction: column; gap: 6px; }
+  .substeps > li { display: flex; gap: 9px; font-size: 14px; color: var(--text); }
+  .substeps > li .ltr { flex-shrink: 0; width: 16px; font-weight: 800; color: var(--red-bright); }
+  .tactic-tools { margin-top: 14px; font-size: 13.5px; color: var(--muted); }
+  .tactic-tools .k { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; color: var(--red-bright); margin-right: 7px; }
+  .tphoto { display: block; max-width: 100%; max-height: 520px; width: auto; height: auto; margin: 10px 0 2px; border-radius: 8px; border: 1px solid var(--border-2); }
+  .substeps .tphoto { margin-left: 0; }
+
   .hardrule.placeholder { border-style: dashed; }
   .hardrule.placeholder .hr-text { color: var(--faint); font-style: italic; font-weight: 500; }
 
@@ -629,6 +639,7 @@
         <span class="pill">Fire</span>
         <span class="pill">Powerlines</span>
         <span class="pill">Hazmat</span>
+        <span class="pill">Fuel/Oil Leaks</span>
         <span class="pill">Traffic</span>
       </div>
     </div>
@@ -850,11 +861,6 @@
     </div>
     <hr class="section-divider">
 
-    <div class="callout callout-amber" style="margin-top:0;">
-      <span class="c-label">Placeholder</span>
-      The cards below are scaffolded and ready to fill in &mdash; add steps, tools, cautions, and a diagram for each tactic.
-    </div>
-
     <div class="toolbar">
       <button type="button" data-expand>Expand all</button>
       <button type="button" data-collapse>Collapse all</button>
@@ -874,39 +880,24 @@
 
         <div class="subtactic">
           <h4>Hinge Attack</h4>
-          <div class="slot">
-            <div class="slot-label">Steps</div>
-            <ul class="ph-steps">
-              <li><span class="ph-line"></span></li>
-              <li><span class="ph-line"></span></li>
-              <li><span class="ph-line"></span></li>
-            </ul>
-          </div>
+          <ol class="steps">
+            <li><span class="t">Create a purchase point &mdash; crush the front fender.<img class="tphoto" src="images/img-3569-34.jpeg" alt="Crush the front fender to create a purchase point" loading="lazy"></span></li>
+            <li><span class="t">Attack one hinge at a time. Start with the <strong>top hinge</strong> to push the door down, away from the patient.<span class="sub">If needed, come in vertically from the top to use gravity.</span><img class="tphoto" src="images/img-3572-28.jpeg" alt="Attack the top hinge first" loading="lazy"></span></li>
+            <li><span class="t">Attack the <strong>lower hinge</strong>.<img class="tphoto" src="images/img-3573-44.jpeg" alt="Attack the lower hinge" loading="lazy"></span></li>
+            <li><span class="t">Keep spreading until <strong>both hinges are defeated</strong>.<span class="sub">Keep the door intact &mdash; if the spreaders start peeling the outer shell away, reset deeper.</span><img class="tphoto" src="images/img-3570-70.jpeg" alt="Spread until both hinges are defeated" loading="lazy"><img class="tphoto" src="images/img-3574-50.jpeg" alt="Correct way" loading="lazy"></span></li>
+          </ol>
         </div>
 
         <div class="subtactic">
-          <h4>Pin Attack</h4>
-          <div class="slot">
-            <div class="slot-label">Steps</div>
-            <ul class="ph-steps">
-              <li><span class="ph-line"></span></li>
-              <li><span class="ph-line"></span></li>
-              <li><span class="ph-line"></span></li>
-            </ul>
-          </div>
+          <h4>Nader Pin Attack &mdash; Latch Side</h4>
+          <ol class="steps">
+            <li><span class="t">Create a purchase point &mdash; Halligan, spreader in the window, or spreader side-entry.<img class="tphoto" src="images/img-3575-76.jpeg" alt="Purchase point with a Halligan bar" loading="lazy"><img class="tphoto" src="images/img-3580-72.jpeg" alt="Spreader in the window" loading="lazy"><img class="tphoto" src="images/img-3581-86.jpeg" alt="Spreader side-entry" loading="lazy"><span class="sub">Spread a little, then reposition deeper to avoid peeling the frame.</span><img class="tphoto" src="images/img-3582-74.jpeg" alt="Reposition deeper" loading="lazy"><img class="tphoto" src="images/img-3584-24.jpeg" alt="Reposition deeper" loading="lazy"></span></li>
+            <li><span class="t">Keep spreading until the <strong>latch releases</strong>.<img class="tphoto" src="images/pasted-graphic-1-46.jpg" alt="Continue spreading until the latch releases" loading="lazy"></span></li>
+            <li><span class="t">Control the door with <strong>webbing</strong> and pull it away from the patient.<img class="tphoto" src="images/img-3585-68.jpeg" alt="Control the door with webbing and pull away" loading="lazy"></span></li>
+          </ol>
         </div>
 
-        <div class="slot">
-          <div class="slot-label">Tools</div>
-          <div class="ph-box">Add tools&hellip;</div>
-        </div>
-
-        <div class="hardrule placeholder">
-          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rules / Cautions</div>
-          <div class="hr-text">Add cautions&hellip;</div>
-        </div>
-
-        <div class="diagram-ph"><span class="icon">&#128247;</span><span class="lbl">Diagram / photo</span></div>
+        <div class="tactic-tools"><span class="k">Tools</span>Spreaders &middot; cutters &middot; Halligan &middot; webbing</div>
       </div>
     </details>
 
@@ -916,29 +907,28 @@
         <span class="s-num">2</span>
         <span class="s-text">
           <span class="s-title">B-Post Blow Out</span>
-          <span class="s-sub">&nbsp;</span>
+          <span class="s-sub">Side removal</span>
         </span>
         <span class="chev">&rsaquo;</span>
       </summary>
       <div class="collapse-body tactic-body">
-        <div class="slot">
-          <div class="slot-label">Steps</div>
-          <ul class="ph-steps">
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-          </ul>
+        <ol class="steps">
+          <li><span class="t">Create a purchase point with the spreaders &mdash; spread in the window, or pinch the door.<img class="tphoto" src="images/img-3586-40.jpeg" alt="Create a purchase point with the spreaders" loading="lazy"></span></li>
+          <li><span class="t">Pop the door at the <strong>Nader pin</strong> using that purchase point.<img class="tphoto" src="images/img-3592-78.jpeg" alt="Pop the door at the Nader pin" loading="lazy"></span></li>
+          <li><span class="t"><strong>Base cut:</strong> cut the B-post as low as possible, parallel to the rocker panel.<img class="tphoto" src="images/img-3587-30.jpeg" alt="Base cut as low as possible, parallel to the rocker panel" loading="lazy"></span></li>
+          <li><span class="t">Spread the <strong>bottom of the B-post</strong> outward, away from the patient. Stabilize the rocker panel underneath to support the spread.<img class="tphoto" src="images/img-3588-26.jpeg" alt="Spread the bottom of the B-post outward" loading="lazy"><img class="tphoto" src="images/stabilize-62.jpeg" alt="Stabilize the rocker panel underneath" loading="lazy"></span></li>
+          <li><span class="t"><strong>Top cut (last):</strong> once the base is free of the rocker, make the final top cut while keeping door control.</span></li>
+          <li><span class="t">Spread and cut the <strong>front door hinges</strong>, maintaining door control with webbing.<img class="tphoto" src="images/img-3594-48.jpeg" alt="Spread and cut the front door hinges" loading="lazy"><img class="tphoto" src="images/img-3595-90.jpeg" alt="Maintain door control with webbing" loading="lazy"></span></li>
+        </ol>
+        <div class="callout callout-amber">
+          <span class="c-label">Cut order</span>
+          Cut the <strong>bottom first</strong>. If you cut the top first, the top of the pillar can swing inward toward the patient&rsquo;s head as the base blows out. Blow the base out fully (or nearly), leave the top intact, and make the top cut <strong>last</strong>.
         </div>
-        <div class="slot">
-          <div class="slot-label">Tools</div>
-          <div class="ph-box">Add tools&hellip;</div>
+        <div class="hardrule">
+          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule</div>
+          <div class="hr-text">Avoid cutting the <strong>seat-belt pretensioners</strong>.</div>
         </div>
-        <div class="hardrule placeholder">
-          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rules / Cautions</div>
-          <div class="hr-text">Add cautions&hellip;</div>
-        </div>
-        <div class="diagram-ph"><span class="icon">&#128247;</span><span class="lbl">Diagram / photo</span></div>
+        <div class="tactic-tools"><span class="k">Tools</span>Spreaders &middot; cutters &middot; webbing</div>
       </div>
     </details>
 
@@ -948,29 +938,23 @@
         <span class="s-num">3</span>
         <span class="s-text">
           <span class="s-title">Dash Jack</span>
-          <span class="s-sub">&nbsp;</span>
+          <span class="s-sub">Dash displacement &middot; spreaders</span>
         </span>
         <span class="chev">&rsaquo;</span>
       </summary>
       <div class="collapse-body tactic-body">
-        <div class="slot">
-          <div class="slot-label">Steps</div>
-          <ul class="ph-steps">
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-          </ul>
-        </div>
-        <div class="slot">
-          <div class="slot-label">Tools</div>
-          <div class="ph-box">Add tools&hellip;</div>
-        </div>
-        <div class="hardrule placeholder">
-          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rules / Cautions</div>
-          <div class="hr-text">Add cautions&hellip;</div>
-        </div>
-        <div class="diagram-ph"><span class="icon">&#128247;</span><span class="lbl">Diagram / photo</span></div>
+        <ol class="steps">
+          <li><span class="t"><strong>Stabilize under the A-post</strong> &mdash; this strengthens the area you&rsquo;ll leverage to lift the dash.<img class="tphoto" src="images/img-3607-94.jpeg" alt="Stabilize under the A-post" loading="lazy"><img class="tphoto" src="images/stabilize-84.jpeg" alt="Stabilize under the A-post" loading="lazy"></span></li>
+          <li><span class="t"><strong>Relief cuts</strong> &mdash; make three:
+            <ul class="substeps">
+              <li><span class="ltr">A</span><span>Cut the A-pillar twice and take a chunk out, so the metal can&rsquo;t snag.<img class="tphoto" src="images/img-3599-42.jpeg" alt="Cut the A-pillar twice" loading="lazy"><img class="tphoto" src="images/img-3613-58.jpeg" alt="Take a chunk out of the A-pillar" loading="lazy"></span></li>
+              <li><span class="ltr">B</span><span>Front cut: peel back the sheet metal to expose the beam, then cut between the strut and the passenger compartment.<img class="tphoto" src="images/img-3600-38.jpeg" alt="Front relief cut to expose the beam" loading="lazy"></span></li>
+              <li><span class="ltr">C</span><span>Lower cut: parallel to the rocker panel.<img class="tphoto" src="images/img-3598-60.jpeg" alt="Lower cut parallel to the rocker panel" loading="lazy"><img class="tphoto" src="images/img-3619-88.jpeg" alt="Lower relief cut" loading="lazy"></span></li>
+            </ul>
+            <span class="sub">May take several cuts to capture the whole pillar and pierce the firewall. Add a 2nd cut just above or below the first, then pinch the metal between the cuts with the spreaders and roll it out of the way.</span><img class="tphoto" src="images/img-3604-66.jpeg" alt="Several cuts to capture the pillar" loading="lazy"><img class="tphoto" src="images/img-3605-56.jpeg" alt="Second cut above or below the first" loading="lazy"><img class="tphoto" src="images/img-3602-92.jpeg" alt="Capture the pillar and pierce the firewall" loading="lazy"><img class="tphoto" src="images/man-pinch-54.jpeg" alt="Pinch the metal between the cuts" loading="lazy"><img class="tphoto" src="images/img-3615-64.jpeg" alt="Roll the metal out of the way" loading="lazy"></span></li>
+          <li><span class="t"><strong>Jack the dash</strong> with the spreaders.<img class="tphoto" src="images/img-3608-82.jpeg" alt="Jack the dash with the spreaders" loading="lazy"></span></li>
+        </ol>
+        <div class="tactic-tools"><span class="k">Tools</span>Cutters &middot; spreaders</div>
       </div>
     </details>
 
@@ -980,29 +964,24 @@
         <span class="s-num">4</span>
         <span class="s-text">
           <span class="s-title">Roll Dash</span>
-          <span class="s-sub">&nbsp;</span>
+          <span class="s-sub">Dash displacement &middot; ram</span>
         </span>
         <span class="chev">&rsaquo;</span>
       </summary>
       <div class="collapse-body tactic-body">
-        <div class="slot">
-          <div class="slot-label">Steps</div>
-          <ul class="ph-steps">
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-          </ul>
-        </div>
-        <div class="slot">
-          <div class="slot-label">Tools</div>
-          <div class="ph-box">Add tools&hellip;</div>
-        </div>
-        <div class="hardrule placeholder">
-          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rules / Cautions</div>
-          <div class="hr-text">Add cautions&hellip;</div>
-        </div>
-        <div class="diagram-ph"><span class="icon">&#128247;</span><span class="lbl">Diagram / photo</span></div>
+        <ol class="steps">
+          <li><span class="t"><strong>Stabilize under the A-post</strong> &mdash; strengthens the area you&rsquo;ll leverage.<img class="tphoto" src="images/img-3610-36.jpeg" alt="Stabilize under the A-post" loading="lazy"></span></li>
+          <li><span class="t"><strong>Relief cuts</strong> &mdash; make three:<img class="tphoto" src="images/img-3612-52.jpeg" alt="Relief cuts" loading="lazy">
+            <ul class="substeps">
+              <li><span class="ltr">A</span><span>Cut the A-pillar twice and take a chunk out (prevents snagging). Leave room at the <strong>bottom of the A-post</strong> for the ram.<img class="tphoto" src="images/stabilizei-32.jpeg" alt="Cut the A-pillar, leave room at the bottom for the ram" loading="lazy"></span></li>
+              <li><span class="ltr">B</span><span>Front cut: peel back the sheet metal to expose the beam; cut between the strut and the passenger compartment.<img class="tphoto" src="images/img-3620-80.jpeg" alt="Front relief cut" loading="lazy"></span></li>
+              <li><span class="ltr">C</span><span>Lower cut: parallel to the rocker panel.</span></li>
+            </ul>
+            <span class="sub">May take several cuts to capture the pillar and pierce the firewall.</span></span></li>
+          <li><span class="t"><strong>Roll the dash:</strong> set the <strong>ram</strong> from the base of the B-post to the base of the A-post and push the dash away from the patient.</span></li>
+          <li><span class="t">The ram may block patient removal &mdash; <strong>chock as a progress capture</strong>, then remove the ram.</span></li>
+        </ol>
+        <div class="tactic-tools"><span class="k">Tools</span>Cutters &middot; ram &middot; chocks</div>
       </div>
     </details>
 
@@ -1012,29 +991,23 @@
         <span class="s-num">5</span>
         <span class="s-text">
           <span class="s-title">Roof Removal</span>
-          <span class="s-sub">&nbsp;</span>
+          <span class="s-sub">Full roof</span>
         </span>
         <span class="chev">&rsaquo;</span>
       </summary>
       <div class="collapse-body tactic-body">
-        <div class="slot">
-          <div class="slot-label">Steps</div>
-          <ul class="ph-steps">
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-          </ul>
+        <ol class="steps">
+          <li><span class="t"><strong>Remove all glass first.</strong></span></li>
+          <li><span class="t">Cut the <strong>A-posts low</strong>, near the dash &mdash; avoids sharp edges.</span></li>
+          <li><span class="t">Cut the <strong>B and C posts high</strong>, near the roof.</span></li>
+          <li><span class="t">Use a <strong>Sawzall</strong> for the larger posts.</span></li>
+          <li><span class="t"><strong>Be ready to catch the roof</strong> &mdash; a firefighter on every corner.</span></li>
+        </ol>
+        <div class="hardrule">
+          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule</div>
+          <div class="hr-text">Biggest hazard is cutting into <strong>airbag cylinders</strong> &mdash; know where they run before you cut.</div>
         </div>
-        <div class="slot">
-          <div class="slot-label">Tools</div>
-          <div class="ph-box">Add tools&hellip;</div>
-        </div>
-        <div class="hardrule placeholder">
-          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rules / Cautions</div>
-          <div class="hr-text">Add cautions&hellip;</div>
-        </div>
-        <div class="diagram-ph"><span class="icon">&#128247;</span><span class="lbl">Diagram / photo</span></div>
+        <div class="tactic-tools"><span class="k">Tools</span>Cutters &middot; Sawzall</div>
       </div>
     </details>
 
@@ -1044,29 +1017,12 @@
         <span class="s-num">6</span>
         <span class="s-text">
           <span class="s-title">Steering Wheel Displacement</span>
-          <span class="s-sub">&nbsp;</span>
+          <span class="s-sub">Not yet documented</span>
         </span>
         <span class="chev">&rsaquo;</span>
       </summary>
       <div class="collapse-body tactic-body">
-        <div class="slot">
-          <div class="slot-label">Steps</div>
-          <ul class="ph-steps">
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-            <li><span class="ph-line"></span></li>
-          </ul>
-        </div>
-        <div class="slot">
-          <div class="slot-label">Tools</div>
-          <div class="ph-box">Add tools&hellip;</div>
-        </div>
-        <div class="hardrule placeholder">
-          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rules / Cautions</div>
-          <div class="hr-text">Add cautions&hellip;</div>
-        </div>
-        <div class="diagram-ph"><span class="icon">&#128247;</span><span class="lbl">Diagram / photo</span></div>
+        <div class="ph-box">Steps to be added &mdash; not included in the source notes yet.</div>
       </div>
     </details>
 
