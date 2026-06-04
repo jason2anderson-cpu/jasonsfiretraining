@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Orem Fire — Vehicle Extrication SOP</title>
+<title>Vehicle Extrication — Jason Anderson</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
@@ -75,7 +75,9 @@
   /* To use a real crest: replace the .emblem div with
      <img class="emblem" src="orem-fire-logo.png" alt="Orem Fire"> */
 
-  .header h1 { font-size: 23px; font-weight: 800; color: #fff; letter-spacing: -0.2px; }
+  .header h1 { font-size: 40px; font-weight: 900; color: #fff; letter-spacing: -1px; line-height: 1.04; }
+  .header .byline { font-size: 16px; font-weight: 700; color: var(--text); margin-top: 10px; }
+  .header .byrole { font-size: 13px; font-weight: 600; color: var(--red-bright); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
   .header .sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
   .header .ver {
     display: inline-block;
@@ -194,7 +196,30 @@
   body.snav-collapsed .sidenav { transform: translateX(135%); opacity: 0; pointer-events: none; }
   body.snav-collapsed .sidenav-tab { display: flex; }
   details.collapse { scroll-margin-top: 72px; }
-  @media (max-width: 1279px) { .sidenav, .sidenav-tab { display: none !important; } }
+  .sidenav-fab {
+    position: fixed; bottom: 20px; right: 18px; z-index: 60;
+    display: none; align-items: center; justify-content: center;
+    width: 54px; height: 54px; border-radius: 50%;
+    background: var(--red); color: #fff; border: none; cursor: pointer;
+    font-size: 22px; box-shadow: 0 4px 16px rgba(0,0,0,0.55);
+  }
+  .snav-backdrop { position: fixed; inset: 0; z-index: 58; display: none; background: rgba(0,0,0,0.6); }
+  @media (max-width: 1279px) {
+    .sidenav-tab { display: none !important; }
+    .sidenav-fab { display: flex; }
+    .sidenav {
+      top: 0; right: 0; height: 100dvh; max-height: 100dvh;
+      width: min(85vw, 300px); border-radius: 0;
+      transform: translateX(100%); opacity: 1; pointer-events: auto;
+      z-index: 62; padding: 18px 14px 24px;
+    }
+    body.snav-open .sidenav { transform: translateX(0); }
+    body.snav-open .snav-backdrop { display: block; }
+    body.snav-open .sidenav-fab { display: none; }
+    body.snav-open { overflow: hidden; }
+    .sn-link { font-size: 16px; padding: 11px 10px; }
+    .sn-sublink { font-size: 14px; padding: 9px 10px; }
+  }
 
   /* ============ FLOW BAR ============ */
   .flow-bar {
@@ -211,6 +236,7 @@
   }
   .flow-bar span.step { font-size: 12.5px; font-weight: 700; color: var(--text); }
   .flow-bar .arrow { color: var(--red); font-size: 15px; font-weight: 800; }
+  .flow-label { text-align: center; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.6px; color: var(--red-bright); margin: 4px 0 9px; }
 
   /* ============ ROLE SECTIONS ============ */
   .role-section { scroll-margin-top: calc(var(--nav-h) + 14px); margin-bottom: 40px; }
@@ -591,7 +617,7 @@
   /* ============ RESPONSIVE ============ */
   @media (max-width: 600px) {
     body { font-size: 15px; }
-    .header h1 { font-size: 19px; }
+    .header h1 { font-size: 30px; }
     .section-header h2 { font-size: 18px; }
     .role-num { width: 38px; height: 38px; font-size: 18px; }
     .decision-grid { grid-template-columns: 1fr 1fr; }
@@ -640,28 +666,31 @@
   <a class="sn-link" href="#peelpeek" data-sec="peelpeek"><span class="sn-n">3</span>Peel &amp; Peek</a>
   <a class="sn-link" href="#tactics" data-sec="tactics"><span class="sn-n">4</span>Tactics</a>
   <div class="sn-sub">
-    <a class="sn-sublink" href="#tactics" data-tactic="0">Pop Door</a>
-    <a class="sn-sublink" href="#tactics" data-tactic="1">B-Post Blow Out</a>
-    <a class="sn-sublink" href="#tactics" data-tactic="2">Dash Jack</a>
-    <a class="sn-sublink" href="#tactics" data-tactic="3">Roll Dash</a>
-    <a class="sn-sublink" href="#tactics" data-tactic="4">Roof Removal</a>
-    <a class="sn-sublink" href="#tactics" data-tactic="5">Steering Wheel</a>
+    <a class="sn-sublink" href="#tactics" data-tactic="0">Door Removal: Hinge</a>
+    <a class="sn-sublink" href="#tactics" data-tactic="1">Door Removal: Pin</a>
+    <a class="sn-sublink" href="#tactics" data-tactic="2">B-Post Blow Out</a>
+    <a class="sn-sublink" href="#tactics" data-tactic="3">Dash Jack</a>
+    <a class="sn-sublink" href="#tactics" data-tactic="4">Roll Dash</a>
+    <a class="sn-sublink" href="#tactics" data-tactic="5">Roof Removal</a>
+    <a class="sn-sublink" href="#tactics" data-tactic="6">Steering Wheel</a>
   </div>
 </nav>
+<button class="sidenav-fab" id="sidenavFab" aria-label="Open contents menu">&#9776;</button>
+<div class="snav-backdrop" id="snavBackdrop"></div>
 
 <div class="page">
 
   <!-- ============ HEADER ============ -->
   <div class="header">
-    <div class="emblem">OREM<br>FIRE</div>
     <div>
       <h1>Vehicle Extrication</h1>
-      <div class="sub">Standard Operating Procedure &mdash; Orem Fire Department</div>
-      <span class="ver">Draft v0.1 &middot; 2026-06-02</span>
+      <div class="byline">By Engineer Jason Anderson</div>
+      <div class="byrole">Heavy Vehicle Extrication Technician</div>
     </div>
   </div>
 
   <!-- ============ FLOW BAR ============ -->
+  <div class="flow-label">The 4-Step System</div>
   <div class="flow-bar">
     <span class="step">Size-Up</span><span class="arrow">&rarr;</span>
     <span class="step">Stabilization</span><span class="arrow">&rarr;</span>
@@ -932,45 +961,51 @@
       <button type="button" data-collapse>Collapse all</button>
     </div>
 
-    <!-- TACTIC 1: Pop Door -->
+    <!-- TACTIC 1: Door Removal — Hinge Attack -->
     <details class="collapse">
       <summary>
         <span class="s-num">1</span>
         <span class="s-text">
-          <span class="s-title">Pop Door</span>
-          <span class="s-sub">Hinge Attack &middot; Pin Attack</span>
+          <span class="s-title">Door Removal: Hinge Attack</span>
+          <span class="s-sub">Door removal</span>
         </span>
         <span class="chev">&rsaquo;</span>
       </summary>
       <div class="collapse-body tactic-body">
-
-        <div class="subtactic">
-          <h4>Hinge Attack</h4>
-          <ol class="steps">
-            <li><span class="t">Create a purchase point &mdash; crush the front fender.<img class="tphoto" src="images/img-3569-34.jpeg" alt="Crush the front fender to create a purchase point" loading="lazy"></span></li>
-            <li><span class="t">Attack one hinge at a time. Start with the <strong>top hinge</strong> to push the door down, away from the patient.<span class="sub">If needed, come in vertically from the top to use gravity.</span><img class="tphoto" src="images/img-3572-28.jpeg" alt="Attack the top hinge first" loading="lazy"></span></li>
-            <li><span class="t">Attack the <strong>lower hinge</strong>.<img class="tphoto" src="images/img-3573-44.jpeg" alt="Attack the lower hinge" loading="lazy"></span></li>
-            <li><span class="t">Keep spreading until <strong>both hinges are defeated</strong>.<span class="sub">Keep the door intact &mdash; if the spreaders start peeling the outer shell away, reset deeper.</span><img class="tphoto" src="images/img-3570-70.jpeg" alt="Spread until both hinges are defeated" loading="lazy"><img class="tphoto" src="images/img-3574-50.jpeg" alt="Correct way" loading="lazy"></span></li>
-          </ol>
-        </div>
-
-        <div class="subtactic">
-          <h4>Nader Pin Attack &mdash; Latch Side</h4>
-          <ol class="steps">
-            <li><span class="t">Create a purchase point &mdash; Halligan, spreader in the window, or spreader side-entry.<img class="tphoto" src="images/img-3575-76.jpeg" alt="Purchase point with a Halligan bar" loading="lazy"><img class="tphoto" src="images/img-3580-72.jpeg" alt="Spreader in the window" loading="lazy"><img class="tphoto" src="images/img-3581-86.jpeg" alt="Spreader side-entry" loading="lazy"><span class="sub">Spread a little, then reposition deeper to avoid peeling the frame.</span><img class="tphoto" src="images/img-3582-74.jpeg" alt="Reposition deeper" loading="lazy"><img class="tphoto" src="images/img-3584-24.jpeg" alt="Reposition deeper" loading="lazy"></span></li>
-            <li><span class="t">Keep spreading until the <strong>latch releases</strong>.<img class="tphoto" src="images/pasted-graphic-1-46.jpg" alt="Continue spreading until the latch releases" loading="lazy"></span></li>
-            <li><span class="t">Control the door with <strong>webbing</strong> and pull it away from the patient.<img class="tphoto" src="images/img-3585-68.jpeg" alt="Control the door with webbing and pull away" loading="lazy"></span></li>
-          </ol>
-        </div>
-
-        <div class="tactic-tools"><span class="k">Tools</span>Spreaders &middot; cutters &middot; Halligan &middot; webbing</div>
+        <ol class="steps">
+          <li><span class="t">Create a purchase point &mdash; crush the front fender.<img class="tphoto" src="images/img-3569-34.jpeg" alt="Crush the front fender to create a purchase point" loading="lazy"></span></li>
+          <li><span class="t">Attack one hinge at a time. Start with the <strong>top hinge</strong> to push the door down, away from the patient.<span class="sub">If needed, come in vertically from the top to use gravity.</span><img class="tphoto" src="images/img-3572-28.jpeg" alt="Attack the top hinge first" loading="lazy"></span></li>
+          <li><span class="t">Attack the <strong>lower hinge</strong>.<img class="tphoto" src="images/img-3573-44.jpeg" alt="Attack the lower hinge" loading="lazy"></span></li>
+          <li><span class="t">Keep spreading until <strong>both hinges are defeated</strong>.<span class="sub">Keep the door intact &mdash; if the spreaders start peeling the outer shell away, reset deeper.</span><img class="tphoto" src="images/img-3570-70.jpeg" alt="Spread until both hinges are defeated" loading="lazy"><img class="tphoto" src="images/img-3574-50.jpeg" alt="Correct way" loading="lazy"></span></li>
+        </ol>
+        <div class="tactic-tools"><span class="k">Tools</span>Spreaders &middot; cutters &middot; webbing</div>
       </div>
     </details>
 
-    <!-- TACTIC 2: B-Post Blow Out -->
+    <!-- TACTIC 2: Door Removal — Pin Attack -->
     <details class="collapse">
       <summary>
         <span class="s-num">2</span>
+        <span class="s-text">
+          <span class="s-title">Door Removal: Pin Attack</span>
+          <span class="s-sub">Latch side</span>
+        </span>
+        <span class="chev">&rsaquo;</span>
+      </summary>
+      <div class="collapse-body tactic-body">
+        <ol class="steps">
+          <li><span class="t">Create a purchase point &mdash; Halligan, spreader in the window, or spreader side-entry.<img class="tphoto" src="images/img-3575-76.jpeg" alt="Purchase point with a Halligan bar" loading="lazy"><img class="tphoto" src="images/img-3580-72.jpeg" alt="Spreader in the window" loading="lazy"><img class="tphoto" src="images/img-3581-86.jpeg" alt="Spreader side-entry" loading="lazy"><span class="sub">Spread a little, then reposition deeper to avoid peeling the frame.</span><img class="tphoto" src="images/img-3582-74.jpeg" alt="Reposition deeper" loading="lazy"><img class="tphoto" src="images/img-3584-24.jpeg" alt="Reposition deeper" loading="lazy"></span></li>
+          <li><span class="t">Keep spreading until the <strong>latch releases</strong>.<img class="tphoto" src="images/pasted-graphic-1-46.jpg" alt="Continue spreading until the latch releases" loading="lazy"></span></li>
+          <li><span class="t">Control the door with <strong>webbing</strong> and pull it away from the patient.<img class="tphoto" src="images/img-3585-68.jpeg" alt="Control the door with webbing and pull away" loading="lazy"></span></li>
+        </ol>
+        <div class="tactic-tools"><span class="k">Tools</span>Halligan &middot; spreaders &middot; cutters &middot; webbing</div>
+      </div>
+    </details>
+
+    <!-- TACTIC 3: B-Post Blow Out -->
+    <details class="collapse">
+      <summary>
+        <span class="s-num">3</span>
         <span class="s-text">
           <span class="s-title">B-Post Blow Out</span>
           <span class="s-sub">Side removal</span>
@@ -998,10 +1033,10 @@
       </div>
     </details>
 
-    <!-- TACTIC 3: Dash Jack -->
+    <!-- TACTIC 4: Dash Jack -->
     <details class="collapse">
       <summary>
-        <span class="s-num">3</span>
+        <span class="s-num">4</span>
         <span class="s-text">
           <span class="s-title">Dash Jack</span>
           <span class="s-sub">Dash displacement &middot; spreaders</span>
@@ -1024,10 +1059,10 @@
       </div>
     </details>
 
-    <!-- TACTIC 4: Roll Dash -->
+    <!-- TACTIC 5: Roll Dash -->
     <details class="collapse">
       <summary>
-        <span class="s-num">4</span>
+        <span class="s-num">5</span>
         <span class="s-text">
           <span class="s-title">Roll Dash</span>
           <span class="s-sub">Dash displacement &middot; ram</span>
@@ -1051,10 +1086,10 @@
       </div>
     </details>
 
-    <!-- TACTIC 5: Roof Removal -->
+    <!-- TACTIC 6: Roof Removal -->
     <details class="collapse">
       <summary>
-        <span class="s-num">5</span>
+        <span class="s-num">6</span>
         <span class="s-text">
           <span class="s-title">Roof Removal</span>
           <span class="s-sub">Full roof</span>
@@ -1077,10 +1112,10 @@
       </div>
     </details>
 
-    <!-- TACTIC 6: Steering Wheel Displacement -->
+    <!-- TACTIC 7: Steering Wheel Displacement -->
     <details class="collapse">
       <summary>
-        <span class="s-num">6</span>
+        <span class="s-num">7</span>
         <span class="s-text">
           <span class="s-title">Steering Wheel Displacement</span>
           <span class="s-sub">Not yet documented</span>
@@ -1096,8 +1131,7 @@
 
   <!-- ============ FOOTER ============ -->
   <div class="footer">
-    <p><strong>Orem Fire Department</strong> &bull; Vehicle Extrication SOP &bull; Training / Internal Use</p>
-    <p style="margin-top:4px;">Draft v0.1 &middot; 2026-06-02</p>
+    <p><strong>Vehicle Extrication</strong> &bull; Engineer Jason Anderson &bull; Heavy Vehicle Extrication Technician</p>
   </div>
 
 </div>
@@ -1110,12 +1144,18 @@
     qa('[data-expand]').forEach(function (b){ b.addEventListener('click', function(){ qa('details.collapse').forEach(function(d){ d.open = true; }); }); });
     qa('[data-collapse]').forEach(function (b){ b.addEventListener('click', function(){ qa('details.collapse').forEach(function(d){ d.open = false; }); }); });
 
-    // Side nav: collapse / reopen
+    // Side nav: collapse (desktop) / open-close (mobile drawer)
     var body = document.body;
     var col = document.getElementById('sidenavCollapse');
     var op = document.getElementById('sidenavOpen');
-    if (col) col.addEventListener('click', function(){ body.classList.add('snav-collapsed'); });
+    var fab = document.getElementById('sidenavFab');
+    var bd = document.getElementById('snavBackdrop');
+    var closeDrawer = function(){ body.classList.remove('snav-open'); };
+    if (col) col.addEventListener('click', function(){ body.classList.add('snav-collapsed'); closeDrawer(); });
     if (op) op.addEventListener('click', function(){ body.classList.remove('snav-collapsed'); });
+    if (fab) fab.addEventListener('click', function(){ body.classList.add('snav-open'); body.classList.remove('snav-collapsed'); });
+    if (bd) bd.addEventListener('click', closeDrawer);
+    qa('.sn-link').forEach(function(a){ a.addEventListener('click', closeDrawer); });
 
     // Tactic sub-links: open that tactic and scroll to it
     var tactics = qa('#tactics details.collapse');
@@ -1125,6 +1165,7 @@
         var d = tactics[+a.getAttribute('data-tactic')];
         if (!d) return;
         d.open = true;
+        closeDrawer();
         d.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
