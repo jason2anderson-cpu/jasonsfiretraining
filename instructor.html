@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instructor Run-Sheet — Vehicle Extrication</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+  :root {
+    --bg:#16181c; --bg-2:#1b1e24; --card:#20242b; --card-2:#262b33;
+    --border:#2e333c; --border-2:#3a414c; --text:#e8eaef; --muted:#9aa1ad;
+    --faint:#5b626d; --red:#dc2626; --red-acc:#e2342b; --red-bright:#ef4444;
+    --amber:#f59e0b; --blue:#3b82f6; --green:#22c55e; --nav-h:56px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    background:var(--bg); color:var(--text); font-size:16px; line-height:1.55;
+    -webkit-font-smoothing:antialiased; -webkit-text-size-adjust:100%;
+  }
+  .page { max-width:860px; margin:0 auto; padding:0 18px 90px; }
+
+  /* top bar with back-logo */
+  .topbar {
+    position:sticky; top:0; z-index:50;
+    background:rgba(22,24,28,0.94); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border-bottom:2px solid var(--red); margin:0 -18px 22px; padding:0 18px;
+  }
+  .topbar-in { max-width:860px; margin:0 auto; height:var(--nav-h); display:flex; align-items:center; gap:12px; }
+  .logo-back {
+    display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+    color:#fff; font-weight:900; font-size:15px; letter-spacing:-0.3px;
+  }
+  .logo-back .chev { color:var(--red-bright); font-size:19px; line-height:1; }
+  .logo-back .mark {
+    background:var(--red); color:#fff; font-size:10px; font-weight:900; letter-spacing:0.5px;
+    padding:3px 7px; border-radius:5px;
+  }
+  .logo-back:hover .mark { background:var(--red-bright); }
+  .topbar .ctx { margin-left:auto; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+
+  /* header */
+  .ihead { padding:6px 0 4px; }
+  .ihead h1 { font-size:32px; font-weight:900; color:#fff; letter-spacing:-0.8px; line-height:1.05; }
+  .ihead .sub { font-size:14px; color:var(--muted); margin-top:6px; }
+
+  /* snapshot strip */
+  .snap { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 26px; }
+  .snap .chip {
+    font-size:12.5px; font-weight:700; color:var(--text);
+    background:var(--card); border:1px solid var(--border); border-radius:999px; padding:7px 13px;
+  }
+  .snap .chip b { color:var(--red-bright); }
+  .snap .chip.warn { background:rgba(245,158,11,0.12); border-color:rgba(245,158,11,0.4); color:#ffe0a8; }
+
+  /* section headers */
+  .sec { margin-bottom:30px; }
+  .sec-h { display:flex; align-items:center; gap:11px; margin-bottom:14px; }
+  .sec-h .n {
+    width:34px; height:34px; flex-shrink:0; border-radius:9px; background:var(--red); color:#fff;
+    font-size:16px; font-weight:900; display:flex; align-items:center; justify-content:center;
+  }
+  .sec-h h2 { font-size:19px; font-weight:800; color:#fff; }
+  hr.div { border:none; border-top:1px solid var(--border); margin:0 0 18px; }
+
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:15px 17px; margin-bottom:13px; }
+  .card h3 { font-size:15px; font-weight:800; color:#fff; margin-bottom:8px; }
+
+  ol.steps, ul.bul { padding-left:0; list-style:none; }
+  ol.steps { counter-reset:s; }
+  ol.steps > li { counter-increment:s; display:flex; gap:11px; padding:6px 0; font-size:15px; }
+  ol.steps > li::before {
+    content:counter(s); flex-shrink:0; width:23px; height:23px; border-radius:50%;
+    background:var(--card-2); border:1px solid var(--border-2); color:var(--text);
+    font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; margin-top:1px;
+  }
+  ul.bul > li { display:flex; gap:10px; padding:5px 0; font-size:14.5px; }
+  ul.bul > li::before { content:''; flex-shrink:0; margin-top:9px; width:6px; height:6px; border-radius:50%; background:var(--red); }
+  strong { color:#fff; }
+
+  /* callouts */
+  .callout { border-left:4px solid var(--blue); background:rgba(59,130,246,0.1); color:#bcd4ff; border-radius:0 8px 8px 0; padding:11px 14px; margin-top:11px; font-size:14px; }
+  .callout.amber { border-left-color:var(--amber); background:rgba(245,158,11,0.1); color:#ffe0a8; }
+  .callout .lbl { display:block; font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.7px; margin-bottom:3px; }
+  .rule { background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.5); border-left:5px solid var(--red-bright); border-radius:0 9px 9px 0; padding:11px 14px; margin-top:10px; }
+  .rule .lbl { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--red-bright); margin-bottom:3px; }
+  .rule .txt { font-size:15px; font-weight:600; color:#ffd9d6; }
+
+  /* standing roles grid */
+  .roles { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:9px; }
+  .role { background:var(--card-2); border:1px solid var(--border-2); border-radius:9px; padding:10px 12px; }
+  .role .r-name { font-size:13.5px; font-weight:800; color:#fff; }
+  .role .r-n { color:var(--red-bright); }
+  .role .r-note { font-size:12px; color:var(--muted); margin-top:2px; }
+
+  /* evolution cards */
+  .evo { background:var(--card); border:1px solid var(--border); border-left:4px solid var(--red); border-radius:10px; padding:14px 16px; margin-bottom:12px; }
+  .evo .e-tag { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; color:var(--red-bright); }
+  .evo h3 { font-size:16px; font-weight:800; color:#fff; margin:2px 0 8px; }
+
+  /* rotation cards */
+  .rot { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:0; margin-bottom:14px; overflow:hidden; }
+  .rot-h { background:var(--card-2); padding:11px 15px; border-bottom:1px solid var(--border); }
+  .rot-h .rt { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; color:var(--red-bright); }
+  .rot-h h3 { font-size:15.5px; font-weight:800; color:#fff; margin-top:1px; }
+  .rot-b { padding:6px 15px 14px; }
+  .seat { display:flex; gap:12px; align-items:flex-start; padding:8px 0; border-bottom:1px solid var(--border); }
+  .seat:last-child { border-bottom:none; }
+  .seat .role-k { flex-shrink:0; width:140px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); padding-top:2px; }
+  .seat .who { flex:1; font-size:14.5px; color:var(--text); font-weight:600; }
+  .seat .who .coach { color:var(--muted); font-weight:500; }
+  .badge-new { display:inline-block; font-size:9.5px; font-weight:900; letter-spacing:0.5px; color:#fff; background:var(--red); border-radius:4px; padding:1px 5px; margin-left:5px; vertical-align:middle; }
+  .badge-ho { display:inline-block; font-size:9.5px; font-weight:800; letter-spacing:0.5px; color:var(--muted); background:var(--card-2); border:1px solid var(--border-2); border-radius:4px; padding:1px 5px; margin-left:5px; vertical-align:middle; }
+  .tagnote { background:rgba(245,158,11,0.1); border:1px dashed rgba(245,158,11,0.5); border-radius:8px; padding:9px 12px; margin-top:10px; font-size:13px; color:#ffe0a8; }
+  .tagnote b { color:#fff; }
+
+  /* roster */
+  .roster .grp { margin-bottom:11px; }
+  .roster .grp-h { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.7px; color:var(--red-bright); margin-bottom:5px; }
+  .roster .names { display:flex; flex-wrap:wrap; gap:7px; }
+  .roster .nm { font-size:13.5px; font-weight:700; color:var(--text); background:var(--card); border:1px solid var(--border-2); border-radius:999px; padding:5px 12px; }
+  .roster .fillin { color:var(--faint); font-style:italic; }
+
+  /* floating discreet back button */
+  .floatback {
+    position:fixed; right:16px; bottom:16px; z-index:60;
+    display:inline-flex; align-items:center; gap:7px; text-decoration:none;
+    font-size:12.5px; font-weight:700; color:var(--muted);
+    background:rgba(32,36,43,0.82); border:1px solid var(--border); border-radius:999px;
+    padding:9px 14px; box-shadow:0 3px 12px rgba(0,0,0,0.4); opacity:0.62;
+    transition:opacity 0.15s ease, color 0.15s ease;
+  }
+  .floatback:hover { opacity:1; color:#fff; border-color:var(--border-2); }
+  .floatback .ar { color:var(--red-bright); font-size:15px; }
+
+  .footer { margin-top:34px; padding-top:14px; border-top:2px solid var(--red); text-align:center; font-size:12px; color:var(--faint); }
+  .footer strong { color:var(--muted); }
+
+  @media (max-width:600px) {
+    .ihead h1 { font-size:26px; }
+    .seat { flex-direction:column; gap:2px; }
+    .seat .role-k { width:auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- top bar: clickable logo returns to the main SOP -->
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="logo-back" href="index.html" title="Back to the SOP">
+      <span class="chev">&lsaquo;</span><span class="mark">SOP</span><span>Vehicle Extrication</span>
+    </a>
+    <span class="ctx">Instructor</span>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="ihead">
+    <h1>Instructor Run-Sheet</h1>
+    <div class="sub">Hands-on vehicle extrication &middot; junkyard evolutions &middot; Engineer Jason Anderson</div>
+  </div>
+
+  <div class="snap">
+    <span class="chip"><b>2</b> cars</span>
+    <span class="chip">You = <b>instructor</b>, hands off</span>
+    <span class="chip">New FFs each do: <b>door pop &middot; windshield &middot; B-post</b></span>
+    <span class="chip warn">No steering-wheel displacement today</span>
+  </div>
+
+  <!-- ========== OPENING ========== -->
+  <div class="sec">
+    <div class="sec-h"><div class="n">1</div><h2>The Opening &mdash; first 5 minutes</h2></div>
+    <hr class="div">
+    <div class="card">
+      <ol class="steps">
+        <li><strong>Safety brief.</strong> Full PPE, gloves, eye-pro. Watch footing, sharp steel, glass. One word today is <strong>STOP</strong> &mdash; anyone calls it, everyone freezes. Captains are the safety backstop. &ldquo;Everybody good? Sound off.&rdquo;</li>
+        <li><strong>The mission.</strong> &ldquo;By the time we leave, our newest &mdash; Dantly and the two new guys &mdash; will each have <strong>popped a door, taken a windshield, and done a B-post blowout.</strong> Everyone else runs a position. Nobody stands around.&rdquo;</li>
+        <li><strong>The system.</strong> &ldquo;Every car runs the <strong>same 4 steps</strong> &mdash; Size-Up, Stabilize, Peel &amp; Peek, Tactics. It&rsquo;s all on the site &mdash; pull it up on your phones.&rdquo;</li>
+        <li><strong>Go.</strong> Assign the first seats, walk to Car 1, start with the size-up.</li>
+      </ol>
+      <div class="callout"><span class="lbl">If your mind blanks</span>Your reset button is always: &ldquo;<strong>What&rsquo;s our next step in the system?</strong>&rdquo; &mdash; ask the group. Nerves become their engagement.</div>
+    </div>
+  </div>
+
+  <!-- ========== RULES ========== -->
+  <div class="sec">
+    <div class="sec-h"><div class="n">2</div><h2>Standing Rules &mdash; all day</h2></div>
+    <hr class="div">
+    <div class="rule">
+      <div class="lbl"><span>&#9888;</span> Rule</div>
+      <div class="txt">Every door, latch and hood is <strong>locked and smashed</strong> &mdash; &ldquo;try before you pry&rdquo; will fail. They <strong>still verbalize it</strong> every single time.</div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <ul class="bul">
+        <li><strong>Rescue Officer</strong> runs the <strong>size-up</strong> on every evolution &mdash; hands OFF tools.</li>
+        <li><strong>Safety Officer</strong> enforces the rules on every evolution &mdash; hands off.</li>
+        <li>During the actual cutting: <strong>only the Cutters &amp; Spreaders team is hands-on.</strong> Rescue Officer watching, Safety Officer nearby, <strong>everyone else in line, watching.</strong></li>
+        <li>Any <strong>&ldquo;STOP&rdquo;</strong> = everyone freezes, no questions.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========== STANDING ROLES ========== -->
+  <div class="sec">
+    <div class="sec-h"><div class="n">3</div><h2>Standing Roles &mdash; per evolution</h2></div>
+    <hr class="div">
+    <div class="roles">
+      <div class="role"><div class="r-name">Rescue Officer <span class="r-n">&times;1</span></div><div class="r-note">Size-up + command &middot; hands off</div></div>
+      <div class="role"><div class="r-name">Safety Officer <span class="r-n">&times;1</span></div><div class="r-note">Enforces the rules &middot; hands off</div></div>
+      <div class="role"><div class="r-name">Securing Electrical <span class="r-n">&times;2</span></div><div class="r-note">Off, keys, seat back, battery</div></div>
+      <div class="role"><div class="r-name">Glass + Windshield <span class="r-n">&times;2</span></div><div class="r-note">Break glass, cut the windshield</div></div>
+      <div class="role"><div class="r-name">Stabilization <span class="r-n">&times;2</span></div><div class="r-note">Chocks + tires / pop tires</div></div>
+      <div class="role"><div class="r-name">Peel &amp; Peek <span class="r-n">&times;2</span></div><div class="r-note">Trim, mark airbags &amp; cylinders</div></div>
+      <div class="role"><div class="r-name">Cutters &amp; Spreaders <span class="r-n">&times;2</span></div><div class="r-note">The tactic operators</div></div>
+    </div>
+  </div>
+
+  <!-- ========== RUN OF SHOW ========== -->
+  <div class="sec">
+    <div class="sec-h"><div class="n">4</div><h2>Run of Show</h2></div>
+    <hr class="div">
+
+    <div class="evo">
+      <div class="e-tag">Car 1 &middot; Side A &mdash; TEACH</div>
+      <h3>New guys on the tools &mdash; walk them through everything</h3>
+      <p style="font-size:14.5px;color:var(--muted);margin-bottom:6px;">Slow and narrated, in order:</p>
+      <ul class="bul">
+        <li>Stabilization (chocks + tires)</li>
+        <li>Secure electrical</li>
+        <li>Glass + front windshield</li>
+        <li>Peel &amp; peek</li>
+        <li><strong>B-post blowout</strong></li>
+        <li><strong>Dash lift</strong></li>
+      </ul>
+      <div class="tagnote"><b>Freeze halfway through the B-post:</b> &ldquo;STOP &mdash; everybody freeze.&rdquo; Then <b>tag a fresh pair in</b> to finish it (teaches the STOP + clean handoff).</div>
+      <div class="tagnote" style="margin-top:8px;"><b>After the B-post:</b> tag <b>two more in</b> to finish the <b>dash lift.</b></div>
+    </div>
+
+    <div class="evo">
+      <div class="e-tag">Car 1 &middot; Side B</div>
+      <h3>Door removals &rarr; Roof removal</h3>
+      <ul class="bul">
+        <li>Remove the doors &mdash; door pops (hinge &amp; pin attack).</li>
+        <li>Finish with <strong>roof removal.</strong></li>
+      </ul>
+    </div>
+
+    <div class="evo">
+      <div class="e-tag">Car 2 &middot; Side A</div>
+      <h3>Full rescue evolution &mdash; one side</h3>
+      <ul class="bul">
+        <li>One clean, realistic, full-speed run start-to-access on one side.</li>
+      </ul>
+    </div>
+
+    <div class="evo">
+      <div class="e-tag">Car 2 &middot; Side B</div>
+      <h3>Full evolution + Dash Roll</h3>
+      <ul class="bul">
+        <li>Same full evolution on the other side, finishing with a <strong>dash roll.</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========== ROTATION CARDS ========== -->
+  <div class="sec">
+    <div class="sec-h"><div class="n">5</div><h2>Rotation Cards</h2></div>
+    <hr class="div">
+    <p style="font-size:13.5px;color:var(--muted);margin-bottom:14px;"><span class="badge-new">NEW</span> = the three newest (Dantly, New&nbsp;FF&nbsp;A, New&nbsp;FF&nbsp;B). <span class="badge-ho">HANDS OFF</span> = no tools. Starting seats &mdash; swap names to taste.</p>
+
+    <!-- Rot 1 -->
+    <div class="rot">
+      <div class="rot-h"><div class="rt">Car 1 &middot; Side A &mdash; Teach</div><h3>New guys do everything</h3></div>
+      <div class="rot-b">
+        <div class="seat"><div class="role-k">Rescue Officer</div><div class="who">Capt. Steiner <span class="badge-ho">HANDS OFF</span> <span class="coach">&mdash; models the size-up out loud</span></div></div>
+        <div class="seat"><div class="role-k">Safety Officer</div><div class="who">Slater <span class="badge-ho">HANDS OFF</span></div></div>
+        <div class="seat"><div class="role-k">Stabilization</div><div class="who">Dantly <span class="badge-new">NEW</span> + New FF A <span class="badge-new">NEW</span> <span class="coach">(coach: Nolan)</span></div></div>
+        <div class="seat"><div class="role-k">Electrical</div><div class="who">New FF B <span class="badge-new">NEW</span> + Dantly <span class="badge-new">NEW</span> <span class="coach">(coach: &ldquo;Mustache&rdquo;)</span></div></div>
+        <div class="seat"><div class="role-k">Glass + Windshield</div><div class="who">New FF A <span class="badge-new">NEW</span> + New FF B <span class="badge-new">NEW</span> <span class="coach">(coach: Vet 1)</span></div></div>
+        <div class="seat"><div class="role-k">Peel &amp; Peek</div><div class="who">Dantly <span class="badge-new">NEW</span> + New FF A <span class="badge-new">NEW</span> <span class="coach">(coach: Vet 2)</span></div></div>
+        <div class="seat"><div class="role-k">Cutters/Spreaders &mdash; B-post</div><div class="who">Dantly <span class="badge-new">NEW</span> + New FF A <span class="badge-new">NEW</span></div></div>
+        <div class="seat"><div class="role-k">Everyone else</div><div class="who"><span class="coach">In line, watching</span></div></div>
+        <div class="tagnote"><b>Freeze mid-B-post</b> &rarr; tag in <b>New FF B <span class="badge-new">NEW</span> + Vet 3</b> to finish. &nbsp;<b>Dash lift</b> &rarr; tag in <b>Vet 1 + Vet 2.</b> <span style="color:var(--muted)">New guys flow between stations &mdash; it&rsquo;s sequential.</span></div>
+      </div>
+    </div>
+
+    <!-- Rot 2 -->
+    <div class="rot">
+      <div class="rot-h"><div class="rt">Car 1 &middot; Side B</div><h3>Doors + Roof</h3></div>
+      <div class="rot-b">
+        <div class="seat"><div class="role-k">Rescue Officer</div><div class="who">Nolan <span class="badge-ho">HANDS OFF</span></div></div>
+        <div class="seat"><div class="role-k">Safety Officer</div><div class="who">&ldquo;Mustache&rdquo; <span class="badge-ho">HANDS OFF</span></div></div>
+        <div class="seat"><div class="role-k">Stabilization</div><div class="who">Vet 1 + New FF B <span class="badge-new">NEW</span></div></div>
+        <div class="seat"><div class="role-k">Glass</div><div class="who">New FF A <span class="badge-new">NEW</span> + Vet 2</div></div>
+        <div class="seat"><div class="role-k">Cutters/Spreaders &mdash; doors</div><div class="who">Dantly <span class="badge-new">NEW</span> + New FF A <span class="badge-new">NEW</span> <span class="coach">&rarr; next door: New FF B <span class="badge-new">NEW</span> + Vet 3</span></div></div>
+        <div class="seat"><div class="role-k">Roof removal</div><div class="who">All hands &mdash; Steiner + Slater lead corners, new guys catch corners</div></div>
+        <div class="seat"><div class="role-k">Everyone else</div><div class="who"><span class="coach">In line, watching</span></div></div>
+        <div class="tagnote"><b>Goal:</b> every new FF pops at least one door here.</div>
+      </div>
+    </div>
+
+    <!-- Rot 3 -->
+    <div class="rot">
+      <div class="rot-h"><div class="rt">Car 2 &middot; Side A</div><h3>Full rescue &mdash; experienced-led</h3></div>
+      <div class="rot-b">
+        <div class="seat"><div class="role-k">Rescue Officer</div><div class="who">Capt. Steiner <span class="badge-ho">HANDS OFF</span></div></div>
+        <div class="seat"><div class="role-k">Safety Officer</div><div class="who">Nolan <span class="badge-ho">HANDS OFF</span></div></div>
+        <div class="seat"><div class="role-k">Stabilization</div><div class="who">Vet 1 + Vet 2</div></div>
+        <div class="seat"><div class="role-k">Electrical</div><div class="who">Slater + New FF A <span class="badge-new">NEW</span></div></div>
+        <div class="seat"><div class="role-k">Glass + Windshield</div><div class="who">Vet 3 + New FF B <span class="badge-new">NEW</span></div></div>
+        <div class="seat"><div class="role-k">Peel &amp; Peek</div><div class="who">&ldquo;Mustache&rdquo; + Dantly <span class="badge-new">NEW</span></div></div>
+        <div class="seat"><div class="role-k">Cutters/Spreaders</div><div class="who">Slater + Vet 3 <span class="coach">&mdash; clean, full-speed; new guys watch up close</span></div></div>
+        <div class="seat"><div class="role-k">Everyone else</div><div class="who"><span class="coach">In line, watching</span></div></div>
+      </div>
+    </div>
+
+    <!-- Rot 4 -->
+    <div class="rot">
+      <div class="rot-h"><div class="rt">Car 2 &middot; Side B</div><h3>Full evolution + Dash Roll</h3></div>
+      <div class="rot-b">
+        <div class="seat"><div class="role-k">Rescue Officer</div><div class="who">Slater <span class="badge-ho">HANDS OFF</span></div></div>
+        <div class="seat"><div class="role-k">Safety Officer</div><div class="who">Capt. Steiner <span class="badge-ho">HANDS OFF</span></div></div>
+        <div class="seat"><div class="role-k">Stabilization</div><div class="who">New FF A <span class="badge-new">NEW</span> + Vet 1</div></div>
+        <div class="seat"><div class="role-k">Electrical</div><div class="who">New FF B <span class="badge-new">NEW</span> + Vet 2</div></div>
+        <div class="seat"><div class="role-k">Glass + Windshield</div><div class="who">Dantly <span class="badge-new">NEW</span> + &ldquo;Mustache&rdquo;</div></div>
+        <div class="seat"><div class="role-k">Peel &amp; Peek</div><div class="who">Vet 3 + New FF A <span class="badge-new">NEW</span></div></div>
+        <div class="seat"><div class="role-k">Cutters/Spreaders &mdash; Dash Roll</div><div class="who">Nolan + Vet 1 lead <span class="coach">&mdash; new guys assist</span></div></div>
+        <div class="seat"><div class="role-k">Everyone else</div><div class="who"><span class="coach">In line, watching</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ROSTER ========== -->
+  <div class="sec">
+    <div class="sec-h"><div class="n">6</div><h2>Roster</h2></div>
+    <hr class="div">
+    <div class="card roster">
+      <div class="grp">
+        <div class="grp-h">Instructor &mdash; hands off</div>
+        <div class="names"><span class="nm">Engineer Jason Anderson</span></div>
+      </div>
+      <div class="grp">
+        <div class="grp-h">Newest &mdash; does everything, most coaching</div>
+        <div class="names"><span class="nm">Dantly</span></div>
+      </div>
+      <div class="grp">
+        <div class="grp-h">Brand new</div>
+        <div class="names"><span class="nm fillin">New FF A &mdash; name?</span><span class="nm fillin">New FF B &mdash; name?</span></div>
+      </div>
+      <div class="grp">
+        <div class="grp-h">Experienced</div>
+        <div class="names"><span class="nm">Capt. Steiner</span><span class="nm">Slater</span><span class="nm">Nolan</span><span class="nm fillin">&ldquo;Mustache&rdquo; &mdash; name?</span></div>
+      </div>
+      <div class="grp">
+        <div class="grp-h">Veterans &mdash; cut plenty of cars</div>
+        <div class="names"><span class="nm fillin">Vet 1 &mdash; name?</span><span class="nm fillin">Vet 2 &mdash; name?</span><span class="nm fillin">Vet 3 &mdash; name?</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p><strong>Instructor Run-Sheet</strong> &bull; Vehicle Extrication &bull; Engineer Jason Anderson</p>
+  </div>
+
+</div>
+
+<a class="floatback" href="index.html" title="Open the main SOP"><span class="ar">&larr;</span> View SOP</a>
+
+</body>
+</html>
