@@ -158,8 +158,52 @@
     .seat .role-k { width:auto; }
   }
 </style>
+
+
+
+
+
+<style id="sitenav-css">
+.sitenav{background:#101216;border-bottom:1px solid #2e333c;font-family:Inter,-apple-system,'Segoe UI',sans-serif}
+.sn-in{max-width:1100px;margin:0 auto;padding:0 18px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:58px}
+.sn-brand{font-weight:800;font-size:15.5px;letter-spacing:.01em;text-decoration:none;
+color:#e8eaef;white-space:nowrap}
+.sn-brand b{color:#dc2626;font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:#9aa1ad;font-weight:600;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:#20242b;color:#e8eaef}
+.sn-links a[aria-current="true"]{background:#2a1416;color:#f87171}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:46px;
+padding:8px 15px;border:1px solid #2e333c;border-radius:11px;background:#20242b;
+font-weight:700;font-size:15px;color:#e8eaef;cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:#dc2626;color:#f87171}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:258px;background:#20242b;
+border:1px solid #3a414c;border-radius:14px;padding:8px;display:grid;gap:2px;z-index:80;
+box-shadow:0 14px 36px -10px rgba(0,0,0,.7)}
+.sn-panel a{display:flex;align-items:center;min-height:50px;padding:8px 15px;border-radius:10px;
+text-decoration:none;color:#e8eaef;font-weight:600;font-size:16px}
+.sn-panel a[aria-current="true"]{background:#2a1416;color:#f87171}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13px;color:#5b626d}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:54px;padding:0 14px}}
+/* Pre-existing defect fix (2026-09-02): nav.nav and .topbar carry `margin:0 -18px` to bleed
+   edge-to-edge, but they sit directly on the page body, which has no padding — so each rendered 36px
+   wider than the viewport and every phone visit had ~18px of horizontal scroll. Zeroing the
+   horizontal margin gives exactly the full-bleed bar the author intended. */
+nav.nav,.topbar{margin-left:0!important;margin-right:0!important;
+padding-left:18px;padding-right:18px}
+.sidenav{max-width:100vw}
+</style>
 </head>
 <body class="locked">
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="hydraulics.html">Hydraulics</a><a href="extrication.html" aria-current="true">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="hydraulics.html">Hydraulics</a><a href="extrication.html" aria-current="true">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
 
 <!-- PIN gate -->
 <div id="pinGate">

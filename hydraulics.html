@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Hydraulics Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=JetBrains+Mono:wght@600;700&display=swap">
+</head>
+<body>
+<style>
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  --gold:#8A5800; --gold-g:#F7EEDC;
+  --blue:#3A5BA8; --blue-g:#E7ECF7;
+  --ink:#0E1A1B;
+  /* dimensional scene */
+  --steel-l:#7E94A6; --steel-m:#5B7086; --steel-d:#3C4E60;
+  --hose-l:#E2E8EA; --hose-m:#B9C6CC; --hose-d:#7E8E97;
+  --sup-l:#5FA8D8; --sup-m:#2F7FB8; --sup-d:#1B5B8A;
+  --bld-l:#DDE5E3; --bld-m:#C2CFCC; --bld-d:#9DAEAA;
+  --grnd:#E4ECEA; --shadow:rgba(14,26,27,.22);
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#42201D;
+    --gold:#DCAF5E; --gold-g:#2E2513;
+    --blue:#9FB6EA; --blue-g:#1A2438;
+    --ink:#060E0F;
+    --steel-l:#6A8093; --steel-m:#4A5D70; --steel-d:#2E3D4C;
+    --hose-l:#9BAAB2; --hose-m:#71838C; --hose-d:#4A5A63;
+    --sup-l:#4E9BCB; --sup-m:#2A6E9F; --sup-d:#174D73;
+    --bld-l:#2A3A38; --bld-m:#22302E; --bld-d:#1A2523;
+    --grnd:#16211F; --shadow:rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#42201D;
+  --gold:#DCAF5E; --gold-g:#2E2513;
+  --blue:#9FB6EA; --blue-g:#1A2438;
+  --ink:#060E0F;
+  --steel-l:#6A8093; --steel-m:#4A5D70; --steel-d:#2E3D4C;
+  --hose-l:#9BAAB2; --hose-m:#71838C; --hose-d:#4A5A63;
+  --sup-l:#4E9BCB; --sup-m:#2A6E9F; --sup-d:#174D73;
+  --bld-l:#2A3A38; --bld-m:#22302E; --bld-d:#1A2523;
+  --grnd:#16211F; --shadow:rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+font-size:16.5px;line-height:1.55;-webkit-text-size-adjust:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px 64px}
+.crumb{font-size:14px;color:var(--text2);margin:16px 0 0}
+.crumb a{color:var(--accent);font-weight:700;text-decoration:none}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(29px,7.4vw,44px);line-height:1.05;
+letter-spacing:-.02em;margin:8px 0 6px}
+.sub{margin:0 0 22px;color:var(--text2);font-size:15.5px;max-width:60ch}
+
+/* ── the dimensional scene ───────────────────────────────────────────── */
+.scene{background:linear-gradient(180deg,var(--surface),var(--expanded));
+border:1.5px solid var(--divider);border-radius:20px;padding:8px;overflow:hidden;
+box-shadow:0 16px 40px -22px var(--shadow)}
+.scene svg{display:block;width:100%;height:auto}
+.rdout{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:9px}
+@media (min-width:700px){.rdout{grid-template-columns:repeat(4,1fr)}}
+.rd{background:var(--surface);border:1.5px solid var(--divider);border-radius:13px;padding:11px 13px}
+.rd b{display:block;font-family:var(--mono);font-weight:700;font-size:23px;letter-spacing:-.02em;
+line-height:1.1}
+.rd span{display:block;font-size:11.5px;font-family:var(--head);font-weight:700;letter-spacing:.11em;
+text-transform:uppercase;color:var(--text2);margin-top:3px}
+.rd.key{background:var(--accent);border-color:var(--accent)}
+.rd.key b,.rd.key span{color:#fff}
+.rd.warn{background:var(--safety-tint);border-color:var(--safety)}
+.rd.warn b{color:var(--safety)}
+
+/* ── controls ────────────────────────────────────────────────────────── */
+.panel{background:var(--surface);border:1.5px solid var(--divider);border-radius:18px;
+padding:18px;margin-top:16px}
+.grid{display:grid;gap:15px;grid-template-columns:1fr}
+@media (min-width:720px){.grid{grid-template-columns:1fr 1fr}}
+.f{display:block}
+.f>label{display:block;font-family:var(--head);font-weight:800;font-size:11.5px;letter-spacing:.13em;
+text-transform:uppercase;color:var(--text2);margin-bottom:7px}
+select,input[type=number]{width:100%;min-height:48px;padding:10px 13px;font-family:var(--body);
+font-size:16px;color:var(--text);background:var(--canvas);border:1.5px solid var(--divider);
+border-radius:11px;-webkit-appearance:none;appearance:none}
+select:focus,input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+select{background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),
+linear-gradient(135deg,currentColor 50%,transparent 50%);
+background-position:calc(100% - 19px) 21px,calc(100% - 13px) 21px;
+background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:38px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:12.8px;color:var(--text2);margin:6px 0 0;line-height:1.4}
+.hint.flag{color:var(--safety);font-weight:700}
+
+/* ── worked answer ───────────────────────────────────────────────────── */
+.work{margin-top:16px;background:var(--ink);border-radius:18px;padding:20px 20px 18px;color:#EAF3F1;
+background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.028) 0 2px,transparent 2px 9px);
+box-shadow:0 16px 40px -24px var(--shadow)}
+.work h2{font-family:var(--head);font-weight:800;font-size:12px;letter-spacing:.15em;
+text-transform:uppercase;color:#7FD4D2;margin:0 0 14px}
+.eq{font-family:var(--mono);font-size:15px;line-height:1.85;margin:0;overflow-x:auto;
+white-space:nowrap;padding-bottom:4px}
+.eq .t{color:#7FD4D2}
+.eq .v{color:#fff;font-weight:700}
+.eq .c{color:#8FA6A2}
+.terms{display:grid;gap:8px;margin:15px 0 0}
+.tm{display:grid;grid-template-columns:26px 1fr auto;gap:11px;align-items:baseline;
+padding:9px 0;border-top:1px solid rgba(255,255,255,.11)}
+.tm .l{font-family:var(--head);font-weight:800;font-size:15px;color:#7FD4D2}
+.tm .d{font-size:14px;color:#C6D8D4;line-height:1.4}
+.tm .d em{font-style:normal;color:#8FA6A2;display:block;font-size:12.6px;margin-top:2px}
+.tm .n{font-family:var(--mono);font-weight:700;font-size:17px;color:#fff;white-space:nowrap}
+.tot{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-top:14px;
+padding-top:14px;border-top:2px solid #7FD4D2}
+.tot span{font-family:var(--head);font-weight:800;font-size:13px;letter-spacing:.13em;
+text-transform:uppercase;color:#7FD4D2}
+.tot b{font-family:var(--mono);font-weight:700;font-size:30px;letter-spacing:-.02em}
+
+/* ── method comparison ───────────────────────────────────────────────── */
+.cmp{display:grid;gap:11px;grid-template-columns:1fr;margin-top:16px}
+@media (min-width:640px){.cmp{grid-template-columns:1fr 1fr}}
+.cm{background:var(--surface);border:1.5px solid var(--divider);border-radius:15px;padding:15px 16px}
+.cm.pick{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-tint)}
+.cm h3{font-family:var(--head);font-weight:800;font-size:13.5px;margin:0 0 4px}
+.cm .big{font-family:var(--mono);font-weight:700;font-size:26px;letter-spacing:-.02em;display:block}
+.cm p{margin:5px 0 0;font-size:13.2px;color:var(--text2);line-height:1.42}
+
+h2.sec{font-family:var(--head);font-weight:800;font-size:12.5px;letter-spacing:.15em;
+text-transform:uppercase;color:var(--text2);margin:34px 0 13px;padding-bottom:8px;
+border-bottom:1px solid var(--divider)}
+table{width:100%;border-collapse:collapse;font-size:14.3px}
+th,td{text-align:left;padding:10px 11px;border-bottom:1px solid var(--divider)}
+th{font-family:var(--head);font-weight:800;font-size:11.5px;letter-spacing:.09em;
+text-transform:uppercase;color:var(--text2)}
+td.n,th.n{text-align:right;font-family:var(--mono);font-weight:700}
+.scroll-x{position:relative;overflow-x:auto;border:1.5px solid var(--divider);border-radius:14px;
+background:var(--surface)}
+.note{margin:11px 0 0;padding:13px 15px;background:var(--gold-g);border-radius:12px;
+font-size:13.6px;line-height:1.5}
+.foot{border-top:1px solid var(--divider);margin-top:30px;padding:18px 0 0;
+font-size:13.2px;color:var(--text2);line-height:1.5}
+.nojs{padding:13px 15px;background:var(--safety-tint);border-radius:12px;font-size:14px}
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="hydraulics.html" aria-current="true">Hydraulics</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="hydraulics.html" aria-current="true">Hydraulics</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+<div class="wrap">
+<p class="crumb"><a href="engine-home.html">Engine Operations</a> &rsaquo; Hydraulics Calculator</p>
+<h1>Hydraulics Calculator</h1>
+<p class="sub">Pump discharge pressure worked the way the standard works it &mdash; nozzle first, back to
+the pump. Every coefficient, nozzle pressure and appliance loss on this page is Orem&rsquo;s.</p>
+
+<div class="scene" id="scene"><svg viewBox="0 0 760 300" role="img"
+  aria-label="Dimensional view of an engine supplying a hose lay to a nozzle at elevation">
+ <defs>
+  <linearGradient id="gSteelT" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="var(--steel-l)"/><stop offset="1" stop-color="var(--steel-m)"/></linearGradient>
+  <linearGradient id="gHose" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="var(--hose-l)"/><stop offset=".42" stop-color="var(--hose-m)"/>
+    <stop offset="1" stop-color="var(--hose-d)"/></linearGradient>
+  <linearGradient id="gSup" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="var(--sup-l)"/><stop offset=".42" stop-color="var(--sup-m)"/>
+    <stop offset="1" stop-color="var(--sup-d)"/></linearGradient>
+  <radialGradient id="gGround" cx="50%" cy="40%" r="72%">
+    <stop offset="0" stop-color="var(--grnd)" stop-opacity="1"/>
+    <stop offset="1" stop-color="var(--grnd)" stop-opacity=".18"/></radialGradient>
+  <filter id="soft" x="-40%" y="-40%" width="180%" height="200%">
+    <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="var(--shadow)"/></filter>
+ </defs>
+
+ <!-- ground -->
+ <path d="M0 252 L760 252 L760 300 L0 300 z" fill="url(#gGround)"/>
+ <path d="M0 252 L760 252" stroke="var(--divider)" stroke-width="1.2" opacity=".7"/>
+
+ <!-- hydrant + supply, far side -->
+ <ellipse cx="52" cy="250" rx="20" ry="5" fill="var(--shadow)" opacity=".38"/>
+ <g filter="url(#soft)">
+   <rect x="45" y="222" width="14" height="26" rx="3" fill="var(--sup-m)"/>
+   <rect x="45" y="222" width="6"  height="26" rx="3" fill="var(--sup-l)" opacity=".75"/>
+   <circle cx="52" cy="220" r="7.5" fill="var(--sup-l)"/>
+   <rect x="36" y="230" width="9" height="7" rx="2" fill="var(--sup-d)"/>
+   <rect x="59" y="230" width="9" height="7" rx="2" fill="var(--sup-d)"/>
+ </g>
+ <path d="M66 240 C 110 240, 120 244, 152 244" fill="none" stroke="url(#gSup)"
+       stroke-width="16" stroke-linecap="round"/>
+ <path d="M70 236 C 110 236, 120 240, 150 240" fill="none" stroke="var(--sup-l)"
+       stroke-width="2.6" stroke-linecap="round" opacity=".5"/>
+
+ <!-- ── engine, 3/4 view ── -->
+ <ellipse cx="238" cy="252" rx="106" ry="13" fill="var(--shadow)" opacity=".45"/>
+ <g filter="url(#soft)">
+  <rect x="150" y="180" width="152" height="66" fill="url(#gSteelT)"/>
+  <path d="M150 180 L206 152 L358 152 L302 180 z" fill="var(--steel-l)"/>
+  <path d="M302 180 L358 152 L358 218 L302 246 z" fill="var(--steel-m)"/>
+  <path d="M150 246 L302 246 L358 218 L358 222 L302 250 L150 250 z" fill="var(--steel-d)"/>
+  <!-- panel -->
+  <rect x="162" y="192" width="128" height="42" rx="4" fill="var(--steel-d)" opacity=".5"/>
+  <circle cx="185" cy="213" r="12.5" fill="var(--hose-l)" opacity=".95"/>
+  <circle cx="185" cy="213" r="8.6" fill="none" stroke="var(--steel-d)" stroke-width="1.3"/>
+  <line x1="185" y1="213" x2="191" y2="206" stroke="#B42318" stroke-width="2.1" stroke-linecap="round"/>
+  <circle cx="216" cy="213" r="7.5" fill="var(--hose-l)" opacity=".72"/>
+  <rect x="234" y="204" width="18" height="18" rx="3" fill="var(--sup-m)" opacity=".9"/>
+  <rect x="260" y="204" width="18" height="18" rx="3" fill="var(--hose-m)" opacity=".72"/>
+  <text x="248" y="172" font-family="var(--head)" font-size="12" font-weight="800"
+        fill="var(--canvas)" letter-spacing=".13em">PUMP</text>
+  <!-- discharge port the line actually leaves from -->
+  <rect x="352" y="196" width="14" height="15" rx="3" fill="var(--steel-d)"/>
+ </g>
+
+ <!-- ── discharge line: drawn AFTER the engine so the connection reads ── -->
+ <path id="riser" d="M360 204 L430 204 L430 120 L520 120" fill="none" stroke="url(#gHose)"
+       stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+ <path id="riser-hi" d="M360 200 L426 200 L426 120" fill="none" stroke="var(--hose-l)"
+       stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+
+ <!-- building -->
+ <ellipse cx="596" cy="252" rx="112" ry="13" fill="var(--shadow)" opacity=".45"/>
+ <g id="bld-floors"></g>
+
+ <!-- nozzle -->
+ <g id="nozgrp" transform="translate(512,112)">
+   <path d="M0 0 l22 -6 l0 16 l-22 -6 z" fill="var(--steel-m)"/>
+   <path d="M0 0 l22 -6 l0 4 l-22 4 z" fill="var(--steel-l)"/>
+   <circle cx="25" cy="2" r="4.6" fill="#B42318"/>
+ </g>
+
+ <text id="lay-label" x="300" y="278" text-anchor="middle" font-family="var(--head)" font-size="13"
+       font-weight="700" fill="var(--text2)">&#8212;</text>
+ <text id="floor-label" x="712" y="278" text-anchor="end" font-family="var(--head)" font-size="13"
+       font-weight="700" fill="var(--text2)">&#8212;</text>
+</svg></div>
+
+<div class="rdout">
+  <div class="rd key"><b id="r-pdp">&mdash;</b><span>PDP psi</span></div>
+  <div class="rd"><b id="r-gpm">&mdash;</b><span>Flowing gpm</span></div>
+  <div class="rd"><b id="r-npdp">&mdash;</b><span>Net pump psi</span></div>
+  <div class="rd" id="r-nr-box"><b id="r-nr">&mdash;</b><span>Nozzle reaction lb</span></div>
+</div>
+
+<div class="panel">
+  <noscript><p class="nojs"><b>This calculator needs JavaScript.</b> The reference tables below are
+  the same numbers it uses, and work without it.</p></noscript>
+  <div class="grid">
+    <div class="f"><label for="noz">Nozzle</label>
+      <select id="noz"><optgroup label="Smooth bore — hand line"><option value="sb78">7/8" tip &mdash; 160 gpm @ 50 psi</option><option value="sb1516" selected>15/16" tip &mdash; 185 gpm @ 50 psi</option><option value="sb1">1" tip &mdash; 200 gpm @ 50 psi</option><option value="sb118">1-1/8" tip &mdash; 265 gpm @ 50 psi</option><option value="sb1316">1-3/16" tip &mdash; 300 gpm @ 50 psi</option><option value="sb114">1-1/4" tip &mdash; 325 gpm @ 50 psi</option></optgroup><optgroup label="Smooth bore — master stream"><option value="ms138">1-3/8" tip &mdash; 500 gpm @ 80 psi</option><option value="ms112">1-1/2" tip &mdash; 600 gpm @ 80 psi</option><option value="ms134">1-3/4" tip &mdash; 800 gpm @ 80 psi</option><option value="ms2">2" tip &mdash; 1000 gpm @ 80 psi</option></optgroup><optgroup label="Fog"><option value="tft">TFT Mid-Matic Blue &mdash; 150 gpm @ 100 psi</option><option value="esom">Elkhart Select-O-Matic &mdash; 200 gpm @ 100 psi</option><option value="exd">Elkhart Chief XD &mdash; 160 gpm @ 50 psi</option></optgroup></select>
+      <p class="hint" id="noz-hint"></p>
+    </div>
+    <div class="f"><label for="hose">Hose</label>
+      <select id="hose"><option value="h1">1" &mdash; C 150.0</option><option value="h134" selected>1-3/4" &mdash; C 15.5</option><option value="h212">2-1/2" &mdash; C 2.0</option><option value="h3">3" &mdash; C 0.8</option><option value="h5">5" &mdash; C 0.08</option></select>
+      <p class="hint" id="hose-hint"></p>
+    </div>
+    <div class="f"><label for="len">Hose length (feet)</label>
+      <input type="number" id="len" value="200" min="0" max="5000" step="50" inputmode="numeric">
+      <p class="hint">Total lay from the pump to the nozzle.</p>
+    </div>
+    <div class="f"><label for="app">Appliance in the lay</label>
+      <select id="app"><option value="none">None</option><option value="small">Wye · gated wye · siamese · reducer</option><option value="deck">Deck gun · ground monitor</option><option value="aerial">Aerial master stream — pre-plumbed (T33)</option><option value="play">Playpipe (Tiller 33)</option><option value="stand">Standpipe</option><option value="ram">Rapid Attack Monitor</option></select>
+      <p class="hint" id="app-hint"></p>
+    </div>
+    <div class="f"><label for="elmode">Elevation</label>
+      <select id="elmode">
+        <option value="none">None &mdash; flat</option>
+        <option value="floors">Structural &mdash; by floor</option>
+        <option value="feet">Geographical &mdash; by feet</option>
+        <option value="below">Sub-level &mdash; below the pump</option>
+      </select>
+      <p class="hint" id="el-hint">5 psi per floor above the 1st &middot; 0.5 psi per foot.</p>
+    </div>
+    <div class="f"><label for="elval"><span id="ellabel">Floor number</span></label>
+      <input type="number" id="elval" value="1" min="0" max="120" step="1" inputmode="numeric">
+      <p class="hint" id="elval-hint"></p>
+    </div>
+    <div class="f"><label for="intake">Intake pressure (psi)</label>
+      <input type="number" id="intake" value="0" min="0" max="300" step="5" inputmode="numeric">
+      <p class="hint">From the hydrant. Net pump pressure is PDP minus this.</p>
+    </div>
+    <div class="f"><label for="lines">Lines off this discharge</label>
+      <input type="number" id="lines" value="1" min="1" max="6" step="1" inputmode="numeric">
+      <p class="hint">Combined flow decides whether a small appliance counts 10 psi or 0.</p>
+    </div>
+  </div>
+</div>
+
+<div class="work">
+  <h2>Worked out &mdash; start at the nozzle</h2>
+  <p class="eq" id="eq"></p>
+  <div class="terms" id="terms"></div>
+  <div class="tot"><span>Pump discharge pressure</span><b id="tot">&mdash;</b></div>
+</div>
+
+<div class="cmp">
+  <div class="cm" id="cm-formula"><h3>Formula &mdash; C&times;Q&sup2;&times;L</h3>
+    <b class="big" id="v-formula">&mdash;</b>
+    <p id="p-formula">Friction loss by coefficient.</p></div>
+  <div class="cm" id="cm-field"><h3>Field method</h3>
+    <b class="big" id="v-field">&mdash;</b>
+    <p id="p-field">The drill-ground shortcut.</p></div>
+</div>
+<p class="note" id="cmp-note"></p>
+
+<h2 class="sec">Friction loss per 100 ft &mdash; the standard&rsquo;s own table</h2>
+<div class="scroll-x"><table>
+<thead><tr><th>Hose</th><th class="n">GPM</th><th class="n">Field</th><th class="n">C&times;Q&sup2;&times;L</th></tr></thead>
+<tbody><tr><td>1-3/4"</td><td class="n">160</td><td class="n">30</td><td class="n">40</td></tr><tr><td>2-1/2"</td><td class="n">265</td><td class="n">16</td><td class="n">14</td></tr><tr><td>3"</td><td class="n">300</td><td class="n">9</td><td class="n">7.2</td></tr><tr><td>5"</td><td class="n">1,000</td><td class="n">10</td><td class="n">8 *</td></tr></tbody></table></div>
+<p class="note"><b>One discrepancy in the source.</b> The printed table shows <b>.08</b> in the 5&Prime;
+C&times;Q&sup2;&times;L column. That is the coefficient repeated, not a pressure &mdash; C&middot;Q&sup2;&middot;L
+at 1,000&nbsp;gpm is 0.08&nbsp;&times;&nbsp;10&sup2;&nbsp;&times;&nbsp;1&nbsp;=&nbsp;<b>8&nbsp;psi</b>,
+which is what this page uses. Worth raising with the training committee.</p>
+
+<h2 class="sec">Nozzles</h2>
+<div class="scroll-x"><table>
+<thead><tr><th>Nozzle</th><th>Type</th><th class="n">GPM</th><th class="n">NP psi</th></tr></thead>
+<tbody><tr><td>7/8" tip</td><td>Smooth bore — hand line</td><td class="n">160</td><td class="n">50</td></tr><tr><td>15/16" tip</td><td>Smooth bore — hand line</td><td class="n">185</td><td class="n">50</td></tr><tr><td>1" tip</td><td>Smooth bore — hand line</td><td class="n">200</td><td class="n">50</td></tr><tr><td>1-1/8" tip</td><td>Smooth bore — hand line</td><td class="n">265</td><td class="n">50</td></tr><tr><td>1-3/16" tip</td><td>Smooth bore — hand line</td><td class="n">300</td><td class="n">50</td></tr><tr><td>1-1/4" tip</td><td>Smooth bore — hand line</td><td class="n">325</td><td class="n">50</td></tr><tr><td>1-3/8" tip</td><td>Smooth bore — master stream</td><td class="n">500</td><td class="n">80</td></tr><tr><td>1-1/2" tip</td><td>Smooth bore — master stream</td><td class="n">600</td><td class="n">80</td></tr><tr><td>1-3/4" tip</td><td>Smooth bore — master stream</td><td class="n">800</td><td class="n">80</td></tr><tr><td>2" tip</td><td>Smooth bore — master stream</td><td class="n">1,000</td><td class="n">80</td></tr><tr><td>TFT Mid-Matic Blue</td><td>Fog</td><td class="n">150</td><td class="n">100</td></tr><tr><td>Elkhart Select-O-Matic</td><td>Fog</td><td class="n">200</td><td class="n">100</td></tr><tr><td>Elkhart Chief XD</td><td>Fog</td><td class="n">160</td><td class="n">50</td></tr></tbody></table></div>
+<p class="note">Orem rates the Chief XD at <b>50 psi</b>, not 100. It is a fixed-gallonage nozzle and pumping it at fog pressure would badly over-pressurize it.</p>
+
+<h2 class="sec">Coefficients &amp; appliance loss</h2>
+<div class="scroll-x"><table>
+<thead><tr><th>Hose</th><th class="n">Coefficient</th><th>Appliance</th><th class="n">Loss</th></tr></thead>
+<tbody><tr><td>1"</td><td class="n">150</td><td>None</td><td class="n">&mdash;</td></tr><tr><td>1-3/4"</td><td class="n">15.5</td><td>Wye · gated wye · siamese · reducer</td><td class="n">10 / 0</td></tr><tr><td>2-1/2"</td><td class="n">2</td><td>Deck gun · ground monitor</td><td class="n">25</td></tr><tr><td>3"</td><td class="n">0.8</td><td>Aerial master stream — pre-plumbed (T33)</td><td class="n">25</td></tr><tr><td>5"</td><td class="n">0.08</td><td>Playpipe (Tiller 33)</td><td class="n">15</td></tr><tr><td></td><td></td><td>Standpipe</td><td class="n">25</td></tr><tr><td></td><td></td><td>Rapid Attack Monitor</td><td class="n">10</td></tr></tbody></table></div>
+
+<p class="foot"><b>Training reference only.</b> Every value is transcribed from the OFD Apparatus
+Driver/Operator Hydraulic Calculation Standards. Elevation follows that standard &mdash; geographical
+0.5&nbsp;psi per foot, structural 5&nbsp;psi per floor above the first, sub-level a gain subtracted from
+the PDP. Verify against the current standard and your own rig before pumping.</p>
+</div>
+
+<script>
+const D = {"nozzles": [{"id": "sb78", "label": "7/8\" tip", "group": "Smooth bore \u2014 hand line", "gpm": 160, "np": 50, "d": 0.875}, {"id": "sb1516", "label": "15/16\" tip", "group": "Smooth bore \u2014 hand line", "gpm": 185, "np": 50, "d": 0.9375}, {"id": "sb1", "label": "1\" tip", "group": "Smooth bore \u2014 hand line", "gpm": 200, "np": 50, "d": 1.0}, {"id": "sb118", "label": "1-1/8\" tip", "group": "Smooth bore \u2014 hand line", "gpm": 265, "np": 50, "d": 1.125}, {"id": "sb1316", "label": "1-3/16\" tip", "group": "Smooth bore \u2014 hand line", "gpm": 300, "np": 50, "d": 1.1875}, {"id": "sb114", "label": "1-1/4\" tip", "group": "Smooth bore \u2014 hand line", "gpm": 325, "np": 50, "d": 1.25}, {"id": "ms138", "label": "1-3/8\" tip", "group": "Smooth bore \u2014 master stream", "gpm": 500, "np": 80, "d": 1.375}, {"id": "ms112", "label": "1-1/2\" tip", "group": "Smooth bore \u2014 master stream", "gpm": 600, "np": 80, "d": 1.5}, {"id": "ms134", "label": "1-3/4\" tip", "group": "Smooth bore \u2014 master stream", "gpm": 800, "np": 80, "d": 1.75}, {"id": "ms2", "label": "2\" tip", "group": "Smooth bore \u2014 master stream", "gpm": 1000, "np": 80, "d": 2.0}, {"id": "tft", "label": "TFT Mid-Matic Blue", "group": "Fog", "gpm": 150, "np": 100, "d": null}, {"id": "esom", "label": "Elkhart Select-O-Matic", "group": "Fog", "gpm": 200, "np": 100, "d": null}, {"id": "exd", "label": "Elkhart Chief XD", "group": "Fog", "gpm": 160, "np": 50, "d": null}], "hose": [{"id": "h1", "label": "1\"", "c": 150.0, "field": null, "range": ""}, {"id": "h134", "label": "1-3/4\"", "c": 15.5, "field": "f134", "range": "100\u2013200 gpm"}, {"id": "h212", "label": "2-1/2\"", "c": 2.0, "field": "f212", "range": "100\u2013500 gpm"}, {"id": "h3", "label": "3\"", "c": 0.8, "field": "f3", "range": "300 gpm and up"}, {"id": "h5", "label": "5\"", "c": 0.08, "field": "f5", "range": "500 gpm and up"}], "appliances": [{"id": "none", "label": "None", "psi": 0, "cond": false}, {"id": "small", "label": "Wye \u00b7 gated wye \u00b7 siamese \u00b7 reducer", "psi": 10, "cond": true}, {"id": "deck", "label": "Deck gun \u00b7 ground monitor", "psi": 25, "cond": false}, {"id": "aerial", "label": "Aerial master stream \u2014 pre-plumbed (T33)", "psi": 25, "cond": false}, {"id": "play", "label": "Playpipe (Tiller 33)", "psi": 15, "cond": false}, {"id": "stand", "label": "Standpipe", "psi": 25, "cond": false}, {"id": "ram", "label": "Rapid Attack Monitor", "psi": 10, "cond": false}]};
+const $ = id => document.getElementById(id);
+const noz = $('noz'), hose = $('hose'), app = $('app');
+
+function fieldFL(key, gpm){            // the standard's drill-ground shortcuts
+  const Q = gpm/100;
+  if(key==='f134') return (gpm-100)/2;
+  if(key==='f212'){
+    const two = Math.floor(gpm/10);
+    return gpm<=300 ? two-10 : (two-10) + Math.floor(gpm/100);
+  }
+  if(key==='f3')  return Q*Q;
+  if(key==='f5')  return Q*Q/10;
+  return null;
+}
+const r1 = n => Math.round(n*10)/10;
+const r0 = n => Math.round(n);
+
+function calc(){
+  const N = D.nozzles.find(n=>n.id===noz.value);
+  const H = D.hose.find(h=>h.id===hose.value);
+  const A = D.appliances.find(a=>a.id===app.value);
+  const L    = Math.max(0, +$('len').value||0);
+  const inta = Math.max(0, +$('intake').value||0);
+  const nl   = Math.max(1, +$('lines').value||1);
+  const mode = $('elmode').value;
+  const ev   = Math.max(0, +$('elval').value||0);
+
+  const gpm = N.gpm, combined = gpm*nl, Q = gpm/100, Lh = L/100;
+
+  // F — friction loss, both ways
+  const flF = H.c * Q*Q * Lh;
+  const per = fieldFL(H.field, gpm);
+  const flD = per===null ? null : per*Lh;
+
+  // E — elevation, per the OFD standard
+  let el=0, elWhy='Flat lay.';
+  if(mode==='floors'){ el = 5*Math.max(0,ev-1);
+    elWhy = ev<=1 ? 'Ground floor — no structural elevation.' : `5 psi × (floor ${ev} − 1)`; }
+  else if(mode==='feet'){ el = 0.5*ev; elWhy = `0.5 psi × ${ev} ft`; }
+  else if(mode==='below'){ el = -0.5*ev; elWhy = `Sub-level gain — 0.5 psi × ${ev} ft, subtracted`; }
+
+  // A — appliance
+  let al = A.psi, alWhy = A.label;
+  if(A.cond){ al = combined>350 ? 10 : 0;
+    alWhy = combined>350 ? `${A.label} — combined ${combined} gpm exceeds 350`
+                         : `${A.label} — combined ${combined} gpm, under 350, so 0`; }
+
+  const fl  = flF;
+  const pdp = N.np + fl + el + al;
+  const pdpField = flD===null ? null : N.np + flD + el + al;
+
+  // nozzle reaction
+  let nr, nrWhy;
+  if(N.d){ nr = 1.57*N.d*N.d*N.np; nrWhy = `1.57 × ${N.d}&sup2; × ${N.np}`; }
+  else   { nr = 0.0505*gpm*Math.sqrt(N.np); nrWhy = `0.0505 × ${gpm} × √${N.np}`; }
+
+  // ── readouts
+  $('r-pdp').textContent  = r0(pdp);
+  $('r-gpm').textContent  = gpm;
+  $('r-npdp').textContent = inta>0 ? r0(pdp-inta) : '—';
+  $('r-nr').textContent   = r0(nr);
+  $('r-nr-box').className = 'rd' + (nr>=100 ? ' warn' : '');
+
+  // ── equation line
+  $('eq').innerHTML =
+    `<span class="t">PDP</span> <span class="c">=</span> <span class="t">NP</span> `+
+    `<span class="c">+</span> <span class="t">FL</span> <span class="c">+</span> `+
+    `<span class="t">EL</span> <span class="c">+</span> <span class="t">AL</span>`+
+    `<span class="c">  →  </span><span class="v">${r0(N.np)}</span> <span class="c">+</span> `+
+    `<span class="v">${r1(fl)}</span> <span class="c">+</span> <span class="v">${r1(el)}</span> `+
+    `<span class="c">+</span> <span class="v">${r0(al)}</span> <span class="c">=</span> `+
+    `<span class="v">${r0(pdp)} psi</span>`;
+
+  const term = (l,d,e,n) =>
+    `<div class="tm"><span class="l">${l}</span><span class="d">${d}<em>${e}</em></span>`+
+    `<span class="n">${n}</span></div>`;
+  $('terms').innerHTML =
+    term('N', N.label, `Nozzle pressure — ${N.gpm} gpm at ${N.np} psi`, r0(N.np)+' psi') +
+    term('F', `${H.label} · ${L} ft`, `C×Q²×L — ${H.c} × ${r1(Q)}² × ${r1(Lh)}`, r1(fl)+' psi') +
+    term('E', mode==='none'?'No elevation':'Elevation', elWhy, r1(el)+' psi') +
+    term('A', A.id==='none'?'No appliance':'Appliance', alWhy, r0(al)+' psi') +
+    term('R', 'Nozzle reaction', nrWhy + (nr>=100?' — brace the line':''), r0(nr)+' lb');
+  $('tot').textContent = r0(pdp) + ' psi';
+
+  // ── method comparison
+  $('v-formula').textContent = r0(pdp)+' psi';
+  $('p-formula').innerHTML = `Friction loss ${r1(fl)} psi over ${L} ft.`;
+  if(pdpField===null){
+    $('v-field').textContent = '—';
+    $('p-field').textContent = 'The standard gives no field shortcut for this hose.';
+    $('cmp-note').innerHTML = `The standard prints a field method for 1&frac34;&Prime;, 2&frac12;&Prime;, `+
+      `3&Prime; and 5&Prime; only. For ${H.label} use the formula.`;
+    $('cm-field').className='cm'; $('cm-formula').className='cm pick';
+  } else {
+    $('v-field').textContent = r0(pdpField)+' psi';
+    $('p-field').innerHTML = `${r1(per)} psi per 100 ft × ${r1(Lh)} = ${r1(flD)} psi.`;
+    const gap = Math.abs(pdp-pdpField);
+    $('cmp-note').innerHTML = gap<1
+      ? `Both methods land on the same number here.`
+      : `The two differ by <b>${r1(gap)} psi</b>. Both are in the standard — the field method is the `+
+        `shortcut you run on the panel, the formula is what it approximates. ${H.range
+        ? 'The field method is written for '+H.range+'.' : ''}`;
+    $('cm-field').className='cm pick'; $('cm-formula').className='cm';
+  }
+
+  // ── hints
+  $('noz-hint').innerHTML = N.id==='exd' ? '⚠ ' + "Orem rates the Chief XD at 50 psi, not 100. It is a fixed-gallonage nozzle and pumping it at fog pressure would badly over-pressurize it." : `${N.gpm} gpm at ${N.np} psi.`;
+  $('noz-hint').className = 'hint' + (N.id==='exd' ? ' flag' : '');
+  $('hose-hint').textContent = H.range ? `Coefficient ${H.c}. Field method written for ${H.range}.`
+                                       : `Coefficient ${H.c}.`;
+  $('app-hint').textContent = A.cond
+    ? '10 psi only when the combined flow exceeds 350 gpm.'
+    : (A.psi ? `${A.psi} psi.` : 'No appliance loss.');
+  $('ellabel').textContent = mode==='floors' ? 'Floor number'
+    : mode==='none' ? 'Not used' : 'Feet';
+  $('elval').disabled = mode==='none';
+  $('elval-hint').textContent = mode==='floors'
+    ? 'The 1st floor counts as zero.' : mode==='below'
+    ? 'Below the pump — this is a gain.' : mode==='feet' ? 'Rise above the pump.' : '';
+
+  draw(mode, ev, L, N, H);
+}
+
+// ── the scene ────────────────────────────────────────────────────────────
+function draw(mode, ev, L, N, H){
+  const floors = mode==='floors' ? Math.max(1,Math.min(ev,16))
+               : mode==='feet'   ? Math.max(1,Math.min(Math.round(ev/10),16)) : 1;
+  const below  = mode==='below';
+  const g = document.getElementById('bld-floors');
+  if(!g) return;
+  const X = 520, BASE = 252, W = 120, DX = 58, DY = 26;
+  const FH = Math.min(26, (BASE - 34) / floors);   // tall buildings compress, never overflow
+  let out = '';
+  for(let i=0;i<floors;i++){
+    const y = BASE - (i+1)*FH;
+    out += `<rect x="${X}" y="${y}" width="${W}" height="${FH}" fill="var(--bld-m)"/>`+
+           `<path d="M${X+W} ${y} l${DX} -${DY} l0 ${FH} l-${DX} ${DY} z" fill="var(--bld-d)"/>`;
+    if(FH>13){
+      for(let k=0;k<3;k++)
+        out += `<rect x="${X+12+k*36}" y="${y+FH*0.26}" width="22" height="${Math.max(5,FH*0.4)}" `+
+               `fill="var(--bld-d)" opacity=".5" rx="1.6"/>`;
+    }
+  }
+  const topY = BASE - floors*FH;
+  out += `<path d="M${X} ${topY} l${DX} -${DY} l${W} 0 l-${DX} ${DY} z" fill="var(--bld-l)"/>`;
+  g.innerHTML = out;
+
+  const entry = below ? BASE + 30 : Math.max(topY + FH*0.45, 22);
+  // one smooth run out of the discharge, up (or down) and into the building
+  const mid = (204 + entry) / 2;
+  const hose = document.getElementById('riser');
+  if(hose) hose.setAttribute('d',
+    `M360 204 Q 430 204 430 ${mid.toFixed(1)} Q 430 ${entry.toFixed(1)} 474 ${entry.toFixed(1)} L${X+4} ${entry.toFixed(1)}`);
+  const hi = document.getElementById('riser-hi');
+  if(hi) hi.setAttribute('d',
+    `M360 199.5 Q 425 199.5 425 ${mid.toFixed(1)} Q 425 ${(entry-4.5).toFixed(1)} 474 ${(entry-4.5).toFixed(1)}`);
+  const noz = document.getElementById('nozgrp');
+  if(noz) noz.setAttribute('transform', `translate(${X-26},${entry-8})`);
+  // keep the frame tight: crop the empty sky so a flat lay doesn't sit in half a frame
+  const svg = document.querySelector('#scene svg');
+  if(svg){
+    requestAnimationFrame(()=>{
+      const bb = svg.getBBox();
+      const y0 = Math.max(0, Math.min(bb.y - 14, 150));
+      svg.setAttribute('viewBox', `0 ${y0.toFixed(0)} 760 ${(300-y0).toFixed(0)}`);
+    });
+  }
+  const lbl = document.getElementById('lay-label');
+  if(lbl) lbl.textContent = `${H.label} · ${L} ft · ${N.gpm} gpm`;
+  const fl = document.getElementById('floor-label');
+  if(fl) fl.textContent = mode==='floors' ? `Floor ${ev}` : mode==='feet' ? `${ev} ft` :
+                          mode==='below' ? `${ev} ft below` : 'Flat';
+}
+
+['noz','hose','len','app','elmode','elval','intake','lines']
+  .forEach(id => { $(id).addEventListener('input', calc); $(id).addEventListener('change', calc); });
+calc();
+</script>
+
+</body>
+</html>
