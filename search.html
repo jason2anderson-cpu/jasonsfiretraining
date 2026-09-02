@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Search &amp; Rescue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+/* ============================================================
+   Field-instrument system — adopted spec.
+   Rev 2026-08-30: section colour identities (one tint + coloured
+   header + left rule per section, per R-50), floating mobile
+   Sections menu built as <details>, citations re-derived from
+   the printed footers in source-extracts/truck.txt.
+   Production note: self-host WOFF2 for offline use.
+   ============================================================ */
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  /* section palette — muted, one identity per section */
+  --c-hos:#3D5A80;  --c-hos-t:#E9EEF5;
+  --c-pod:#5B4E9E;  --c-pod-t:#ECE9F6;
+  --c-win:#2F7D4F;  --c-win-t:#E4F2E9;
+  --c-lad:#8A6116;  --c-lad-t:#F6EEDC;
+  --c-res:#7C3F87;  --c-res-t:#F4E9F5;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --c-hos:#9FBCDF; --c-hos-t:#18232F;
+    --c-pod:#B7ADE9; --c-pod-t:#231E38;
+    --c-win:#8FCEA4; --c-win-t:#1A3023;
+    --c-lad:#DFBC77; --c-lad-t:#332A15;
+    --c-res:#D9A2DB; --c-res-t:#301D33;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --c-hos:#9FBCDF; --c-hos-t:#18232F;
+  --c-pod:#B7ADE9; --c-pod-t:#231E38;
+  --c-win:#8FCEA4; --c-win-t:#1A3023;
+  --c-lad:#DFBC77; --c-lad-t:#332A15;
+  --c-res:#D9A2DB; --c-res-t:#301D33;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-wrap:break-word}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2)}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:18px 0 20px}
+.kicker{font-family:var(--head);font-weight:700;font-size:14px;color:var(--accent);
+  letter-spacing:.04em;margin:0 0 6px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1.1;
+  margin:0 0 10px;text-wrap:balance}
+.objective{font-size:18px;color:var(--text2);margin:0;max-width:60ch}
+.objective .src{font-size:14px;display:block;margin-top:6px}
+
+/* jump to section — sticky on wide screens */
+.jump{position:sticky;top:0;z-index:10;background:var(--canvas);padding:10px 0;
+  display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--divider)}
+.jump a{min-height:44px;display:inline-flex;align-items:center;gap:8px;padding:6px 14px;
+  border:1.5px solid var(--divider);border-radius:999px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:14.5px}
+.jump a::before{content:"";width:10px;height:10px;border-radius:50%;flex:0 0 auto;
+  background:var(--divider)}
+.jump a:hover{border-color:var(--accent)}
+.jump a.shos::before{background:var(--c-hos)}
+.jump a.spod::before{background:var(--c-pod)}
+.jump a.swin::before{background:var(--c-win)}
+.jump a.slad::before{background:var(--c-lad)}
+.jump a.sres::before{background:var(--c-res)}
+
+/* floating Sections menu — narrow screens only; <details> so it works with JS off */
+.secmenu{display:none}
+@media (max-width:640px){
+  .jump{display:none}
+  .secmenu{display:block;position:fixed;right:16px;bottom:16px;z-index:40}
+  .secmenu > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+    min-height:56px;min-width:56px;padding:0 22px;border:1.5px solid var(--divider);border-radius:999px;
+    background:var(--surface);color:var(--text);font-family:var(--head);font-weight:700;font-size:16px;
+    cursor:pointer;box-shadow:0 4px 14px rgba(10,30,28,.22)}
+  .secmenu > summary::-webkit-details-marker{display:none}
+  .secmenu[open] > summary{border-color:var(--accent);color:var(--accent)}
+  .secpanel{position:absolute;bottom:calc(100% + 10px);right:0;min-width:224px;max-width:78vw;
+    background:var(--surface);border:1.5px solid var(--divider);border-radius:14px;
+    box-shadow:0 8px 24px rgba(10,30,28,.25);padding:8px;display:grid;gap:2px}
+  .secpanel a{display:flex;align-items:center;min-height:48px;padding:6px 14px;border-radius:10px;
+    text-decoration:none;color:var(--text);font-weight:600;font-size:16px;border-left:5px solid transparent}
+  .secpanel a.shos{border-left-color:var(--c-hos)}
+  .secpanel a.spod{border-left-color:var(--c-pod)}
+  .secpanel a.swin{border-left-color:var(--c-win)}
+  .secpanel a.slad{border-left-color:var(--c-lad)}
+  .secpanel a.sres{border-left-color:var(--c-res)}
+}
+
+/* the procedure surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:18px;overflow:hidden}
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:18px 24px 4px;scroll-margin-top:70px}
+.phase > .pnote{font-size:15.5px;color:var(--text2);margin:0;padding:0 24px 10px;max-width:66ch}
+
+/* section colour identities — tinted ground + matching coloured heading + left rule.
+   Colour is never carried alone: every tint below is paired with its own coloured h2 and rule. */
+.phase.chos{background:var(--c-hos-t);border-left:6px solid var(--c-hos);--phase:var(--c-hos)}
+.phase.chos > h2{color:var(--c-hos)}
+.phase.cpod{background:var(--c-pod-t);border-left:6px solid var(--c-pod);--phase:var(--c-pod)}
+.phase.cpod > h2{color:var(--c-pod)}
+.phase.cwin{background:var(--c-win-t);border-left:6px solid var(--c-win);--phase:var(--c-win)}
+.phase.cwin > h2{color:var(--c-win)}
+.phase.clad{background:var(--c-lad-t);border-left:6px solid var(--c-lad);--phase:var(--c-lad)}
+.phase.clad > h2{color:var(--c-lad)}
+.phase.cres{background:var(--c-res-t);border-left:6px solid var(--c-res);--phase:var(--c-res)}
+.phase.cres > h2{color:var(--c-res)}
+
+.step{display:flex;align-items:flex-start;gap:16px;padding:16px 24px;min-height:72px;
+  border-top:1px solid var(--divider)}
+.step:first-of-type{border-top:0}
+.phase > h2 + .step, .phase > .pnote + .step{border-top:0}
+.stepnum{font-family:var(--head);font-weight:700;font-size:36px;line-height:1;color:var(--text2);
+  min-width:56px;font-variant-numeric:tabular-nums;padding-top:2px}
+.stepbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:21px;line-height:1.35;margin:0}
+.action em{font-style:normal;text-decoration:underline;text-underline-offset:3px}
+.detail{font-size:16px;color:var(--text2);margin:6px 0 0;max-width:64ch}
+.detail strong{color:var(--text)}
+
+/* big pull quote — the manual's own line, full width in the sheet */
+.pull{padding:20px 24px;border-top:1px solid var(--divider)}
+.pull blockquote{margin:0;padding:0 0 0 16px;border-left:4px solid var(--phase,var(--accent));
+  font-weight:600;font-size:21px;line-height:1.4;max-width:62ch}
+.pull .srcline{display:block;margin-top:8px}
+
+/* ladder-tip rows — big value column, carrying the section colour */
+.tiprow{display:flex;align-items:flex-start;gap:16px;padding:18px 24px;min-height:80px;
+  border-top:1px solid var(--divider)}
+.tipval{font-family:var(--head);font-weight:800;font-size:36px;line-height:1.05;
+  color:var(--phase,var(--accent));min-width:132px;font-variant-numeric:tabular-nums;padding-top:2px}
+.tipval small{display:block;font-family:var(--body);font-weight:600;font-size:13.5px;
+  color:var(--text2);letter-spacing:.01em;margin-top:4px}
+.tipval.words{font-size:28px}
+.tipbody{flex:1;min-width:0}
+
+/* disclosures */
+details{margin-top:8px}
+details > summary{list-style:none;display:inline-flex;align-items:center;min-height:44px;
+  padding:6px 14px;border:1.5px solid var(--divider);border-radius:10px;color:var(--accent);
+  font-weight:600;font-size:15px;cursor:pointer;background:transparent}
+details > summary::-webkit-details-marker{display:none}
+details > summary::after{content:"▾";margin-left:8px;font-size:12px;transition:transform .15s}
+details[open] > summary::after{transform:rotate(180deg)}
+details > .dbody{background:var(--expanded);border-radius:12px;padding:14px 18px;margin-top:8px;
+  font-size:16px}
+details > .dbody p{margin:0 0 10px;max-width:64ch}
+details > .dbody p:last-child{margin:0}
+.srcline{font-size:14px;color:var(--text2)}
+blockquote{margin:0 0 10px;padding:0 0 0 14px;border-left:3px solid var(--accent);color:var(--text)}
+
+/* pending ruling */
+.pending{margin:0;padding:18px 24px;background:var(--expanded);border-top:1px solid var(--divider)}
+.pending .ptag{display:inline-flex;align-items:center;gap:8px;font-family:var(--head);font-weight:700;
+  font-size:14px;letter-spacing:.04em;color:var(--text);background:var(--surface);
+  border:2px dashed var(--text2);border-radius:8px;padding:6px 12px;margin:0 0 10px}
+.pending p{margin:0 0 8px;max-width:66ch;font-size:16px}
+.pending p:last-child{margin:0}
+
+/* safety gate — full-width interruption; not red-alone */
+.gate{border-top:1px solid var(--divider);background:var(--safety-tint);padding:20px 24px}
+.gate .gtag{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:800;
+  font-size:15px;letter-spacing:.06em;color:var(--safety);margin:0 0 8px}
+.gate .gtag::before{content:"";width:0;height:0;border-left:11px solid transparent;
+  border-right:11px solid transparent;border-bottom:19px solid currentColor}
+.gate h3{font-family:var(--head);font-weight:800;font-size:21px;line-height:1.25;margin:0 0 8px;
+  border-left:5px solid var(--safety);padding-left:14px}
+.gate p{margin:0 0 8px;max-width:62ch;font-size:16px}
+.gate .srcline{display:block;margin-top:6px}
+
+.docfoot{margin-top:22px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+@media (max-width:640px){
+  .wrap{padding-bottom:120px} /* clear the floating Sections button */
+}
+@media (max-width:560px){
+  .step,.tiprow,.pull{padding-left:16px;padding-right:16px;gap:12px}
+  .stepnum{font-size:30px;min-width:44px}
+  .tipval{font-size:30px;min-width:104px}
+  .tipval.words{font-size:23px}
+  .action,.pull blockquote{font-size:19px}
+  .phase > h2,.phase > .pnote,.pending,.gate{padding-left:16px;padding-right:16px}
+}
+/* narrow screens: stack the ladder-tip value above its body so neither column is squeezed */
+@media (max-width:460px){
+  .tiprow{display:block}
+  .tipval{display:block;min-width:0;padding-top:0;margin-bottom:8px}
+  .tipval small{display:inline-block;margin:0 0 0 10px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.jump,.nightbtn,.secmenu{display:none}
+  .sheet{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  .step,.tiprow,.pull{break-inside:avoid;min-height:0;padding:8px 12px}
+  .phase{break-inside:avoid-page;background:#fff!important}
+  .phase.chos,.phase.cpod,.phase.cwin,.phase.clad,.phase.cres{border-left:6px solid #000}
+  .phase > h2{color:#000!important}
+  details{display:none}
+  .pending{border:2px dashed #000;background:#fff}
+  .gate{background:#fff;border-top:3px double #000;border-bottom:3px double #000}
+  .gate h3{border-left:5px solid #000}
+  .stepnum{color:#000;font-size:16pt;min-width:30pt}
+  .tipval{color:#000!important;font-size:16pt;min-width:70pt}
+  .action{font-size:12pt}
+  .pull blockquote{font-size:12pt;border-left:3px solid #000}
+}
+/* FAB clearance — the floating Sections button must never cover the last content */
+@media (max-width:640px){ .wrap{ padding-bottom:132px } }
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html" aria-current="true">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html" aria-current="true">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="thome" href="truck-home.html">Truck Operations</a><span>›</span>Search &amp; Rescue</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <p class="kicker">OFD Truck Manual v3.1 · Section 5-2 Search and Rescue · Section 5-3 Ground Ladders</p>
+    <h1>Search &amp; Rescue</h1>
+    <p class="objective">“Search may be performed in front of or without an operating hoseline on the
+    fireground.”<span class="src srcline">OFD Truck Manual v3.1, p.80 — All Clear</span></p>
+  </header>
+
+  <nav class="jump" aria-label="Jump to section">
+    <a class="shos" href="#hoseline">Hoseline</a>
+    <a class="spod" href="#positions">Positions</a>
+    <a class="swin" href="#windowsearch">Window search</a>
+    <a class="slad" href="#laddertips">Ladder tips</a>
+    <a class="sres" href="#windowrescue">Window rescue</a>
+  </nav>
+
+  <div class="sheet">
+
+    <section class="phase chos" aria-labelledby="hoseline">
+      <h2 id="hoseline">SEARCHING AHEAD OF &amp; BEHIND THE HOSELINE</h2>
+      <p class="pnote">“When simultaneous crews are searching, which is generally reserved for known
+      victims or in incidents where vertical ventilation is not feasible, the crews typically split into
+      two teams. The two crews must formulate a plan to coordinate their search efforts, to reduce the
+      possibility of redundancy or missed areas.” — p.76</p>
+
+      <div class="step"><span class="stepnum">A</span>
+        <div class="stepbody">
+          <p class="action">Ahead of the hoseline — the “inside” crew searches for the fire, isolates and
+          communicates location to fire attack (<em>Locates – Isolates – Communicates</em>)</p>
+          <p class="detail">“In unison, the ‘outside’ crew performs a targeted search.”</p>
+          <details><summary>Source note</summary><div class="dbody">
+            <blockquote>“When searching ahead of the hoseline. The ‘inside’ crew searches for the fire,
+            isolates and communicates location to fire attack (Locates - Isolates - Communicates). In
+            unison, the ‘outside’ crew performs a targeted search.”</blockquote>
+            <p class="srcline">OFD Truck Manual v3.1, p.76 — Simultaneous crews on primary search</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">B</span>
+        <div class="stepbody">
+          <p class="action">Behind the hoseline — the “inside” crew makes their way to fire attack,
+          communicates that fire attack has the fire area for search, then searches back</p>
+          <p class="detail">“In unison, the ‘outside’ crew performs a targeted search.”</p>
+          <details><summary>Why &amp; source</summary><div class="dbody">
+            <blockquote>“When searching behind the hoseline. The ‘inside’ crew makes their way to fire
+            attack, typically communicating that fire attack has the fire area for search and then
+            searches back. In unison, the ‘outside’ crew performs a targeted search.”</blockquote>
+            <p><strong>Targeted Search</strong>, as the manual defines it: “Starting a search at a place
+            within the structure that has the highest potential for civilians, which are typically
+            bedrooms, family rooms, egress and within 6’ of an exterior door.” (p.79)</p>
+            <p class="srcline">OFD Truck Manual v3.1, p.76 — Simultaneous crews on primary search; the
+            definition is p.79 — Search: Types and decisions to make while searching</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="gate">
+        <p class="gtag">STOP — AHEAD OF OR WITHOUT A HOSELINE</p>
+        <h3>“Members shall be constantly aware of the environment, including the status, location and
+        operation of hose-lines or lack thereof.”</h3>
+        <p>This is the standing condition on searching in front of, or without, an operating hoseline.</p>
+        <span class="srcline">OFD Truck Manual v3.1, p.80 — All Clear</span>
+      </div>
+    </section>
+
+    <section class="phase cpod" aria-labelledby="positions">
+      <h2 id="positions">SEARCH POSITIONS</h2>
+      <p class="pnote">“Search Position is imperative to an efficient and thorough search. If you can
+      identify all objects around you, then walking upright is typically performed. Walking during
+      moderate, low or zero visibility is jeopardizing civilian lives.” — p.76</p>
+
+      <div class="pull">
+        <blockquote>“Your body position should place the ears where sound is farthest traveled, the eyes
+        where it is most visible and place the hands where the victims are. Get on the ground!”</blockquote>
+        <span class="srcline">OFD Truck Manual v3.1, p.76 — Search Positions · “Inches of visibility are
+        worth miles of work” — Brian Olson, quoted on the same page</span>
+      </div>
+
+      <div class="step"><span class="stepnum">·</span>
+        <div class="stepbody">
+          <p class="action">BODY POSITIONING MATTERS — “The search position height is dictated by heat, but
+          the position is chosen”</p>
+          <p class="detail">“The position is chosen for its ability to amplify sound, maximize visibility
+          and remain efficient. The denser the smoke the eyes and ears are occupying, the more suppressed
+          the senses become.” (p.76)</p>
+          <details><summary>Source note</summary><div class="dbody">
+            <blockquote>“We do not need to maintain physical contact with another firefighter, wall or
+            search line to stay oriented. Knowledge of building construction and layouts along with
+            practical training, can prepare a firefighter to stay oriented, efficient and off the wall in
+            adverse conditions.”</blockquote>
+            <p class="srcline">OFD Truck Manual v3.1, p.76 — Search Positions / Body Positioning Matters</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">1</span>
+        <div class="stepbody">
+          <p class="action">Down On All Fours (Crawling)</p>
+          <p class="detail">“…it’s an efficient way to stay low and move throughout a low visibility, high
+          heat structure. It’s just not always the most efficient and effective way to search.” — “this position
+          forces the eyes down and is counterproductive to the assignment.” “There may be times we crawl,
+          typically in more cluttered homes, small spaces or over beds.” (p.77)</p>
+          <details><summary>Why &amp; source</summary><div class="dbody">
+            <blockquote>“Crawling is dependent on all four appendages to continually hold up and balance
+            the body. When one is crawling and lifts a hand to sweep, the balance must be adjusted or the
+            body will tend to follow. Opt to not sweep, and the ground covered in one pass becomes
+            inefficient. If you come upon below-grade stairs or a compromised floor while on all fours,
+            the center of gravity can lead you into the hazard. Crawling tends to open up the palms for
+            burns and trauma, which we need for ourselves and THEM.”</blockquote>
+            <p class="srcline">OFD Truck Manual v3.1, p.77 — Down On All Fours (Crawling)</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">2</span>
+        <div class="stepbody">
+          <p class="action">Upright On Two Feet (Walking)</p>
+          <p class="detail">“When the conditions allow, this can be a quick, sturdy and effective position
+          to use.” — “Ever heard, ‘If you can see your feet, then walk’. It isn’t my feet that I am worried
+          about, it’s what is beneath them that matters.” (p.77)</p>
+          <details><summary>Why &amp; source</summary><div class="dbody">
+            <blockquote>“The distance of vision in a standing position is greatest when looking straight
+            down towards your feet, and decreases as the eyesight rises. Being able to see 5 feet down to
+            your boots, does not equate to the same visibility as 5 feet in front of you. In low to zero
+            visibility, firefighters that are standing are slow and use their hands to navigate walls and
+            furniture and concentrate on not tripping on objects, which hinders them to be able to
+            effectively search for victims.”</blockquote>
+            <p class="srcline">OFD Truck Manual v3.1, p.77 — Upright On Two Feet (Walking)</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">3</span>
+        <div class="stepbody">
+          <p class="action">Crouched walk (“duck walk”)</p>
+          <p class="detail">“Staying on both feet, but in a squatted down position to be able to visualize
+          better, underneath the smoke layering. This is a position that fatigue can quickly set in, but is
+          also one that can be utilized for speed when visibility conditions are changing rapidly based on
+          location in the structure.” (p.77)</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">4</span>
+        <div class="stepbody">
+          <p class="action">The Tripod-Position</p>
+          <p class="detail">“A firefighter that trains with this technique can be efficient and search a
+          structure with nearly the same speed yet is more effective than one can be on their feet.”
+          (p.77)</p>
+          <details><summary>Why &amp; source</summary><div class="dbody">
+            <blockquote>“The tripod position keeps the center of gravity low and to the rear, which creates
+            a stable and balanced stance. The position leads with a foot which increases the stability and
+            situational awareness. The foot can give warning and increase time to react, to compromised
+            floors and step downs such as below grade stairs.”</blockquote>
+            <blockquote>“The tripod position can cover more square footage per pass and increases
+            efficiency. The position allows the use of both hands to search. … Visibility is maximized for
+            the environment by getting low and naturally keeping the eyes up. This technique keeps eyes up,
+            to scan for victims, egress and monitor the conditions.”</blockquote>
+            <p class="srcline">OFD Truck Manual v3.1, pp.77–78 — The Tripod-Position</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">5</span>
+        <div class="stepbody">
+          <p class="action">Body Length Sweep/Search</p>
+          <p class="detail">“Can be used to sweep the entry and egress and in low to zero visibility, high
+          heat searches.” — “Upon forcing access or egress, complete the assignment and perform a full body
+          length sweep and Size-Up; LIFE, FIRE, LAYOUT.” (p.78)</p>
+          <details><summary>Why &amp; source</summary><div class="dbody">
+            <blockquote>“This will increase the probability of finding the 42% of victims that collapsed,
+            during re-entry for fire control, returned for a rescue attempt or attempting egress (NFIRS
+            Data - Fatalities Only). www.FirefighterRescueSurvey.com reports that 10% of all structural
+            fire victims are within 6 feet of a door.”</blockquote>
+            <p class="srcline">OFD Truck Manual v3.1, p.78 — Body Length Sweep/Search</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="pull">
+        <blockquote>“Swinging a tool to search for humans is not acceptable. … We will not sweep tools for
+        victims, search with our hands.”</blockquote>
+        <span class="srcline">OFD Truck Manual v3.1, p.78 — Extending The Reach With A Tool: “When you
+        strike an object, you still need to go investigate with your hands. … Every firefighter should know
+        what a human feels like with gloved hands, second nature matters when seconds count.”</span>
+      </div>
+    </section>
+
+    <section class="phase cwin" aria-labelledby="windowsearch">
+      <h2 id="windowsearch">WINDOW BASED SEARCH · VES</h2>
+
+      <div class="step"><span class="stepnum">1</span>
+        <div class="stepbody">
+          <p class="action">“…a window based search typically is not just a single room search, but rather
+          a means of entry to start a full search of the building. It is our intention to go beyond the
+          door.”</p>
+          <details><summary>Source note</summary><div class="dbody">
+            <blockquote>“VES is a common expression used to describe a window based search, but may imply
+            searching only one room. The Orem Fire Department believes strongly in searching all searchable
+            space and the common use of entering buildings via a window when warranted. To remove
+            confusion, anytime the expression of VES is used, assume it is merely a starting point, unless
+            hallway conditions dictate otherwise.”</blockquote>
+            <p class="srcline">OFD Truck Manual v3.1, p.75 — both quotes; in the <em>Making Entry for
+            Search</em> discussion, which opens on p.73</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">2</span>
+        <div class="stepbody">
+          <p class="action">“Prior to a window based search, be efficient and size-up for interior door
+          location”</p>
+          <p class="detail">“In bedrooms, doors are in or within a few feet of the corners. Bedrooms that
+          are on outside corners of the structure will typically have interior doors on the inside corner.
+          Midspan or non-corner bedrooms will have interior doors that are typically placed on the far side
+          of a wall from the living areas. This knowledge can decrease the time for room isolation.”
+          (p.74)</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">3</span>
+        <div class="stepbody">
+          <p class="action">“A non-operable window on floor two that is in line with the front door can be
+          a warning that it is a vaulted entry”</p>
+          <p class="detail">“…and attempting a window initiated search can negatively affect the entire
+          fireground.” (p.74)</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase clad" aria-labelledby="laddertips">
+      <h2 id="laddertips">LADDER TIP PLACEMENT — BY PURPOSE</h2>
+      <p class="pnote">Four different placements for four different jobs. The manual separates them by
+      heading — the purpose decides the tip.</p>
+
+      <div class="tiprow"><span class="tipval">3–5<small>rungs above the roofline</small></span>
+        <div class="tipbody">
+          <p class="action">Roof access / egress — Primary and Secondary ladder</p>
+          <p class="detail">“Ideally, both the Primary and Secondary will be 3-5 rungs above the roofline,
+          with a climbing angle of approximately 75 degrees.” Carry: “The high shoulder carry is the
+          preferred method of throwing ladders for roof access <strong>due to its speed</strong>. The low
+          shoulder can also be utilized.” (p.93 — <em>Positioning your Ladder for your Operation · Roof
+          Access/Egress</em>)</p>
+          <p class="detail">Roof work: <a data-nav="roofres" href="roof-residential.html">Residential</a> ·
+          <a data-nav="roofsteep" href="roof-steep.html">Steep pitch</a> · <a data-nav="roofcom" href="roof-commercial.html">Commercial</a></p>
+        </div>
+      </div>
+
+      <div class="tiprow"><span class="tipval words">AT<small>the window sill</small></span>
+        <div class="tipbody">
+          <p class="action">Window — rescue, access &amp; egress</p>
+          <p class="detail">“Rescue, access and egress ladders that are thrown to windows, will have the
+          tip at the window sill.” Angle: “Angle will vary when throwing ladders for rescue. Ladders should
+          land between 60 and 75 degrees but other angles will work.” (p.85 — <em>LADDERS · Throwing
+          Ladders for Access, Egress &amp; Rescues</em>)</p>
+        </div>
+      </div>
+
+      <div class="tiprow"><span class="tipval words">AT / BELOW<small>the window sill</small></span>
+        <div class="tipbody">
+          <p class="action">Window — VES / search / outside operations</p>
+          <p class="detail">“Ladders thrown for VES, rescue, or window access and egress will have the tip
+          at or below the window sill.” Angle: “Ladders should be placed between 60 and 75 degrees, but
+          other angles will work.” (p.94 — <em>Ladders for SEARCH / OUTSIDE OPERATIONS</em>)</p>
+          <details><summary>Carry — and the manual’s reason</summary><div class="dbody">
+            <blockquote>“The preferred carry for Search/Outside Ops is the suitcase carry due to ease of
+            dropping the ladder if a need arises to catch a jumping victim. It should be noted that this
+            carry should be done on the firefighter’s side that is away from the structure, to eliminate a
+            trip hazard if dropped. The low shoulder can also be utilized. These two carries allow for
+            maximum visibility to scan for victims while carrying.”</blockquote>
+            <p class="srcline">OFD Truck Manual v3.1, p.94 — Ladders for SEARCH / OUTSIDE OPERATIONS</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="tiprow"><span class="tipval">2–4<small>rungs above the railing</small></span>
+        <div class="tipbody">
+          <p class="action">Balcony</p>
+          <p class="detail">“Ladders thrown to a balcony will extend 2-4 rungs above the railing on the
+          wall, <strong>to provide a good handle for victims and firefighters</strong>.” (p.85; stated
+          again on p.94)</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">·</span>
+        <div class="stepbody">
+          <p class="action">Victim already hanging out the window — a technique, not a placement rule</p>
+          <p class="detail">“When civilians are hanging out windows, two firefighters can carry the ladder
+          flat and throw the tip below the victim and raise it up and under the victim.” (p.86) You put the
+          tip low <strong>on purpose</strong> and bring it up under them — this is not a fifth tip rule.</p>
+        </div>
+      </div>
+
+      <div class="pending">
+        <p class="ptag">⏸ PENDING RULING — “at” vs “at or below” the sill</p>
+        <p>p.85 and p.94 both list rescue, access and egress in their scope — p.85 says the tip goes
+        <strong>at</strong> the sill, p.94 says <strong>at or below</strong>. Published above by each
+        page’s own heading and purpose. A crew following p.85 also satisfies p.94, so this is not a safety
+        conflict — but the wording needs aligning.</p>
+        <p><strong>Decider:</strong> the Truck training committee, as a wording item — carried on the
+        committee list as B9a. The question for them: is “at or below” the intended rule everywhere, with
+        p.85 the older wording?</p>
+      </div>
+    </section>
+
+    <section class="phase cres" aria-labelledby="windowrescue">
+      <h2 id="windowrescue">WINDOW RESCUE — THE PREFERRED WAY</h2>
+      <p class="pnote">“Our preferred way of window rescue…” — OFD Truck Manual v3.1, p.85, in the printed
+      order, under the heading <em>Rescuing Victims Through Windows</em> (p.83).</p>
+
+      <div class="step"><span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">Drag victims, on their backs to the window, feet first</p></div>
+      </div>
+      <div class="step"><span class="stepnum">2</span>
+        <div class="stepbody">
+          <p class="action">Feet go against the baseboard, rotated inward; toes together</p>
+          <p class="detail">“This keeps the knees from rolling outward.”</p>
+        </div>
+      </div>
+      <div class="step"><span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">Knees are bent upward</p></div>
+      </div>
+      <div class="step"><span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">The victim’s hands are crossed and handed to the outside
+        firefighter</p>
+          <p class="detail">“This brings the victim to a sitting position, where the interior firefighter
+          can rest them on their knee while adjusting their lifting position.”</p>
+        </div>
+      </div>
+      <div class="step"><span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">The victim is then pulled head out by the outside
+        firefighter, and assisted from the inside by the inside firefighters</p></div>
+      </div>
+
+      <div class="step"><span class="stepnum">+</span>
+        <div class="stepbody">
+          <p class="action">Parallel ladders — “When a window rescue is being made, a second ladder is
+          recommended”</p>
+          <p class="detail">“It creates a wider base and the ability for more firefighters to assist in the
+          rescue.” (p.86) — “Consider utilizing two parallel ladders for victim removal and VES.” (p.94)</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">+</span>
+        <div class="stepbody">
+          <p class="action">On the ladder — “We prefer to take victims out of the window head first”</p>
+          <p class="detail">“As the victim’s torso is being brought to the ladder, place your arm under
+          their armpit and grasp the back of the beam. Guide legs to one side of the ladder, place arm
+          between the victim’s legs and grasp the back of the ladder beam. Slide hands along beams during
+          rescue.” (p.86)</p>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /sheet -->
+
+  <div class="docfoot">
+    <p><strong>Source.</strong> OFD Truck Operations Manual v3.1 (2026). Section 5-2 <em>Search and
+    Rescue</em> — pp.74–80, 85–86; Section 5-3 <em>Ground Ladders — Choices, Techniques, and Positioning</em>
+    — pp.93–94. Quotes verbatim. Every page number on this sheet was re-derived from the manual’s printed
+    footers, not from PDF page positions. Ladder tip placements are published by purpose, per the manual’s
+    own headings.</p>
+    <p>Version: prototype · Last reviewed 2026-08-30</p>
+  </div>
+
+</div>
+
+<details class="secmenu" id="secMenu">
+  <summary aria-label="Open sections menu">Sections</summary>
+  <nav class="secpanel" aria-label="Jump to section">
+    <a class="shos" href="#hoseline">Hoseline</a>
+    <a class="spod" href="#positions">Positions</a>
+    <a class="swin" href="#windowsearch">Window search</a>
+    <a class="slad" href="#laddertips">Ladder tips</a>
+    <a class="sres" href="#windowrescue">Window rescue</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  // night mode
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // floating Sections menu — close on tap. Works without JS too; this is a nicety.
+  var menu=document.getElementById('secMenu');
+  if(menu){
+    [].slice.call(menu.querySelectorAll('a')).forEach(function(a){
+      a.addEventListener('click',function(){menu.removeAttribute('open')});
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

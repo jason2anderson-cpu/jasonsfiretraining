@@ -1,0 +1,1182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Water Supply</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+/* ============================================================
+   Field-instrument system - adopted spec, copied forward from
+   engine-flow.html. Learning page: sticky jump bar (bubbles)
+   PLUS the floating Sections menu. Designed at 390px first.
+   Every claim carries a per-chapter citation.
+   Production note: self-host WOFF2 for offline use.
+   ============================================================ */
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  --c-pos:#3D5A80;  --c-pos-t:#E9EEF5;
+  --c-wtr:#0F6F78;  --c-wtr-t:#DFEEEF;
+  --c-sup:#5B4E9E;  --c-sup-t:#ECE9F6;
+  --c-mst:#7C3F87;  --c-mst-t:#F4E9F5;
+  --c-fom:#2F7D4F;  --c-fom-t:#E4F2E9;
+  --c-dig:#8A6116;  --c-dig-t:#F6EEDC;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --c-pos:#9FBCDF; --c-pos-t:#18232F;
+    --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+    --c-sup:#B7ADE9; --c-sup-t:#231E38;
+    --c-mst:#D9A2DB; --c-mst-t:#301D33;
+    --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+    --c-dig:#DFBC77; --c-dig-t:#332A15;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --c-pos:#9FBCDF; --c-pos-t:#18232F;
+  --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+  --c-sup:#B7ADE9; --c-sup-t:#231E38;
+  --c-mst:#D9A2DB; --c-mst-t:#301D33;
+  --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+  --c-dig:#DFBC77; --c-dig-t:#332A15;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:18px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2);margin:0}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:56px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:14px 0 2px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1.08;
+  margin:0 0 8px;text-wrap:balance}
+
+/* sticky jump bar - kept on every width. On a phone it is one scrolling
+   row of 56px bubbles, so it never wraps and never widens the page. */
+.jump{position:sticky;top:0;z-index:10;background:var(--canvas);padding:10px 0 9px;margin-top:12px;
+  display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--divider)}
+.jump a{min-height:56px;display:inline-flex;align-items:center;padding:6px 16px;
+  border:1.5px solid var(--divider);border-radius:999px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:15px;
+  border-left-width:5px;border-left-style:solid}
+.jump a:hover{border-color:var(--accent)}
+.jump a.spos{border-left-color:var(--c-pos)}
+.jump a.swtr{border-left-color:var(--c-wtr)}
+.jump a.sfom{border-left-color:var(--c-fom)}
+.jump a.sdig{border-left-color:var(--c-dig)}
+.jump a.ssup{border-left-color:var(--c-sup)}
+.jump a.smst{border-left-color:var(--c-mst)}
+.jump a.sred{border-left-color:var(--safety)}
+@media (max-width:640px){
+  .jump{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    overscroll-behavior-x:contain;padding:9px 20px;margin:12px -20px 0;
+    scrollbar-width:none}
+  .jump::-webkit-scrollbar{display:none}
+  .jump a{flex:0 0 auto;white-space:nowrap}
+}
+
+/* floating Sections menu - narrow screens; a disclosure element, so it works with JS off */
+.secmenu{display:none}
+@media (max-width:640px){
+  .secmenu{display:block;position:fixed;right:14px;bottom:14px;z-index:40}
+  .secmenu > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+    min-height:56px;min-width:56px;padding:0 22px;border:1.5px solid var(--divider);border-radius:999px;
+    background:var(--surface);color:var(--text);font-family:var(--head);font-weight:700;font-size:16px;
+    cursor:pointer;box-shadow:0 4px 14px rgba(10,30,28,.22)}
+  .secmenu > summary::-webkit-details-marker{display:none}
+  .secmenu[open] > summary{border-color:var(--accent);color:var(--accent)}
+  .secpanel{position:absolute;bottom:calc(100% + 10px);right:0;min-width:236px;max-width:78vw;
+    background:var(--surface);border:1.5px solid var(--divider);border-radius:14px;
+    box-shadow:0 8px 24px rgba(10,30,28,.25);padding:8px;display:grid;gap:2px}
+  .secpanel a{display:flex;align-items:center;min-height:56px;padding:6px 14px;border-radius:10px;
+    text-decoration:none;color:var(--text);font-weight:600;font-size:16px;border-left:5px solid transparent}
+  .secpanel a.spos{border-left-color:var(--c-pos)}
+  .secpanel a.swtr{border-left-color:var(--c-wtr)}
+  .secpanel a.sfom{border-left-color:var(--c-fom)}
+  .secpanel a.sdig{border-left-color:var(--c-dig)}
+  .secpanel a.ssup{border-left-color:var(--c-sup)}
+  .secpanel a.smst{border-left-color:var(--c-mst)}
+  .secpanel a.sred{border-left-color:var(--safety)}
+  .secpanel a.spend{border-left-color:var(--text2)}
+}
+
+/* the one reference surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:16px;overflow:hidden}
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:17px 22px 3px;scroll-margin-top:82px;text-transform:uppercase}
+.phase > .lede{margin:0;padding:2px 22px 6px;font-size:16px;color:var(--text2);max-width:68ch}
+
+/* section colour identities - tinted ground + coloured heading + left rule.
+   Colour is never the only carrier: every tint keeps its own heading colour,
+   a 6px rule, and a written label. */
+.phase.cpos{background:var(--c-pos-t);border-left:6px solid var(--c-pos)}
+.phase.cpos > h2{color:var(--c-pos)}
+.phase.cwtr{background:var(--c-wtr-t);border-left:6px solid var(--c-wtr)}
+.phase.cwtr > h2{color:var(--c-wtr)}
+.phase.csup{background:var(--c-sup-t);border-left:6px solid var(--c-sup)}
+.phase.csup > h2{color:var(--c-sup)}
+.phase.cmst{background:var(--c-mst-t);border-left:6px solid var(--c-mst)}
+.phase.cmst > h2{color:var(--c-mst)}
+.phase.cfom{background:var(--c-fom-t);border-left:6px solid var(--c-fom)}
+.phase.cfom > h2{color:var(--c-fom)}
+.phase.cdig{background:var(--c-dig-t);border-left:6px solid var(--c-dig)}
+.phase.cdig > h2{color:var(--c-dig)}
+.phase.cardred{background:var(--safety-tint);border-left:6px solid var(--safety)}
+.phase.cardred > h2{color:var(--safety)}
+.phase.cardred .row{border-top-color:color-mix(in srgb,var(--safety) 18%,transparent)}
+@supports not (color:color-mix(in srgb,red 10%,blue)){.phase.cardred .row{border-top-color:var(--divider)}}
+
+.row{display:flex;align-items:flex-start;gap:14px;padding:15px 22px;min-height:62px;
+  border-top:1px solid var(--divider)}
+.phase > h2 + .row,.phase > .lede + .row{border-top:0}
+.ord{font-family:var(--head);font-weight:700;font-size:30px;line-height:1.05;color:var(--text2);
+  min-width:46px;font-variant-numeric:tabular-nums;padding-top:2px}
+.ord.small{font-size:20px;padding-top:7px}
+.rowbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:19.5px;line-height:1.33;margin:0}
+.sub{font-size:16px;color:var(--text2);margin:6px 0 0;max-width:64ch}
+.srcline{font-size:14px;color:var(--text2)}
+.rowbody > .srcline{display:block;margin-top:6px}
+
+/* sub-heading inside a section, e.g. FORWARD LAY */
+.grouphead{font-family:var(--head);font-weight:800;font-size:14px;letter-spacing:.06em;
+  text-transform:uppercase;margin:0;padding:16px 22px 0;border-top:1px solid var(--divider)}
+.phase.csup .grouphead{color:var(--c-sup)}
+.phase.cmst .grouphead{color:var(--c-mst)}
+.grouphead + .row{border-top:0}
+
+/* attached tag on a line */
+.oretag{display:inline-flex;align-items:center;gap:6px;margin-top:8px;margin-right:8px;
+  font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.02em;
+  color:var(--accent);background:var(--accent-tint);border-radius:8px;padding:6px 11px}
+
+/* big figure lines */
+.figrow{display:flex;align-items:baseline;gap:14px;margin-top:9px;flex-wrap:wrap}
+.figrow .figval{font-family:var(--head);font-weight:800;font-size:26px;line-height:1.1;
+  font-variant-numeric:tabular-nums}
+.phase.cfom .figrow .figval{color:var(--c-fom)}
+.figrow .figname{font-size:16px;color:var(--text2)}
+
+/* the muscle-memory line - what you actually do with your hands */
+.rignote{margin:10px 0 0;padding:12px 15px;border-left:4px solid var(--accent);
+  background:var(--accent-tint);border-radius:0 12px 12px 0}
+.rignote .rigtag{display:inline-flex;align-items:center;font-family:var(--head);font-weight:700;
+  font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:0 0 6px}
+.rignote p{margin:0;font-size:16.5px;font-weight:600;max-width:60ch}
+.rignote ol{margin:6px 0 0;padding-left:22px;font-size:16.5px;line-height:1.6;font-weight:600}
+.rignote li{padding:2px 0}
+
+/* disclosures - labeled by content, closed by default */
+details.disc{margin-top:9px}
+details.disc > summary{list-style:none;display:inline-flex;align-items:center;min-height:56px;
+  padding:6px 15px;border:1.5px solid var(--divider);border-radius:10px;color:var(--accent);
+  font-weight:600;font-size:15px;cursor:pointer;background:var(--surface)}
+details.disc > summary::-webkit-details-marker{display:none}
+details.disc > summary::after{content:"\25BE";margin-left:9px;font-size:12px;transition:transform .15s}
+details.disc[open] > summary::after{transform:rotate(180deg)}
+details.disc > .dbody{background:var(--expanded);border-radius:12px;padding:14px 17px;margin-top:8px;
+  font-size:16px}
+details.disc > .dbody p{margin:0 0 10px;max-width:64ch}
+details.disc > .dbody p:last-child{margin:0}
+details.disc > .dbody ul,details.disc > .dbody ol{margin:0 0 10px;padding-left:22px;max-width:64ch}
+details.disc > .dbody li{margin:0 0 7px}
+details.disc > .dbody h4{font-family:var(--head);font-weight:700;font-size:15.5px;margin:14px 0 6px}
+details.disc > .dbody h4:first-child{margin-top:0}
+blockquote{margin:0 0 10px;padding:0 0 0 14px;border-left:3px solid var(--accent);color:var(--text);
+  overflow-wrap:break-word}
+
+/* the safety gate - full-width interruption inside the sheet */
+.gate{border-top:1px solid var(--divider);background:var(--safety-tint);padding:18px 22px}
+.gate .gtag{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:800;
+  font-size:15px;letter-spacing:.06em;color:var(--safety);margin:0 0 8px}
+.gate .gtag::before{content:"";width:0;height:0;border-left:11px solid transparent;
+  border-right:11px solid transparent;border-bottom:19px solid currentColor}
+.gate h3{font-family:var(--head);font-weight:800;font-size:21px;line-height:1.22;margin:0 0 9px;
+  border-left:5px solid var(--safety);padding-left:13px;scroll-margin-top:82px}
+.gate p{margin:0 0 8px;max-width:62ch;font-size:16.5px}
+.gate .srcline{display:block;margin-top:6px}
+.gate details.disc > summary{background:var(--surface);border-color:var(--safety);color:var(--safety)}
+
+/* wide content never pushes the page sideways */
+.tablehead{margin:0;padding:16px 22px 2px;font-family:var(--head);font-weight:700;font-size:16px}
+.scrollhint{margin:0;padding:0 22px 10px;font-size:14px;color:var(--text2)}
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+  border-top:1px solid var(--divider);border-bottom:1px solid var(--divider)}
+table.grid{border-collapse:collapse;width:100%;min-width:520px;font-size:15.5px;background:var(--surface)}
+table.grid th,table.grid td{border-top:1px solid var(--divider);padding:13px 16px;text-align:left;
+  vertical-align:top;line-height:1.45}
+table.grid thead th{font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.03em;
+  color:var(--text2);border-top:0;white-space:nowrap}
+table.grid tbody th{font-family:var(--head);font-weight:700;font-size:19px;white-space:nowrap;
+  color:var(--text2);font-variant-numeric:tabular-nums}
+table.grid td.hit{background:var(--c-dig-t);box-shadow:inset 4px 0 0 var(--c-dig)}
+.tablenote{padding:12px 22px 18px;font-size:14.5px;color:var(--text2);margin:0;max-width:72ch}
+
+/* the flagged item - dashed, deliberately unlike a settled section */
+.pending{margin-top:22px;padding:20px 22px;background:var(--expanded);border-radius:16px;
+  border:2px dashed var(--text2);scroll-margin-top:82px}
+.pending h2{font-family:var(--head);font-weight:800;font-size:21px;line-height:1.25;color:var(--text);
+  margin:0 0 10px}
+.pending .ptag{display:inline-flex;align-items:center;gap:8px;font-family:var(--head);font-weight:700;
+  font-size:13.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--text);background:var(--surface);
+  border:2px dashed var(--text2);border-radius:8px;padding:7px 12px;margin:0 0 12px}
+.pending p{margin:0 0 10px;max-width:66ch;font-size:16px}
+.pending p:last-child{margin:0}
+
+/* onward links */
+.onward{margin-top:22px;background:var(--surface);border:1px solid var(--divider);
+  border-left:6px solid var(--accent);border-radius:14px;padding:16px 20px}
+.onward h2{font-family:var(--head);font-weight:800;font-size:14px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--accent);margin:0 0 12px}
+.onward ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.onward a{display:flex;align-items:center;min-height:56px;padding:6px 12px;border-radius:10px;
+  text-decoration:none;font-weight:600;font-size:16.5px;border:1.5px solid var(--divider);
+  background:var(--surface);color:var(--text)}
+.onward a:hover{border-color:var(--accent)}
+
+.docfoot{margin-top:24px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 7px;max-width:76ch}
+
+@media (max-width:640px){
+  .wrap{padding-bottom:132px} /* clear the floating Sections button */
+}
+@media (max-width:560px){
+  body{font-size:16.5px}
+  .row{padding:13px 15px;gap:12px;min-height:56px}
+  .ord{font-size:26px;min-width:38px}
+  .ord.small{font-size:17px}
+  .action{font-size:18.5px}
+  .phase > h2,.phase > .lede,.grouphead,.gate{padding-left:15px;padding-right:15px}
+  .tablehead,.scrollhint,.tablenote{padding-left:15px;padding-right:15px}
+  .pending,.onward{padding-left:15px;padding-right:15px}
+  .figrow .figval{font-size:23px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.nightbtn,.jump,.secmenu,.scrollhint,.onward{display:none}
+  .sheet,.pending{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  .pending{border:2px dashed #000;background:#fff}
+  .phase{break-inside:avoid-page;background:#fff!important;border-left:6px solid #000}
+  .phase > h2,.grouphead{color:#000!important}
+  .row{break-inside:avoid;min-height:0;padding:8px 12px}
+  .ord{color:#000;font-size:16pt;min-width:30pt}
+  .action{font-size:12pt}
+  details.disc{display:none}
+  .gate{background:#fff;border-top:3px double #000;border-bottom:3px double #000}
+  .gate h3{border-left:5px solid #000}
+  .rignote{background:#fff;border-left:4px solid #000;border-radius:0}
+  .rignote .rigtag{color:#000}
+  .oretag{background:#fff;border:1px solid #000;color:#000}
+  .scroll-x{overflow:visible;border-color:#000}
+  table.grid{min-width:0;font-size:9pt;background:#fff}
+  table.grid td.hit{background:#fff;box-shadow:none;outline:1.5pt solid #000;outline-offset:-1.5pt}
+  .figrow .figval{color:#000}
+}
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="ehome" href="engine-home.html">Engine Operations</a><span>&rsaquo;</span>Water Supply</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <h1>Water Supply</h1>
+  </header>
+
+  <nav class="jump" aria-label="Jump to section">
+    <a class="spos" href="#own">You own it</a>
+    <a class="swtr" href="#hydrant">The hydrant</a>
+    <a class="sred" href="#charged">Charged rule</a>
+    <a class="sfom" href="#flows">What it gives</a>
+    <a class="sdig" href="#digit">1st digit</a>
+    <a class="ssup" href="#lays">The three lays</a>
+    <a class="smst" href="#more">More &amp; farther</a>
+  </nav>
+
+  <div class="sheet">
+
+    <!-- ===================== 1 · OWNERSHIP ===================== -->
+    <section class="phase cpos" aria-labelledby="own">
+      <h2 id="own">You own the water</h2>
+      <p class="lede">The Officer picks the tactic. The Engineer recognises the need, initiates it, and keeps
+      it flowing.</p>
+
+      <div class="row">
+        <span class="ord">1</span>
+        <div class="rowbody">
+          <p class="action">RECOGNISE THE NEED AND INITIATE THE SUPPLY LINE.</p>
+          <p class="sub">Arriving other than first due does not release you &mdash; you stay aware of the water
+          supply needs of the units already on scene.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; Engineer, suppression</summary><div class="dbody">
+            <blockquote>"The Engineer must recognize the need for and initiate supply line operations when
+            required. When arriving other than first due, the Engineer must remain aware of water supply
+            needs of units already on the scene."</blockquote>
+            <p>The three suppression duties listed for the Engineer are <strong>water supply</strong>, pump
+            operations, and observing the condition of every hoseline stretched. The tactics the Engineer
+            must be capable of performing are <strong>Forward Lay, Reverse Lay and FDC Supply</strong>.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.1 Firefighter Assignments, p.1-9</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord">2</span>
+        <div class="rowbody">
+          <p class="action">FOUR OPTIONS. THE OFFICER PICKS ONE &mdash; AND SAYS IT ON THE RADIO.</p>
+          <p class="sub">Lay-in wet &middot; lay-in dry &middot; reverse lay &middot; hand-jack.</p>
+          <div class="rignote">
+            <p class="rigtag">Muscle memory</p>
+            <p>If you did not hear the water supply call, ask for it before you leave the seat. The second due
+            cannot adjust to a plan that was never transmitted.</p>
+          </div>
+          <details class="disc"><summary>Read it in the manual &mdash; the Officer's options</summary><div class="dbody">
+            <blockquote>"Locating a water source. The officer has several options for securing a water
+            supply; lay-in wet, lay-in dry, reverse lay, or hand-jack. If unable to take supply MUST notify
+            the next incoming company to lay in a water supply."</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.1 Firefighter Assignments, p.1-3</p>
+            <p>Chapter 5 puts the same duty in stronger terms:</p>
+            <blockquote>"Whatever decision the first-in Company Officer chooses to select, they MUST announce
+            over the radio their water supply intentions so that the second due engine can adjust their
+            strategies accordantly."</blockquote>
+            <p>The first arriving engine may elect to <strong>pass up a water supply</strong>, attack off tank
+            water and assign the supply line to the second due engine; or lay in dry; or lay in wet. Direction
+            of lay and wet-or-dry are two separate choices.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-1</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord">3</span>
+        <div class="rowbody">
+          <p class="action">SPOT FOR A FORWARD LAY BY DEFAULT.</p>
+          <p class="sub">A hydrant in the immediate vicinity of the fire building can be used &mdash; if it
+          allows a rapid stretch and does not interfere with ladder company positioning.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; spotting for supply</summary><div class="dbody">
+            <blockquote>"The Engineer should position the apparatus for a Forward Lay whenever the need for
+            water supply is determined. A hydrant in the immediate vicinity of the fire building may be used
+            if it allows for a rapid stretch and will not interfere with ladder company positioning."</blockquote>
+            <p>Other spotting considerations named for the engine company: <strong>water supply needs, FDC
+            connections, line placement, fire location and intensity.</strong></p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.1 Firefighter Assignments, pp.1-9&ndash;1-10</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord">4</span>
+        <div class="rowbody">
+          <p class="action">SECOND DUE SUPPLIES THE FIRST &mdash; FROM THE HYDRANT, NOT FROM THE FRONT.</p>
+          <p class="sub">Lay away from the first engine, spot on the hydrant, connect, supply. Second engines
+          position so they block nothing on the fireground.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; the second-due assignment</summary><div class="dbody">
+            <blockquote>"The Engineer of the second arriving engine is assigned to supply the first engine,
+            this should be accomplished without placing their apparatus at the front of the fire scene. This
+            is best accomplished by laying a supply line away from the first engine, spotting the second
+            engine at the hydrant, connecting to that hydrant, and supplying the first arriving engine."</blockquote>
+            <p>The determination of the need for water supply is made by the <strong>first arriving Engine
+            Company Officer</strong>, who either takes it or hands the responsibility to the second arriving
+            engine &mdash; and in either case transmits that information from first to second.</p>
+            <p>Second arriving engines are also told to position so as not to block apparatus movement on the
+            fireground and to be able to lay a supply line from the first-in engine to the hydrant. Third and
+            later engines stay out of the direct fire scene, or take the alley behind the structure to get
+            additional lines in more easily.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.1 Firefighter Assignments, pp.1-9&ndash;1-11</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord">5</span>
+        <div class="rowbody">
+          <p class="action">5&Prime; LDH FIRST.</p>
+          <p class="sub">If the 5&Prime; connection cannot be secured on the hydrant, go to a minimum of two
+          3&Prime; hoses &mdash; one on each side of the hydrant.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; the connection rule</summary><div class="dbody">
+            <blockquote>"When performing a Forward Lay, the connection shall be made using 5&rdquo; LDH, in the
+            event the 5&rdquo; LDH connection cannot be secured on the hydrant a minimum of 2-3&rdquo; hoses shall
+            be connected, one on each side of the hydrant. Pony lines are acceptable where connections are
+            short as long as &lsquo;5&rdquo; LDH first&rsquo; rules are applied."</blockquote>
+            <p>And a positioning reminder attached to the same paragraph: when stretching hose lines from the
+            apparatus, the apparatus should be positioned so it will not interfere with Truck Company
+            operations.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.1 Firefighter Assignments, p.1-11</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord">6</span>
+        <div class="rowbody">
+          <p class="action">WATCH THE MASTER INTAKE GAUGE.</p>
+          <p class="sub">Residual pressure on that gauge is how you know whether there is more volume in the
+          hydrant to give.</p>
+          <div class="rignote">
+            <p class="rigtag">Muscle memory</p>
+            <p>Read the intake <em>before</em> you flow, then again after each line is charged. The difference
+            between those two numbers is the whole answer &mdash; see <a href="#digit">1st digit</a>.</p>
+          </div>
+          <details class="disc"><summary>Read it in the manual &mdash; knowing your own layout</summary><div class="dbody">
+            <blockquote>"In order to establish and maintain proper pumping pressures, all Engineers must know
+            how many hoselines, the size and length of the hoseline, the type of nozzles being used, and their
+            flow. It is imperative that the Engineer listen closely to the radio at all times for traffic
+            concerning charging, shutting down or adjusting hose line pressures on hose lines. They should
+            also monitor the residual pressure of the pump master intake gauge to determine the capability of
+            supplying additional volumes when available or as needed."</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.1 Firefighter Assignments, p.1-11</p>
+            <p>The same duty is listed in the Engineer's numbered responsibilities: <em>"Must know how many
+            hose lines, size, length, nozzles, and the flow rates of their apparatus. (per OFD hydraulic
+            standard)"</em></p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.1 Firefighter Assignments, p.1-8</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord">7</span>
+        <div class="rowbody">
+          <p class="action">NOTHING SHOWING: PUMP IN SERVICE, NO HYDRANT CONNECTION YET.</p>
+          <p class="sub">Complete every step to put the pump in service and supply water to hose. Stay by the
+          pump and monitor the radio. Make the hydrant connection when fire involvement warrants it.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; 1st due, nothing showing</summary><div class="dbody">
+            <ol>
+              <li>"Park in a location that allows for easy access by ladder trucks."</li>
+              <li>"Engineer/ADO should fully prepare his engine by completing all steps required to put the
+              pump in service and supply water to hose."</li>
+              <li>"No hydrant connection made until otherwise warranted by fire involvement."</li>
+              <li>"Engineer will stay by the pump and monitor radio traffic for further assignments."</li>
+            </ol>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.1 Firefighter Assignments, p.1-9</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord">8</span>
+        <div class="rowbody">
+          <p class="action">HAND-JACKING THE LDH IS A HOSE TASK &mdash; THE BACK-UP FIREFIGHTER OWNS IT.</p>
+          <p class="sub">Hand-jack the LDH back to the plug and complete the hydrant connection.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; Back-Up Firefighter, stretching</summary><div class="dbody">
+            <p>Under the Back-Up Firefighter's three key elements of hose work &mdash; assisting the stretch,
+            flaking and chasing kinks, assisting the advance &mdash; stretching is broken out by line type. For
+            LDH:</p>
+            <blockquote>"Hand jack LDH back to the plug and complete the hydrant connection for water supply
+            operations."</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.1 Firefighter Assignments, p.1-24</p>
+            <p>Hand-jack is also one of the four water supply options the Officer may select on the response
+            in.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.1 Firefighter Assignments, p.1-3</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 2 · THE HYDRANT ===================== -->
+    <section class="phase cwtr" aria-labelledby="hydrant">
+      <h2 id="hydrant">The hydrant</h2>
+      <p class="lede">Dry-barrel is what you should expect to find. Three parts: barrel, discharge outlets,
+      stem.</p>
+
+      <div class="row">
+        <span class="ord small">A</span>
+        <div class="rowbody">
+          <p class="action">DRY-BARREL: STEM CLOSED MEANS THE BARREL IS EMPTY.</p>
+          <p class="sub">The main valve sits below the frost line underground, which is what keeps water out
+          of the barrel. From the top of the stem down to the main valve there is normally no water.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; dry-barrel</summary><div class="dbody">
+            <blockquote>"As the name implies, when the stem valve is closed, the barrel from the top of the
+            hydrant, down to the water main is empty. The main valve is located below the frost line
+            underground, which prevents water from entering the barrel."</blockquote>
+            <p>The three basic components associated with the hydrant: <strong>Barrel, Discharge outlets and
+            Stem (shut off valve).</strong></p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-2</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord small">B</span>
+        <div class="rowbody">
+          <p class="action">STANDARD HYDRANT: ONE 4&frac12;&Prime; STEAMER + TWO 2&frac12;&Prime;.</p>
+          <p class="sub">In commercial or high-occupancy areas you may find hydrants with <em>two</em>
+          steamers.</p>
+          <div class="figrow"><span class="figval">2&frac12;&Prime; &middot; 4&frac12;&Prime;</span>
+            <span class="figname">the only two outlet diameters &mdash; all NST</span></div>
+          <details class="disc"><summary>Read it in the manual &mdash; outlets and threads</summary><div class="dbody">
+            <blockquote>"The standard hydrant will have one 4 &frac12;&rdquo; (steamer) outlet and two 2 &frac12;&rdquo;
+            outlets. In commercial or high occupancy areas, you may encounter hydrants with two steamers."</blockquote>
+            <blockquote>"All outlets have National Standard Threads (NST) per NFPA. The diameter of the
+            outlets are 2 &frac12;&rdquo; or 4 &frac12;&rdquo;."</blockquote>
+            <p>Type, size and spacing are determined by the <strong>water district</strong> the hydrant sits
+            in, so the mix changes as you cross jurisdiction lines.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-2</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord small">C</span>
+        <div class="rowbody">
+          <p class="action">OPEN LEFT.</p>
+          <p class="sub">Counter-clockwise is the nationally recognised direction to open a hydrant stem
+          valve, and every water district and municipality surrounding Orem follows it.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; stem valve rotation</summary><div class="dbody">
+            <blockquote>"The nationally recognized direction to open hydrant stem valves is
+            counter-clockwise(&lsquo;Open-Left&rsquo;). All water districts and municipalities that surround the
+            City of Orem follow these standards."</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-5</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord small">D</span>
+        <div class="rowbody">
+          <p class="action">KNOW THE THREE HYDRANTS YOU WILL ACTUALLY MEET.</p>
+          <p class="sub">Standard dry-barrel &middot; double 2&frac12;&Prime; &middot; private systems.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; the hydrants in the response area</summary><div class="dbody">
+            <h4>Standard dry-barrel</h4>
+            <p>"The most common dry&ndash;barrel hydrant found within the Orem Fire response area. Comprised with
+            two 2 &frac12;&rdquo; outlets and one steamer outlet." Current city code allows Mueller Centurion,
+            Waterous Pacer or Kennedy Guardian; older hydrants may be found in the city and the functions are
+            similar.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-3</p>
+            <h4>Double 2&frac12;&Prime;</h4>
+            <p>"A dry-barrel hydrant with two 2&frac12;&rdquo; outlets. These outlets are feed by a 4&rdquo; Main,
+            expected flows are less than 600gpm." Hydrant locations across the city are published on the
+            city's GIS web map.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-4</p>
+            <h4>Private hydrant systems</h4>
+            <p>"There are a few locations throughout the city that contain privately owned hydrants systems.
+            The maintenance and repair of these systems is the responsibility of the HOA or business
+            owner/management. The Orem City water department may flow test these private hydrant systems if
+            staffing and time allow."</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-4</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord small">E</span>
+        <div class="rowbody">
+          <p class="action">THE HYDRANT BAG GOES TO THE HYDRANT AND STAYS THERE.</p>
+          <p class="sub">Stowed in the rear compartment. Depending on arrival order and the type of lead being
+          performed, either the 1st or the 2nd due engine leaves the bucket and its contents at the plug.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; hydrant bucket contents</summary><div class="dbody">
+            <ul>
+              <li><strong>Screw handle hydrant wrench</strong> &mdash; opens and closes the hydrant on the
+              bonnet nut; double claw sides for use on coupling lugs.</li>
+              <li><strong>5&Prime; Storz &times; 2&frac12;&Prime; female</strong> &mdash; connects a 5-inch supply
+              line into a 2&frac12;&Prime; hydrant outlet.</li>
+              <li><strong>2&frac12;&Prime; and Storz spanner wrenches</strong> &mdash; tightening and loosening
+              couplings and valves.</li>
+              <li><strong>Two 2&frac12;&Prime; hydrant gate valves</strong> &mdash; attached to the 2&frac12;&Prime;
+              outlets when additional GPM is required.</li>
+              <li><strong>2&frac12;&Prime; double-female</strong> &mdash; connected to a hydrant outlet when a
+              3-inch supply line is used.</li>
+              <li><strong>Rubber mallet</strong> &mdash; for loosening stuck hydrant caps and hoseline
+              couplings.</li>
+            </ul>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-6</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="gate">
+        <p class="gtag">Do not get caught</p>
+        <h3 id="charged">Charge a dry-barrel and EVERY outlet goes live at once.</h3>
+        <p>Once that hydrant is charged, <strong>no additional line may be added to another outlet</strong>
+        unless you shut the hydrant down, or a shut-off valve was already fitted before charging.</p>
+        <p>So on a multi-outlet dry-barrel hydrant, a <strong>2&frac12;&Prime; gate valve goes on an unused outlet
+        at the onset of the operation</strong> &mdash; before the wrench turns, not after somebody asks for
+        more water.</p>
+        <div class="rignote">
+          <p class="rigtag">Muscle memory</p>
+          <ol>
+            <li>Caps off.</li>
+            <li>Gate valve on the spare outlet &mdash; closed.</li>
+            <li>Supply line on.</li>
+            <li>Then Open-Left.</li>
+          </ol>
+        </div>
+        <details class="disc"><summary>Read it in the manual &mdash; the charged-hydrant rule</summary><div class="dbody">
+          <blockquote>"It is important to remember, when a dry-barrel hydrant is charged no additional lines
+          may be added to the other outlets unless the hydrant is shut down or a shut off valve is added prior
+          to charging."</blockquote>
+          <blockquote>"When the stem valve is opened, water is supplied to ALL outlets at the same time. To
+          accommodate additional water supply needs, multi-outlet dry barrel hydrants must have a 2 1/2&rdquo;
+          hydrant gate-valve attached to an unused outlet at the onset of any hydrant operation."</blockquote>
+          <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-2</p>
+          <p>The hydrant bag carries two of those gate valves for exactly this.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-6</p>
+        </div></details>
+      </div>
+    </section>
+
+    <!-- ===================== 3 · WHAT IT GIVES ===================== -->
+    <section class="phase cfom" aria-labelledby="flows">
+      <h2 id="flows">What the hydrant will give you</h2>
+      <p class="lede">Two figures are operative, and one of them is a warning about the hydrant in front of
+      you.</p>
+
+      <div class="row">
+        <span class="ord small">&mdash;</span>
+        <div class="rowbody">
+          <p class="action">A DOUBLE 2&frac12;&Prime; IS A SMALL HYDRANT.</p>
+          <div class="figrow"><span class="figval">&lt; 600 gpm</span>
+            <span class="figname">two 2&frac12;&Prime; outlets, no steamer, 4&Prime; main</span></div>
+          <p class="sub">No steamer on the barrel is the tell. Treat it as a supplement, not as your supply
+          for a working fire, and plan the second source early.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; double 2&frac12;&Prime;</summary><div class="dbody">
+            <blockquote>"A dry-barrel hydrant with two 2&frac12;&rdquo; outlets. These outlets are feed by a 4&rdquo;
+            Main, expected flows are less than 600gpm."</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-4</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord small">&mdash;</span>
+        <div class="rowbody">
+          <p class="action">ONE 5&Prime; SUPPLY LINE PER 1,000 GPM TO BE DELIVERED.</p>
+          <div class="figrow"><span class="figval">1 &times; 5&Prime; = 1,000 gpm</span>
+            <span class="figname">plan lines against the flow you owe</span></div>
+          <p class="sub">And a single 5-inch line may not flow all of the water that is actually available
+          from the hydrant or the main &mdash; the line can be the restriction, not the water.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; basic hydrant flows</summary><div class="dbody">
+            <p>The chapter opens the section by naming what moves the number:</p>
+            <blockquote>"The amount of water available to an engine company through a fire hydrant may vary
+            based on many factors, including main size, pressure in the system, and the amount of hydrants
+            being operated off the same main at the same time."</blockquote>
+            <p>Some of those factors are outside the engine company's control. The two bullets this page
+            publishes:</p>
+            <ul>
+              <li>"A single 5-inch line may not flow all of the available water from a hydrant and/or water
+              main."</li>
+              <li>"Provide one 5-inch hose line for every 1000 gpm to be delivered."</li>
+            </ul>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-5</p>
+            <p>Other flow bullets printed on that same page are <strong>not published here</strong> &mdash; see
+            <a href="#flagged">the flagged item</a> at the bottom of this page.</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord small">&mdash;</span>
+        <div class="rowbody">
+          <p class="action">MORE HYDRANTS ON ONE MAIN = LESS WATER EACH.</p>
+          <p class="sub">Main size, system pressure, and how many hydrants are being worked off the same main
+          at the same time. That last one is the one you can do something about &mdash; it is why the high-flow
+          order of preference below ends with <em>different mains</em>.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-5</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 4 · 1ST DIGIT ===================== -->
+    <section class="phase cdig" aria-labelledby="digit">
+      <h2 id="digit">How much more is there? &mdash; 1st digit method</h2>
+      <p class="lede">Your intake gauge tells you how many more like volumes the hydrant has in it. Two
+      readings and one multiplication.</p>
+
+      <div class="row">
+        <span class="ord">1</span>
+        <div class="rowbody">
+          <p class="action">READ THE STATIC INTAKE BEFORE YOU FLOW.</p>
+          <p class="sub">That number is the basis of everything below. Take the first digit of it.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord">2</span>
+        <div class="rowbody">
+          <p class="action">MULTIPLY THAT FIRST DIGIT BY 1, 2 AND 3.</p>
+          <p class="sub">Those three products are your bands. On a 90 psi intake the first digit is 9, so the
+          bands are 9, 18 and 27.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord">3</span>
+        <div class="rowbody">
+          <p class="action">CHARGE THE LINE, READ THE INTAKE AGAIN, TAKE THE DROP.</p>
+          <p class="sub">The drop &mdash; the R-difference &mdash; falls into one of the bands and tells you how
+          many more lines of that same volume the hydrant will carry.</p>
+        </div>
+      </div>
+
+      <p class="tablehead">Worked on a 90 psi intake</p>
+      <p class="scrollhint">Table scrolls sideways &rarr;</p>
+      <div class="scroll-x">
+        <table class="grid">
+          <thead><tr>
+            <th scope="col">Band</th><th scope="col">Intake drop (R-difference)</th>
+            <th scope="col">Like volumes left</th><th scope="col">What that means at the panel</th>
+          </tr></thead>
+          <tbody>
+            <tr><th scope="row">9 &times; 1</th><td class="hit">1&ndash;9 psi</td><td class="hit">3</td>
+              <td>Three more lines of the same volume.</td></tr>
+            <tr><th scope="row">9 &times; 2</th><td>10&ndash;18 psi</td><td>2</td>
+              <td>Two more lines of the same volume.</td></tr>
+            <tr><th scope="row">9 &times; 3</th><td>19&ndash;27 psi</td><td>1</td>
+              <td>One more line, and you are done.</td></tr>
+            <tr><th scope="row">&mdash;</th><td>28 psi or more</td><td>0</td>
+              <td>Nothing left. Get another source.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tablenote">Example: intake reads <strong>90</strong> static. You charge a 150 gpm line and the
+      intake settles at <strong>84</strong>. Drop of 6 &rarr; the 1&ndash;9 band &rarr; <strong>3 like
+      volumes</strong> &mdash; three more lines of that same flow before the hydrant is spent.</p>
+
+      <div class="row">
+        <span class="ord small">!</span>
+        <div class="rowbody">
+          <p class="action">9 / 18 / 27 ARE NOT THE NUMBERS. THEY CAME FROM A 90 PSI GAUGE.</p>
+          <p class="sub">Recompute the bands off whatever your intake actually reads. A 60 psi intake gives a
+          first digit of 6, so the bands become 6, 12 and 18 &mdash; a 14 psi drop that would have left you two
+          like volumes at 90 psi leaves you <strong>one</strong> at 60. Memorising the worked figures is how
+          you over-promise water.</p>
+          <div class="rignote">
+            <p class="rigtag">Muscle memory</p>
+            <p>First digit of the gauge in front of you &times; 1, 2, 3. Never the digits off a training
+            slide.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord small">&mdash;</span>
+        <div class="rowbody">
+          <p class="action">NET PUMP DISCHARGE PRESSURE IS THE WORK YOU ARE ACTUALLY DOING.</p>
+          <p class="sub">NPDP = PDP &minus; intake. A 150 psi PDP on a 90 psi intake is 60 psi of net work,
+          because no work is being done on the suction side of the pump.</p>
+          <details class="disc"><summary>Read it in the standard &mdash; NPDP and like volumes</summary><div class="dbody">
+            <h4>Net pump discharge pressure, from a hydrant</h4>
+            <p>"NPDP = PDP &ndash; INTAKE. No work is being performed on the suction side of the pump. This is
+            the total work of the pump. Therefore, the incoming pressure must be subtracted from the discharge
+            pressure." Worked in the standard as: "PDP of 150 psi &ndash; Intake of 90 psi = Net of 60 psi. This
+            is how much work the pump is actually doing."</p>
+            <h4>Calculating like volumes &mdash; 1st digit method with 90 intake pressure</h4>
+            <ul>
+              <li>"90 x 1 = 9: R-Difference 1-9 psi = 3 Like Volumes"</li>
+              <li>"90 x 2 = 18: R-Difference 10-18 = 2 Like Volumes"</li>
+              <li>"90 x 3 = 27: R-Difference 19-27 = 1 Like Volume"</li>
+              <li>"R-Difference 28+ = 0 Like Volumes"</li>
+            </ul>
+            <p>The standard prints this worked example only, at a 90 psi intake. The method itself is the
+            first digit of <em>your</em> intake reading multiplied by 1, 2 and 3.</p>
+            <p class="srcline">OFD Apparatus Driver / Operator Hydraulic Calculation Standards (Target
+            Solutions), &sect;3 Net Pump Discharge Pressure and &sect;4 Calculating Like Volumes &mdash; the
+            document is unpaginated.</p>
+            <p>This is the standard chapter 5 sends you to for relay pressures and distances.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-15</p>
+          </div></details>
+          <p class="oretag">Pump work lives on <a data-nav="epump" href="engine-emergency.html">Pump Operations</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 5 · THE THREE LAYS ===================== -->
+    <section class="phase csup" aria-labelledby="lays">
+      <h2 id="lays">The three lays</h2>
+      <p class="lede">Forward, reverse, split. Chosen on arrival order, direction of travel, occupancy type
+      and anticipated water needs &mdash; and announced before it is executed.</p>
+
+      <p class="grouphead">Forward lay &mdash; hydrant to fire</p>
+      <div class="row">
+        <span class="ord small">1</span>
+        <div class="rowbody">
+          <p class="action">STOP AT THE HYDRANT, LASSO THE LDH AROUND IT, DROP TOWARD THE FIRE.</p>
+          <p class="sub">Depending on the lead the Officer selects, the Back-Up firefighter can be left at the
+          hydrant to complete the connection.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; forward lay</summary><div class="dbody">
+            <blockquote>"A Forward Lay is a supply line evolution that starts with the laying of a hose-line
+            from a hydrant / water source, and proceeds to the fire (hydrant-to-fire). The forward lay
+            operation is used when the engine stops at a hydrant, &lsquo;Lassoes&rsquo; the LDH around the hydrant
+            and drops the supply line toward the fire building."</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-7</p>
+            <p>"This evolution is typically done by either an engine company providing its own water supply,
+            or by one company supplying another company already on scene."</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-8</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord small">2</span>
+        <div class="rowbody">
+          <p class="action">WET LEAD &mdash; SOMEBODY STAYS.</p>
+          <p class="sub">The Back-Up firefighter remains at the hydrant and charges the line when the command
+          to do so is received.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord small">3</span>
+        <div class="rowbody">
+          <p class="action">DRY LEAD &mdash; NOBODY STAYS.</p>
+          <p class="sub">The Tailboard firefighter anchors the hose, leaves the hydrant bucket, and proceeds
+          to the fire with the crew. Other personnel are assigned to charge the hydrant &mdash; know who that
+          is before you pull away.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; the two lead modes</summary><div class="dbody">
+            <h4>The "Wet" lead</h4>
+            <blockquote>"The back-up firefighter will remain at the hydrant and charge the line when the
+            command to do so is received."</blockquote>
+            <h4>The "Dry" lead</h4>
+            <blockquote>"The Tailboard firefighter anchors the hose, leaves the hydrant bucket, and proceeds
+            to the fire with his/her crew. Other personnel will be assigned to charge the hydrant."</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-8</p>
+          </div></details>
+        </div>
+      </div>
+
+      <p class="grouphead">Reverse lay &mdash; fire to hydrant</p>
+      <div class="row">
+        <span class="ord small">4</span>
+        <div class="rowbody">
+          <p class="action">ARRIVE AT THE BUILDING FIRST, THEN LAY OUT TO THE PLUG.</p>
+          <p class="sub">It puts your engine <em>at the source</em>, so you can supplement hydrant pressure to
+          the engine that ended up in front of the fire. Available to the first or the second due.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; reverse lay</summary><div class="dbody">
+            <blockquote>"The reverse lay option may be employed by either the first due engine or the second
+            due engine and occurs when the engine arrives at the fire building first and then proceeds to the
+            hydrant location. In some cases this action may be advantageous for the fire ground operations
+            because it places the engine at the source of the water and the engine can supplement the pressure
+            from the hydrant to the engine that ends in front of the fire."</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-9</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord small">5</span>
+        <div class="rowbody">
+          <p class="action">DECIDE WHICH SIDE OF THE PUMP THE LDH LANDS ON.</p>
+          <p class="sub"><strong>Supply evolution</strong> &mdash; LDH between the suction side of the pump and
+          the hydrant. <strong>Attack evolution</strong> &mdash; LDH between the discharge side of the pump and
+          an appliance or master stream.</p>
+          <div class="rignote">
+            <p class="rigtag">Muscle memory</p>
+            <p>Suction side = you are feeding somebody. Discharge side = you are the gun.</p>
+          </div>
+          <details class="disc"><summary>Read it in the manual &mdash; the two reverse-lay evolutions</summary><div class="dbody">
+            <blockquote>"Supply evolution: LDH is connected between the suction-side of the pump, and the
+            hydrant."</blockquote>
+            <blockquote>"Attack evolution: LDH is connected between the discharge-side of the pump, and an
+            appliance or master stream."</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-9</p>
+          </div></details>
+          <p class="oretag">Feeding a gun? <a data-nav="mstream" href="master-streams.html">Master Stream Operations</a></p>
+        </div>
+      </div>
+
+      <p class="grouphead">Split lay &mdash; when your position has no water</p>
+      <div class="row">
+        <span class="ord small">6</span>
+        <div class="rowbody">
+          <p class="action">DROP THE LDH AT THE ENTRANCE AND TRANSMIT IT.</p>
+          <p class="sub">Cul-de-sac, limited-access apartment complex, commercial structure where the water is
+          out on the main thoroughfare. The first due <strong>must</strong> transmit the intention to start a
+          split lay.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <span class="ord small">7</span>
+        <div class="rowbody">
+          <p class="action">SECOND DUE COMPLETES THE SPLIT &mdash; EITHER DIRECTION.</p>
+          <p class="sub">Depending on their direction of travel relative to the split, they lay out from the
+          split to the hydrant, or lay in from the hydrant to the split.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; split lay</summary><div class="dbody">
+            <blockquote>"The third option for engine companies to lay hose is the Split Lay. In this operation
+            the first due engine may have to place their apparatus in a position where there is no water.
+            Examples of this may include operating in a cul-de-sac or entering a limited access apartment
+            complex or commercial structure where the water supply is located on the main thoroughfare. If the
+            company officer chooses this tactic, they will drop their LDH at the entrance to the area that
+            they will be operating. If the first due engine MUST transmit their intention to start a split
+            lay."</blockquote>
+            <blockquote>"The second due engine will complete the split. Depending on the direction of travel
+            in relation to the split, they can either lay-out from the split to the hydrant or lay-in from the
+            hydrant to the split."</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-11</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 6 · MORE & FARTHER ===================== -->
+    <section class="phase cmst" aria-labelledby="more">
+      <h2 id="more">More water, and water from farther away</h2>
+
+      <p class="grouphead">High-flow hydrant operations &mdash; least to best preferred</p>
+      <div class="row">
+        <span class="ord">1</span>
+        <div class="rowbody">
+          <p class="action">MULTIPLE SUPPLY LINES FROM A SINGLE HYDRANT.</p>
+          <p class="sub">Least preferred &mdash; every line is drawing on the same barrel.</p>
+        </div>
+      </div>
+      <div class="row">
+        <span class="ord">2</span>
+        <div class="rowbody">
+          <p class="action">PUMP THE HYDRANT WITH THE 2ND OR 3RD DUE ENGINE SUPPLYING THE ATTACK PUMPER.</p>
+        </div>
+      </div>
+      <div class="row">
+        <span class="ord">3</span>
+        <div class="rowbody">
+          <p class="action">MULTIPLE SUPPLY LINES FROM DIFFERENT HYDRANTS SHARING THE SAME MAIN.</p>
+        </div>
+      </div>
+      <div class="row">
+        <span class="ord">4</span>
+        <div class="rowbody">
+          <p class="action">MULTIPLE SUPPLY LINES FROM DIFFERENT HYDRANTS <em>NOT</em> SHARING THE SAME MAIN.</p>
+          <p class="sub">Best preferred.</p>
+          <div class="rignote">
+            <p class="rigtag">Muscle memory</p>
+            <p>The best water is water that does not share a main. Two lines off one plug is the answer of
+            last resort, not the first move.</p>
+          </div>
+          <details class="disc"><summary>Read it in the manual &mdash; high-flow hydrant operations</summary><div class="dbody">
+            <p>"There are three basic tactics to employ when getting the most water from a distribution
+            system. They are listed below in order of least preferred to best preferred."</p>
+            <ul>
+              <li>"Multiple supply lines from a single hydrant."</li>
+              <li>"Pumping the hydrant with the 2nd or 3rd due engine suppling the attack pumper."</li>
+              <li>"Multiple supply lines from different hydrants sharing the same water main."</li>
+              <li>"Multiple supply lines from different hydrants not sharing the same water main."</li>
+            </ul>
+            <p>Note for the reader: the heading says <em>three</em> basic tactics and four bullets are printed
+            underneath it. All four are reproduced above in the printed order.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-13</p>
+          </div></details>
+        </div>
+      </div>
+
+      <p class="grouphead">Relay pumping &mdash; when the water is a long way off</p>
+      <div class="row">
+        <span class="ord small">&mdash;</span>
+        <div class="rowbody">
+          <p class="action">PUMPERS IN SERIES: DISCHARGE OF ONE FEEDS THE INTAKE OF THE NEXT.</p>
+          <p class="sub">Used when the water source is remote from the fire scene. It only works with
+          pre-planning, training and coordination of everybody in the chain.</p>
+        </div>
+      </div>
+      <div class="row">
+        <span class="ord small">&mdash;</span>
+        <div class="rowbody">
+          <p class="action">THREE SEATS IN A RELAY: SOURCE, RELAY, ATTACK.</p>
+          <p class="sub">Biggest pump goes to the source. Relay pumpers can be smaller because they inherit
+          the energy of the pumpers behind them. The attack pumper feeds the lines and appliances at the
+          fire.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; relay roles</summary><div class="dbody">
+            <blockquote>"Using two or more pumpers to move water over a long distance by operating them in
+            series; water discharged from one pumper flows through hoses to the inlet of the next pumper, and
+            so on."</blockquote>
+            <p>"A relay pumping operation consists of a pumper positioned at the water supply source that is
+            used to pump water under pressure through one or more supply lines to another pumper connected
+            further down the supply line(s). This pumper boosts the pressure to supply the next pumper and so
+            on until water reaches the attack pumper. In order to be effective, relay operations require
+            pre-planning, training, and coordinating of all participants."</p>
+            <ul>
+              <li><strong>Water supply pumper</strong> &mdash; "takes water from a hydrant or static source and
+              pumps it under pressure to the next apparatus in the relay pumping operation. Water supply
+              pumpers should be the apparatus with the largest pumping capacity." Some jurisdictions call this
+              the source pumper.</li>
+              <li><strong>Relay pumper</strong> &mdash; "receive water from the source pumper or another relay
+              pumper, raises the pressure, and then supplies water to the next apparatus. This pumper may be
+              of smaller capacity due to its ability to use the acquired energy of previous pumpers in the
+              relay."</li>
+              <li><strong>Fire attack pumper</strong> &mdash; "located at the fire scene that receives water
+              from the relay and is responsible for supplying the attack lines and appliances required for
+              fire suppression."</li>
+            </ul>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-14</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="row">
+        <span class="ord small">&mdash;</span>
+        <div class="rowbody">
+          <p class="action">OREM RELAYS ON CONSTANT PRESSURE.</p>
+          <p class="sub">Relay pumpers spaced at 750-foot intervals; source and relay pumpers hold 175 psi
+          PDP; the attack pumper adjusts and dumps the excess.</p>
+          <details class="disc"><summary>Read it in the manual &mdash; which method Orem uses</summary><div class="dbody">
+            <blockquote>"Orem Fire Department uses the Constant Pressure Relay method for establishing
+            hydraulic pressures and distances during relay operations. For more specific information see the
+            current APPARATUS DRIVER / OPERATOR HYDRAULIC CALCULATION STANDARDS in Target Solutions."</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.5 Water Supply, p.5-15</p>
+            <p>From that standard: relay pumpers are placed at <strong>750 foot intervals</strong>; every
+            pumper except the source opens a discharge to exhaust air from the lines; the source pumper
+            throttles to <strong>175 psi</strong>, then each relay pumper closes its unused discharge once a
+            steady stream flows and throttles to 175 psi in turn; all driver/operators set their intake relief
+            valves; the attack pumper adjusts PDP to supply the attack lines. The 175 psi figure accounts for
+            <strong>20 psi residual</strong> at the next pumper in the relay.</p>
+            <p class="srcline">OFD Apparatus Driver / Operator Hydraulic Calculation Standards (Target
+            Solutions), Constant Pressure Relay &mdash; unpaginated</p>
+          </div></details>
+          <p class="oretag">Full procedure: <a data-nav="relay" href="relay-pumping.html">Relay Pumping</a></p>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /sheet -->
+
+  <section class="pending" id="flagged" aria-labelledby="flaggedh">
+    <p class="ptag">Flagged for the training committee</p>
+    <h2 id="flaggedh">Some flow bullets on p.5-5 are not published on this page.</h2>
+    <p>Engine Company Operations p.5-5 carries a pump-rating bullet and a set of outlet-flow bullets that
+    cannot be reconciled with what the same chapter states three pages earlier about a double 2&frac12;&Prime;
+    hydrant. Rather than teach a number the department may have to correct, those bullets are held off this
+    page and are on the list to take to the training committee.</p>
+    <p>The water-supply figures that <em>are</em> operative, and that this page teaches:</p>
+    <p><strong>Double 2&frac12;&Prime; hydrant &mdash; two 2&frac12;&Prime; outlets on a 4&Prime; main, no steamer
+    &mdash; expect less than 600 gpm</strong> (p.5-4), and <strong>provide one 5&Prime; supply line for every
+    1,000 gpm to be delivered</strong> (p.5-5).</p>
+    <p>Apparatus capacities are likewise not published anywhere on this site until they are verified at the
+    rig and put on that apparatus's own spec sheet.</p>
+  </section>
+
+  <nav class="onward" aria-label="Related pages">
+    <h2>Where this goes next</h2>
+    <ul>
+      <li><a data-nav="eflow" href="engine-flow.html">Engine Evolution &mdash; the pumping evolution end to end</a></li>
+      <li><a data-nav="epump" href="engine-emergency.html">Pump Operations &mdash; PDP, intake, changeover</a></li>
+      <li><a data-nav="erole" href="engine-role.html">Engineer &mdash; Roles &amp; First-Due</a></li>
+      <li><a data-nav="relay" href="relay-pumping.html">Relay Pumping</a></li>
+      <li><a data-nav="standpipe" href="standpipe-ops.html">Standpipe Operations</a></li>
+      <li><a data-nav="mstream" href="master-streams.html">Master Stream Operations</a></li>
+      <li><a data-nav="qrg" href="qrg.html">Initial company assignments</a></li>
+    </ul>
+  </nav>
+
+  <div class="docfoot">
+    <p>Sources: <strong>Engine Company Operations 2023 V-1</strong> &mdash; ch.1 Firefighter Assignments
+    (pp.1-3, 1-8 to 1-11, 1-24) and ch.5 Water Supply (pp.5-1 to 5-15); <strong>OFD Apparatus Driver /
+    Operator Hydraulic Calculation Standards</strong> (Target Solutions, unpaginated). Page numbers are the
+    manual's own per-chapter footers.</p>
+    <p>The manual's photo and figure references (Photos 5-1 to 5-18, Figures 5-7 to 5-13) are not reproduced
+    here; look them up in the chapter itself.</p>
+  </div>
+
+</div>
+
+<details class="secmenu" id="secMenu">
+  <summary aria-label="Open sections menu">Sections</summary>
+  <nav class="secpanel" aria-label="Jump to section">
+    <a class="spos" href="#own">You own the water</a>
+    <a class="swtr" href="#hydrant">The hydrant</a>
+    <a class="sred" href="#charged">Charged-hydrant rule</a>
+    <a class="sfom" href="#flows">What it will give you</a>
+    <a class="sdig" href="#digit">1st digit method</a>
+    <a class="ssup" href="#lays">The three lays</a>
+    <a class="smst" href="#more">More &amp; farther</a>
+    <a class="spend" href="#flagged">Flagged item</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+  var menu=document.getElementById('secMenu');
+  if(menu){
+    [].slice.call(menu.querySelectorAll('a')).forEach(function(a){
+      a.addEventListener('click',function(){menu.removeAttribute('open')});
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

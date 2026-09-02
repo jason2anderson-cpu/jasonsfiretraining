@@ -1,0 +1,1291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Evolution 1.9 — Pump to a ladder company for an elevated stream</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+/* ============================================================
+   Official evolution page — Evolution 1.9.
+   Field-instrument system, same tokens as engine-flow.html
+   (rev 2026-08-30: verification pass — section colour identities,
+   R-48 master-stream order, floating mobile Sections menu).
+   Production note: self-host WOFF2 for offline.
+   ============================================================ */
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  /* section palette — muted, one identity per phase */
+  --c-pos:#3D5A80;  --c-pos-t:#E9EEF5;
+  --c-wtr:#0F6F78;  --c-wtr-t:#DFEEEF;
+  --c-sup:#5B4E9E;  --c-sup-t:#ECE9F6;
+  --c-mst:#7C3F87;  --c-mst-t:#F4E9F5;
+  --c-fom:#2C7749;  --c-fom-t:#E4F2E9;
+  --c-dig:#8A6116;  --c-dig-t:#F6EEDC;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF8F86; --safety-tint:#4A1D1A;
+    --c-pos:#9FBCDF; --c-pos-t:#18232F;
+    --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+    --c-sup:#B7ADE9; --c-sup-t:#231E38;
+    --c-mst:#D9A2DB; --c-mst-t:#301D33;
+    --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+    --c-dig:#DFBC77; --c-dig-t:#332A15;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF8F86; --safety-tint:#4A1D1A;
+  --c-pos:#9FBCDF; --c-pos-t:#18232F;
+  --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+  --c-sup:#B7ADE9; --c-sup-t:#231E38;
+  --c-mst:#D9A2DB; --c-mst-t:#301D33;
+  --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+  --c-dig:#DFBC77; --c-dig-t:#332A15;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2)}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:18px 0 6px}
+.kicker{font-family:var(--head);font-weight:700;font-size:14px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(26px,5vw,40px);line-height:1.1;
+  margin:0 0 10px;text-wrap:balance;overflow-wrap:break-word}
+.objective{font-size:18px;color:var(--text2);margin:0;max-width:66ch}
+.objective strong{color:var(--text)}
+.honestnote{margin:12px 0 0;font-size:15.5px;color:var(--text2);max-width:70ch;
+  border-left:3px solid var(--divider);padding-left:14px}
+.honestnote strong{color:var(--text)}
+
+/* mode bar */
+.modebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0 6px}
+.mode{display:flex;border:1.5px solid var(--divider);border-radius:12px;overflow:hidden;background:var(--surface)}
+.mode button{min-height:56px;min-width:120px;padding:0 20px;border:0;background:transparent;
+  font-weight:700;font-size:16px;color:var(--text2)}
+.mode button[aria-pressed="true"]{background:var(--accent-tint);color:var(--text)}
+#resetBtn{min-height:56px;padding:0 18px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);font-weight:600;font-size:15px;color:var(--text2);display:none}
+body.checkoff #resetBtn{display:inline-block}
+.progress{font-size:15px;color:var(--text2);display:none;font-variant-numeric:tabular-nums}
+body.checkoff .progress{display:inline}
+
+/* jump to phase — sticky on wide screens */
+.jump{position:sticky;top:0;z-index:10;background:var(--canvas);padding:10px 0;
+  display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--divider)}
+.jump a{min-height:44px;display:inline-flex;align-items:center;padding:6px 14px;
+  border:1.5px solid var(--divider);border-radius:999px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:14.5px}
+.jump a:hover{border-color:var(--accent)}
+
+/* floating Sections menu — mobile only; <details> so it works with JS off */
+.secmenu{display:none}
+@media (max-width:640px){
+  .jump{display:none}
+  .secmenu{display:block;position:fixed;right:16px;bottom:16px;z-index:40}
+  .secmenu > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+    min-height:56px;min-width:56px;padding:0 22px;border:1.5px solid var(--divider);border-radius:999px;
+    background:var(--surface);color:var(--text);font-family:var(--head);font-weight:700;font-size:16px;
+    cursor:pointer;box-shadow:0 4px 14px rgba(10,30,28,.22)}
+  .secmenu > summary::-webkit-details-marker{display:none}
+  .secmenu[open] > summary{border-color:var(--accent);color:var(--accent)}
+  .secpanel{position:absolute;bottom:calc(100% + 10px);right:0;min-width:230px;
+    background:var(--surface);border:1.5px solid var(--divider);border-radius:14px;
+    box-shadow:0 8px 24px rgba(10,30,28,.25);padding:8px;display:grid;gap:2px}
+  .secpanel a{display:flex;align-items:center;min-height:48px;padding:6px 14px;border-radius:10px;
+    text-decoration:none;color:var(--text);font-weight:600;font-size:16px;border-left:5px solid transparent}
+  .secpanel a.spos{border-left-color:var(--c-pos)}
+  .secpanel a.swtr{border-left-color:var(--c-wtr)}
+  .secpanel a.ssup{border-left-color:var(--c-sup)}
+  .secpanel a.smst{border-left-color:var(--c-mst)}
+  .secpanel a.sfom{border-left-color:var(--c-fom)}
+  .secpanel a.sdig{border-left-color:var(--c-dig)}
+}
+
+/* the one procedure surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:18px;overflow:hidden}
+
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:18px 24px 4px;scroll-margin-top:70px;overflow-wrap:break-word}
+
+/* section colour identities — tinted ground + matching header accent,
+   never colour alone: every tint is paired with its coloured heading + left rule */
+.phase.cpos{background:var(--c-pos-t);border-left:6px solid var(--c-pos)}
+.phase.cpos > h2{color:var(--c-pos)}
+.phase.cwtr{background:var(--c-wtr-t);border-left:6px solid var(--c-wtr)}
+.phase.cwtr > h2{color:var(--c-wtr)}
+.phase.csup{background:var(--c-sup-t);border-left:6px solid var(--c-sup)}
+.phase.csup > h2{color:var(--c-sup)}
+.phase.cmst{background:var(--c-mst-t);border-left:6px solid var(--c-mst)}
+.phase.cmst > h2{color:var(--c-mst)}
+.phase.cfom{background:var(--c-fom-t);border-left:6px solid var(--c-fom)}
+.phase.cfom > h2{color:var(--c-fom)}
+.phase.cdig{background:var(--c-dig-t);border-left:6px solid var(--c-dig)}
+.phase.cdig > h2{color:var(--c-dig)}
+
+.step{display:flex;align-items:flex-start;gap:16px;padding:16px 24px;min-height:76px;
+  border-top:1px solid var(--divider)}
+.phase > h2 + .step{border-top:0}
+.stepnum{font-family:var(--head);font-weight:700;font-size:36px;line-height:1;color:var(--text2);
+  min-width:56px;font-variant-numeric:tabular-nums;padding-top:2px}
+.stepnum.sub{font-size:22px;padding-top:10px}
+.stepbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:21px;line-height:1.35;margin:0;overflow-wrap:break-word}
+.subaction{font-weight:600;font-size:18px;line-height:1.35;margin:0;font-style:italic}
+
+/* merged muscle-memory step — mine, added where it applies */
+.step.merged{background:color-mix(in srgb,var(--accent-tint) 55%,transparent)}
+@supports not (color:color-mix(in srgb,red 10%,blue)){.step.merged{background:var(--accent-tint)}}
+.step.merged .stepnum{color:var(--accent)}
+
+/* small attached Orem/rig tag on a line */
+.oretag{display:inline-flex;align-items:center;gap:6px;margin-top:8px;margin-right:8px;
+  font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.02em;
+  color:var(--accent);background:var(--accent-tint);border-radius:8px;padding:5px 10px}
+
+/* small plain note attached to a step */
+.plainnote{margin:8px 0 0;font-size:15px;color:var(--text2);max-width:62ch}
+.plainnote strong{color:var(--text)}
+
+/* starting-condition strip */
+.startrow{border-top:1px solid var(--divider);padding:14px 24px;font-size:16px;color:var(--text2)}
+.startrow strong{color:var(--text)}
+
+/* rig note — the Engine 34 sub-sequence, boxed inside the section */
+.rignote{margin:6px 24px 16px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);padding:14px 18px}
+.rignote .rigtag{display:inline-flex;align-items:center;font-family:var(--head);font-weight:700;
+  font-size:13.5px;letter-spacing:.02em;color:var(--accent);background:var(--accent-tint);
+  border-radius:8px;padding:5px 10px;margin:0 0 10px}
+.rignote h3{font-family:var(--head);font-weight:700;font-size:17px;margin:0 0 8px}
+.rignote ol{margin:0;padding-left:26px}
+.rignote li{font-weight:600;font-size:18px;padding:3px 0}
+.rignote p{margin:0 0 8px;max-width:62ch;font-size:16px}
+.rignote p:last-child{margin:0}
+.step .rignote{margin-left:0;margin-right:0;margin-top:10px}
+
+/* check-off */
+.tick{display:none;flex:0 0 auto;padding-top:2px}
+body.checkoff .tick{display:block}
+.tick input{width:32px;height:32px;margin:12px;accent-color:var(--accent);cursor:pointer}
+body.checkoff .step.done .action,body.checkoff .step.done .subaction{color:var(--text2)}
+body.checkoff .step.done .stepnum{color:var(--accent)}
+
+/* disclosures — labeled by content */
+details.disc{margin-top:8px}
+details.disc > summary{list-style:none;display:inline-flex;align-items:center;min-height:44px;
+  padding:6px 14px;border:1.5px solid var(--divider);border-radius:10px;color:var(--accent);
+  font-weight:600;font-size:15px;cursor:pointer;background:transparent}
+details.disc > summary::-webkit-details-marker{display:none}
+details.disc > summary::after{content:"\25BE";margin-left:8px;font-size:12px;transition:transform .15s}
+details.disc[open] > summary::after{transform:rotate(180deg)}
+details.disc > .dbody{background:var(--expanded);border-radius:12px;padding:14px 18px;margin-top:8px;
+  font-size:16px}
+details.disc > .dbody p{margin:0 0 10px;max-width:64ch}
+details.disc > .dbody p:last-child{margin:0}
+details.disc > .dbody ul{margin:0 0 10px;padding-left:22px;max-width:60ch}
+details.disc > .dbody li{margin:0 0 6px}
+.srcline{font-size:14px;color:var(--text2)}
+
+/* wide figure tables — always scroll inside their own box, never the page */
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 10px;
+  border:1px solid var(--divider);border-radius:10px;background:var(--surface);max-width:100%}
+.tablewrap table{border-collapse:collapse;width:100%;min-width:340px;font-size:15.5px}
+.tablewrap th,.tablewrap td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--divider);
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.tablewrap thead th{font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--text2)}
+.tablewrap tr:last-child td{border-bottom:0}
+.tablewrap td.wrapcell{white-space:normal;min-width:170px}
+.tablewrap td:first-child,.tablewrap th:first-child{white-space:normal;min-width:92px}
+.formula{font-family:var(--head);font-weight:800;font-size:20px;letter-spacing:.02em;
+  margin:0 0 10px;color:var(--text)}
+blockquote{margin:0 0 10px;padding:0 0 0 14px;border-left:3px solid var(--accent);color:var(--text)}
+
+/* manual study blocks — full-width disclosures inside a manual phase */
+.manblock{padding:8px 24px 16px}
+.manblock + .manblock{border-top:1px solid var(--divider);padding-top:16px}
+.manblock > details.disc{margin-top:0}
+.manblock > details.disc > summary{font-family:var(--head);font-weight:700;font-size:17px;
+  color:var(--text);width:100%;justify-content:space-between;border-color:var(--divider);
+  background:var(--surface)}
+
+/* the safety gate — permanent full-width interruption; reminder only, no button.
+   In check-off mode it carries a checkbox like any step. Never red alone:
+   the STOP word, the triangle glyph, the left rule and the border all carry it. */
+.gate{border-top:1px solid var(--divider);background:var(--safety-tint);padding:20px 24px;
+  display:flex;align-items:flex-start;gap:16px;border-left:6px solid var(--safety)}
+.gatebody{flex:1;min-width:0}
+.gate .gtag{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:800;
+  font-size:15px;letter-spacing:.06em;color:var(--safety);margin:0 0 8px}
+.gate .gtag::before{content:"";width:0;height:0;border-left:11px solid transparent;
+  border-right:11px solid transparent;border-bottom:19px solid currentColor}
+.gate h3{font-family:var(--head);font-weight:800;font-size:21px;line-height:1.25;margin:0 0 8px;
+  border-left:5px solid var(--safety);padding-left:14px}
+.gate p{margin:0 0 8px;max-width:62ch;font-size:16px}
+.gate .srcline{display:block;margin-top:6px;font-size:14px;color:var(--text2)}
+body.checkoff .gate.done h3{color:var(--text2);border-left-color:var(--text2)}
+
+/* prev / next evolution links */
+.pagenav{display:flex;justify-content:space-between;gap:12px;margin-top:22px;flex-wrap:wrap}
+.pagenav a{min-height:48px;display:inline-flex;align-items:center;padding:8px 18px;
+  border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:15.5px}
+.pagenav a:hover{border-color:var(--accent)}
+
+.docfoot{margin-top:26px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+@media (max-width:640px){
+  .wrap{padding-bottom:110px} /* clear the floating Sections button */
+}
+@media (max-width:560px){
+  .step{padding:14px 16px;gap:12px}
+  .stepnum{font-size:30px;min-width:44px}
+  .action{font-size:19px}
+  .phase > h2,.gate,.startrow{padding-left:16px;padding-right:16px}
+  .manblock{padding-left:16px;padding-right:16px}
+  .rignote{margin-left:16px;margin-right:16px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.modebar,.jump,.nightbtn,.secmenu,.pagenav{display:none}
+  .sheet{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  .step{break-inside:avoid;break-after:auto;min-height:0;padding:8px 12px}
+  .phase{break-inside:auto;background:#fff!important;border-left:none}
+  .phase > h2{break-after:avoid;color:#000!important}
+  .phase.cpos,.phase.cwtr,.phase.csup,.phase.cmst,.phase.cfom,.phase.cdig{border-left:6px solid #000}
+  .step.merged{background:#fff;border-left:4px solid #000}
+  .tick{display:block}
+  .tick input{width:14pt;height:14pt;margin:2pt 8pt}
+  details.disc,.study{display:none}
+  .oretag,.rignote .rigtag{background:#fff;border:1px solid #000;color:#000}
+  .rignote{border:1px solid #000;border-radius:0;break-inside:avoid}
+  .gate{background:#fff;border:none;border-top:3px double #000;border-bottom:3px double #000;
+    break-inside:avoid}
+  .gate h3{border-left:5px solid #000}
+  .gate .gtag{color:#000}
+  .stepnum{color:#000;font-size:16pt;min-width:30pt}
+  .action{font-size:12pt}
+}
+.headnote{margin-top:12px}
+/* FAB clearance — the floating Sections button must never cover the last content */
+@media (max-width:640px){ .wrap{ padding-bottom:132px } }
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="ehome" href="engine-home.html">Engine Operations</a><span>&rsaquo;</span>Evolution 1.9</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <p class="kicker">Official evolution &middot; ADO-Pumper Task Book &middot; September 2024</p>
+    <h1>Evolution 1.9 &mdash; Pump to a ladder company for an elevated stream</h1>
+    <p class="objective"><strong>OBJECTIVE:</strong> Calculate proper PDP for supplying an Elevated Master
+      Stream from the truck</p>
+    <details class="disc headnote">
+      <summary>Which rig you are supplying, and why it changes the math</summary>
+      <div class="dbody"><p>The only figure printed anywhere on this sheet is the <strong>about 15 mph</strong>
+      speedometer reading at in-cab 7a. It gives no appliance loss, no elevation figure, no nozzle pressure
+      and no target PDP &mdash; even though its objective is to calculate one. Every number below comes from
+      the OFD Hydraulic Manual, and the term that changes is <strong>A</strong>: which rig you are supplying
+      decides which appliance you are pumping through.</p></div>
+    </details>
+  </header>
+
+  <div class="modebar">
+    <div class="mode" role="group" aria-label="Sheet mode">
+      <button type="button" id="refBtn" aria-pressed="true">Reference</button>
+      <button type="button" id="checkBtn" aria-pressed="false">Check-off</button>
+    </div>
+    <button type="button" id="resetBtn">Reset all</button>
+    <span class="progress" id="progress"></span>
+  </div>
+
+  <div class="sheet">
+
+    
+
+    <section class="phase cwtr" aria-labelledby="incab">
+      <h2 id="incab">In-cab operations</h2>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: right foot on brake"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">Right foot on brake</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set parking brake"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">Set parking brake</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift transmission to neutral"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">Shift transmission to neutral</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift from road to pump"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">Shift from road to pump (engage the pump shift control lever)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: pump engaged light is on"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">Pump engaged light is on</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift transmission to drive"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">Shift transmission to Drive (D)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: OK to pump light is on and"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">OK TO PUMP light is on <em>and</em></p>
+          <p class="plainnote">The sheet joins 7 to 7a with <strong>and</strong> &mdash; they are one check
+          in two halves. The light alone does not prove the shift took.</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: speedometer registers about 15 mph"></span>
+        <span class="stepnum sub">7a</span>
+        <div class="stepbody"><p class="action">Speedometer registers about 15 mph</p></div>
+      </div>
+
+      <div class="rignote">
+        <p class="rigtag">Orem rigs: Engine 34 only &mdash; pump shift operations</p>
+        <p>The sheet prints Engine 34's pump shift here, between 7a and 8. On 34 these five replace the
+        lever sequence above.</p>
+        <ol>
+          <li>Right foot on brake</li>
+          <li>Neutral</li>
+          <li>Park brake</li>
+          <li>Engage &ldquo;water pump&rdquo; switch</li>
+          <li>Green light indicator on</li>
+        </ol>
+      </div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: emergency and warning lights are on"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">Emergency/warning lights are on</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: change radio to correct channel"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">Change radio to correct channel</p>
+          <p class="plainnote">The Engineer listens closely to the radio at all times for traffic concerning
+          charging, shutting down or adjusting pressures.
+          <span class="srcline">Engine Company Operations 2023 V-1, Ch.1 Firefighter Assignments, p.1-11</span></p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: remove right foot from brake"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">Remove right foot from brake</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: apparatus does not move"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">Apparatus does not move</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: exit cab after looking both directions"></span>
+        <span class="stepnum">12</span>
+        <div class="stepbody"><p class="action">Exit cab after looking both directions</p></div>
+      </div>
+    </section>
+
+    <section class="phase csup" aria-labelledby="outcab">
+      <h2 id="outcab">Out-of-cab operations</h2>
+      <div class="startrow"><strong>Numbering:</strong> 1&ndash;12 are the printed out-of-cab steps in the
+        printed order. Steps marked <strong>+</strong> are mine, merged in where they apply.</div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: verify pump is engaged"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">Verify pump is engaged</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open tank to pump"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">Open tank to pump</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: crack re-circulating tank fill valve"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">Crack re-circulating/tank fill valve</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: prime pump if necessary"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">Prime pump (if necessary)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set wheel chocks"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">Set wheel chocks</p>
+          <p class="plainnote">Printed on this sheet, and the first line of the changeover procedure:
+          position the apparatus safely and immobilize it by setting the parking brake and chocking the
+          wheels. <span class="srcline">ADO Task #19 Basic Pump Skills &mdash; Changeover, Step 1</span></p>
+        </div>
+      </div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: connect to hydrant supply and call for water"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">Connect to hydrant supply and call for water</p>
+          <details class="disc"><summary>The changeover, step by step</summary><div class="dbody">
+            <p>Air in the empty supply hose will cause problems if it enters the pump while the pump is
+            supplying lines under pressure. Open the bleeder valve on the gated intake so the air escapes as
+            the supply line fills; when all the air has been forced out, close the bleeder. The water is now
+            at the pump.</p>
+            <p>Then open the intake valve from the supply line <strong>very slowly</strong>, watching both the
+            intake and the discharge gauges, adjusting discharge pressure as it comes open. After the intake
+            is open the tank-to-pump can be closed &mdash; but leave the tank-fill valve partially open until
+            the tank has refilled. A full tank is your reserve if the external supply is lost unexpectedly.</p>
+            <p class="srcline">ADO Task #19 Basic Pump Skills &mdash; Changeover (Transition to an External
+            Water Supply): opening narrative, and Operating Procedure Steps 6&ndash;8</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: connect LDH supply"></span>
+        <span class="stepnum">+</span>
+        <div class="stepbody"><p class="action">CONNECT LDH SUPPLY</p>
+          <span class="oretag">from <a href="engine-flow.html" style="color:inherit">Engine Evolution</a></span>
+        </div>
+      </div>
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: open pressure relief valve"></span>
+        <span class="stepnum">+</span>
+        <div class="stepbody"><p class="action">OPEN PRESSURE RELIEF VALVE</p>
+          <span class="oretag">from Engine Evolution</span>
+          <details class="disc"><summary>Why it goes open before the water comes</summary><div class="dbody">
+            <blockquote>&ldquo;Set the Discharge Relief Valve to about 150, rev up psi to 150 &hellip; then
+            when I introduce hydrant water there isn't as much of a pressure spike and the discharge relief
+            valve will catch any extra. Then after hydrant is fully opened I can throttle back down.&rdquo;</blockquote>
+            <p class="srcline">My 2026-08-30 review. Orem's own changeover procedure agrees on the order:
+            set the relief valve or pressure governor at Step 6, before the external supply is opened at
+            Step 8. <span class="srcline">ADO Task #19</span></p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: signal for water"></span>
+        <span class="stepnum">+</span>
+        <div class="stepbody"><p class="action">SIGNAL FOR WATER</p>
+          <span class="oretag">from Engine Evolution</span>
+        </div>
+      </div>
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: close pressure relief valve"></span>
+        <span class="stepnum">+</span>
+        <div class="stepbody"><p class="action">CLOSE PRESSURE RELIEF VALVE</p>
+          <span class="oretag">from Engine Evolution</span>
+        </div>
+      </div>
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: open supply intake slowly, monitor gauges"></span>
+        <span class="stepnum">+</span>
+        <div class="stepbody"><p class="action">OPEN SUPPLY INTAKE SLOWLY (MONITOR GAUGES)</p>
+          <span class="oretag">from Engine Evolution</span>
+          <p class="plainnote"><strong>Maintain 20 psi intake pressure.</strong> 20 psi minimum protects from
+          drawing a vacuum on the intake hose.</p>
+        </div>
+      </div>
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: close tank to pump"></span>
+        <span class="stepnum">+</span>
+        <div class="stepbody"><p class="action">CLOSE TANK TO PUMP</p>
+          <span class="oretag">from Engine Evolution</span>
+        </div>
+      </div>
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: refill tank"></span>
+        <span class="stepnum">+</span>
+        <div class="stepbody"><p class="action">REFILL TANK</p>
+          <span class="oretag">from Engine Evolution</span>
+          <p class="plainnote"><strong>Note static hydrant pressure.</strong> You need it to read the residual
+          drop later &mdash; see the 1st digit method in <a href="#numbers">The numbers</a>.</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: make contact with truck company"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">Make contact with truck company</p>
+          <p class="plainnote">This is where you find out which rig you are supplying and what tip is going
+          on the aerial &mdash; both of which change the PDP.</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: connect to truck with LDH"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">Connect to truck with LDH</p>
+          <details class="disc"><summary>Which side of the pump this is</summary><div class="dbody">
+            <p>The manual names this configuration directly. In a <strong>supply evolution</strong> LDH is
+            connected between the <em>suction</em> side of the pump and the hydrant. In an
+            <strong>attack evolution</strong> LDH is connected between the <em>discharge</em> side of the
+            pump and &ldquo;an appliance or master stream.&rdquo; Evolution 1.9 is both at once: hydrant to
+            suction, truck to discharge.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.5-9</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: charge LDH slowly"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">Charge LDH slowly</p>
+          <p class="plainnote">Same discipline as the intake: open slowly and watch the gauges while the line
+          fills. <span class="srcline">ADO Task #19, opening narrative and Step 8</span></p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: verify correct pressures"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">Verify correct pressures</p>
+          <div class="rignote">
+            <p class="rigtag">Name the rig before you calculate</p>
+            <p><strong>Ladder 32</strong> carries the <strong>pre-plumbed waterway</strong> &mdash;
+            <strong>25 psi &plusmn; elevation</strong>.</p>
+            <p><strong>The tiller</strong> carries the <strong>playpipe</strong> &mdash; condensed
+            Q&sup2; for the 3&Prime;, plus the elevation of the ladder, plus a <strong>15 psi</strong>
+            appliance loss, plus nozzle pressure.</p>
+            <p>The hydraulic manual lists these as &ldquo;T33&rdquo; and &ldquo;Tiller33&rdquo;, which reads
+            like one rig with two appliances. It is two rigs, and T33 is now Ladder 32.</p>
+            <p class="srcline">OFD Hydraulic Manual, Appliance Loss &mdash; Large Appliances, Aerial Master
+            Stream &middot; rig assignment per my 2026-08-30 ruling</p>
+          </div>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set manual discharge relief valve"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">Set manual discharge relief valve</p>
+          <span class="oretag">Manual valve: Engine 31 &middot; Engine 3820 &middot; Ladder 32</span>
+          <p class="plainnote">The sheet prints this at 11, near the end. Orem's own changeover procedure sets
+          the relief valve or pressure governor <strong>before</strong> pressure is put to the line
+          &mdash; Step 6 of nine, not the last step. Flagged for the committee; on the fireground, set it
+          early. <span class="srcline">ADO Task #19, Step 6</span></p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: monitor residual"></span>
+        <span class="stepnum">12</span>
+        <div class="stepbody"><p class="action">Monitor residual</p>
+          <p class="plainnote">A standing job, not a one-off check: monitor the residual pressure of the pump
+          master intake gauge to determine the capability of supplying additional volumes when available or as
+          needed. <span class="srcline">Engine Company Operations 2023 V-1, Ch.1 Firefighter Assignments, p.1-11</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase cmst" aria-labelledby="master">
+      <h2 id="master">Master stream &mdash; the truck's elevated stream</h2>
+      <div class="startrow">The printed sheet stops at <strong>Monitor residual</strong>. It never says when
+        the stream flows. That order is mine, fixed in my 2026-08-30 review: secure the device &rarr;
+        calculate PDP &rarr; set PDP &rarr; notify Command big water is ready &rarr; confirm everyone is out
+        &rarr; open the discharge. The full sequence lives on
+        <a href="engine-flow.html">Engine Evolution</a>.</div>
+
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: properly secure device"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">PROPERLY SECURE DEVICE</p>
+          <details class="disc"><summary>Why &amp; source</summary><div class="dbody">
+            <p>Master stream devices carry safety considerations that members must address. Higher flows are
+            more likely to knock debris loose from the building and send it through the air into people or
+            apparatus &mdash; that applies to any master stream, elevated included.</p>
+            <p>The second consideration is specific to a portable device: in the portable mode the monitor has
+            a limited side-to-side range, and turning the nozzle too far left or right may destabilise the
+            base and tip it over. On this evolution the device is the truck's, so securing it is the truck
+            company's work &mdash; your part is confirming with them that it is done before you flow.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.7-1</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: calculate PDP"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">CALCULATE PDP</p>
+          <p class="plainnote">This is the evolution's stated objective. The arithmetic &mdash; formula,
+          appliance loss by rig, friction loss, elevation and tip flows &mdash; is in
+          <a href="#numbers">The numbers</a> below.</p>
+        </div>
+      </div>
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: set PDP"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">SET PDP</p></div>
+      </div>
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: notify command big water is ready"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">NOTIFY COMMAND BIG WATER IS READY</p></div>
+      </div>
+
+      <div class="gate step" id="gateStep">
+        <span class="tick"><input type="checkbox" aria-label="Done: confirmed with Command that all department members are out of the building"></span>
+        <div class="gatebody">
+          <p class="gtag">STOP</p>
+          <h3>Confirm all department members are out of the building before flowing the elevated stream.</h3>
+          <p>Affirmative acknowledgement from Command, not a one-way notification. Master stream operations
+          require a coordinated effort from the companies on scene, &ldquo;one of which is ensuring that all
+          department members have been backed out of the building prior to flowing any master stream or
+          elevated ladder pipe.&rdquo;</p>
+          <p>Once the stream is in operation it has to be shut down to be repositioned, so the first placement
+          has to be right. The safest exterior positions are the corners; the front is a dangerous and
+          ineffective tactic that puts people in the collapse zone.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, p.7-1</span>
+        </div>
+      </div>
+
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: open discharge"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">OPEN DISCHARGE</p>
+          <p class="plainnote">The sheet's own closing note: <em>use different nozzles and tip sizes on the
+          truck elevated master stream.</em> Every tip change is a new N and a new Q &mdash; recalculate,
+          do not adjust by feel.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase cfom study" aria-labelledby="numbers">
+      <h2 id="numbers">The numbers &mdash; what CALCULATE PDP means here</h2>
+
+      <div class="manblock">
+        <details class="disc"><summary>The formula &mdash; and the one place the manual's notation is wrong</summary><div class="dbody">
+          <p class="formula">PDP = F + E + A + N</p>
+          <ul>
+            <li><strong>F</strong> &mdash; friction loss. Repeat F for every additional line or hose segment
+            in the layout (F&middot;F&middot;E&middot;A&middot;N and beyond as the layout requires).</li>
+            <li><strong>E</strong> &mdash; elevation loss or gain.</li>
+            <li><strong>A</strong> &mdash; appliance loss.</li>
+            <li><strong>N</strong> &mdash; nozzle pressure, counted exactly once.</li>
+          </ul>
+          <p>Always start at the nozzle and work back to the pump.</p>
+          <p>The manual writes it as &ldquo;PDP = Nozzle Pressure + Total Friction Loss&rdquo; and then lists
+          &ldquo;N &ndash; Nozzle Pressure&rdquo; <em>inside</em> the total-friction-loss list. Read literally
+          that adds nozzle pressure twice and over-pumps every line. <strong>N appears once.</strong> Nozzle
+          pressure is a component of PDP, not a component of friction loss.</p>
+          <p class="srcline">OFD Hydraulic Manual &sect;2.a and &sect;2.c &middot; notation corrected per my
+          2026-08-29 ruling</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>A &mdash; the appliance loss, and which rig you are pumping to</summary><div class="dbody">
+          <p>This is the term that this whole evolution turns on. The hydraulic manual lists the two aerial
+          master streams under near-identical designations, which reads as one rig with two appliances. It is
+          two rigs.</p>
+          <div class="tablewrap"><table>
+            <thead><tr><th scope="col">Rig</th><th scope="col">What you add</th><th scope="col">Appliance</th></tr></thead>
+            <tbody>
+              <tr><td>Ladder 32<br><span class="srcline">manual's &ldquo;T33&rdquo;</span></td><td class="wrapcell">25 psi &plusmn; elevation</td><td class="wrapcell">Pre-plumbed waterway</td></tr>
+              <tr><td>The tiller<br><span class="srcline">manual's &ldquo;Tiller33&rdquo;</span></td><td class="wrapcell">Condensed Q&sup2; for the 3&Prime; &middot; elevation of the ladder &middot; 15 psi appliance &middot; nozzle pressure</td><td class="wrapcell">Playpipe</td></tr>
+            </tbody>
+          </table></div>
+          <p>For reference, the other large appliances in the same section: deck gun / ground monitor
+          <strong>25 psi</strong>; standpipe <strong>25 psi regardless of flow</strong>; Rapid Attack Monitor
+          <strong>10 psi</strong>. Small appliances &mdash; wyes, gated wyes, siamese, reducer, increaser
+          &mdash; are 10 psi if the combined flow exceeds 350 gpm, 0 psi below it.</p>
+          <p class="srcline">OFD Hydraulic Manual, Appliance Loss &mdash; large and small appliances &middot;
+          rig assignment per my 2026-08-30 ruling</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>F &mdash; friction loss in the LDH between engine and truck</summary><div class="dbody">
+          <p>Setup step 3 is a hydraulics instruction: shorten the lay and you shrink this term.</p>
+          <p class="formula">FL = C &times; Q&sup2; &times; L</p>
+          <p>Q is gpm &divide; 100 (the &ldquo;condensed Q&rdquo;), L is length in hundreds of feet. The
+          coefficients are developed from flow testing and IFSTA. Alongside the formula the manual gives a
+          field method for each hose size &mdash; that is what you use on the panel.</p>
+          <div class="tablewrap"><table>
+            <thead><tr><th scope="col">Hose</th><th scope="col">Coefficient (C)</th><th scope="col">Field method</th><th scope="col">Worked</th></tr></thead>
+            <tbody>
+              <tr><td>1&frac34;&Prime;</td><td>15.5 (IFSTA)</td><td class="wrapcell">100&ndash;200 gpm &mdash; subtract 100 from the gpm, divide by 2</td><td class="wrapcell">150 gpm &rarr; 25 psi / 100&prime;</td></tr>
+              <tr><td>2&frac12;&Prime;</td><td>2 (IFSTA)</td><td class="wrapcell">100&ndash;300 gpm &mdash; first two digits of the gpm, minus 10. 301&ndash;500 gpm &mdash; same, then add back the first digit</td><td class="wrapcell">250 gpm &rarr; 15 psi / 100&prime;<br>350 gpm &rarr; 28 psi / 100&prime;</td></tr>
+              <tr><td>3&Prime;</td><td>.8</td><td class="wrapcell">300 gpm and up &mdash; Q&sup2; (condensed Q)</td><td class="wrapcell">300 gpm &rarr; 9 psi / 100&prime;</td></tr>
+              <tr><td>5&Prime;</td><td>.08</td><td class="wrapcell">500 gpm and up &mdash; Q&sup2; &divide; 10</td><td class="wrapcell">1,000 gpm &rarr; 10 psi / 100&prime;</td></tr>
+            </tbody>
+          </table></div>
+          <p>Two of those rows are the ones this evolution uses. The <strong>5&Prime;</strong> is the lay
+          from the engine to the truck &mdash; the term setup step 3 is telling you to shrink. The
+          <strong>3&Prime;</strong> appears on the tiller only: the manual lists &ldquo;Q&sup2; (condensed Q)
+          for the 3&Prime;&rdquo; inside the playpipe appliance entry, so it is a friction loss you add
+          <em>on top of</em> the LDH you laid, not instead of it.</p>
+          <p class="srcline">OFD Hydraulic Manual, Friction Loss &mdash; coefficients from flow testing and
+          IFSTA; Appliance Loss &mdash; Aerial Master Stream &middot; 5&Prime; figures per my 2026-08-29 ruling</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>E &mdash; elevation, and why this evolution always has one</summary><div class="dbody">
+          <ul>
+            <li><strong>Geographical:</strong> .5 psi per foot.</li>
+            <li><strong>Structural:</strong> 5 psi per floor, minus the first floor, calculated to the floor
+            the nozzle is on.</li>
+            <li><strong>Sub-level</strong> is a gain &mdash; subtract it from the PDP.</li>
+          </ul>
+          <p>A handline on the ground can be an E of zero. An elevated stream never is: the nozzle is at the
+          tip of a raised aerial. Both aerial entries name elevation explicitly &mdash; the pre-plumbed
+          waterway is 25 psi <em>&plusmn; elevation</em>, and the playpipe list has &ldquo;elevation of the
+          ladder&rdquo; as its own line. Get the tip height from the truck company; do not estimate it from
+          the ground.</p>
+          <p class="srcline">OFD Hydraulic Manual, Elevation Loss &mdash; field hydraulic calculation;
+          Appliance Loss &mdash; Aerial Master Stream &middot; elevation-to-the-nozzle per my ruling</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>N &mdash; the tip on the aerial</summary><div class="dbody">
+          <p>The sheet tells you the tip will change: <em>use different nozzles and tip sizes on the truck
+          elevated master stream</em>. Master-stream smooth bore tips are rated at <strong>80 psi</strong>
+          nozzle pressure, not the 50 psi you use on a hand line.</p>
+          <div class="tablewrap"><table>
+            <caption class="srcline" style="caption-side:bottom;padding:8px 12px;text-align:left">Standard GPM for master-stream smooth bore tips &mdash; a calculation table, not a list of what is on any rig.</caption>
+            <thead><tr><th scope="col">Tip</th><th scope="col">Nozzle pressure</th><th scope="col">GPM</th></tr></thead>
+            <tbody>
+              <tr><td>1&frac38;&Prime;</td><td>80 psi</td><td>500</td></tr>
+              <tr><td>1&frac12;&Prime;</td><td>80 psi</td><td>600</td></tr>
+              <tr><td>1&frac34;&Prime;</td><td>80 psi</td><td>800</td></tr>
+              <tr><td>2&Prime;</td><td>80 psi</td><td>1,000</td></tr>
+            </tbody>
+          </table></div>
+          <p>For a tip that is not on the table: GPM = 29.7 &times; D&sup2; &times; &radic;NP.</p>
+          <p>On the fog side there is no blanket figure &mdash; nozzle pressure is a property of the nozzle
+          model. Read the nozzle; do not assume 100.</p>
+          <p class="srcline">OFD Hydraulic Manual, Determining GPM from Smooth Bore Nozzles &mdash; Solid
+          Stream / Smooth Bore Tips, master streams column; Determining GPM from FOG Nozzles</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Rounding, and the number you actually set on the panel</summary><div class="dbody">
+          <p>Round down to the easiest whole number to set on the panel. The gauge is not a calculator
+          &mdash; a component sum of 171 gets set as 170.</p>
+          <p class="srcline">Rounding convention per my 2026-08-29 ruling</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Putting it together &mdash; two worked PDPs, one per rig</summary><div class="dbody">
+          <p><strong>Read this first.</strong> Orem publishes no worked PDP for evolution 1.9. What follows
+          assembles the manual's own figures in the manual's own order so you can see the arithmetic. Every
+          line is labelled either <strong>MANUAL</strong> (an OFD figure) or <strong>ON SCENE</strong> (a
+          number you must get from the truck company &mdash; the values used here are placeholders to make
+          the sum visible, not Orem figures).</p>
+
+          <p class="formula">Ladder 32 &mdash; pre-plumbed waterway</p>
+          <div class="tablewrap"><table>
+            <thead><tr><th scope="col">Term</th><th scope="col">psi</th><th scope="col">Where it comes from</th></tr></thead>
+            <tbody>
+              <tr><td>N &mdash; 2&Prime; tip</td><td>80</td><td class="wrapcell"><strong>MANUAL</strong> &mdash; master-stream smooth bore, 80 psi, 1,000 gpm</td></tr>
+              <tr><td>A &mdash; waterway</td><td>25</td><td class="wrapcell"><strong>MANUAL</strong> &mdash; pre-plumbed waterway</td></tr>
+              <tr><td>E &mdash; tip height</td><td>35</td><td class="wrapcell"><strong>ON SCENE</strong> &mdash; 70 ft of tip height &times; .5 psi/ft</td></tr>
+              <tr><td>F &mdash; 5&Prime; lay</td><td>20</td><td class="wrapcell"><strong>ON SCENE</strong> &mdash; 200 ft at 1,000 gpm; 10 psi per 100 ft</td></tr>
+              <tr><td><strong>PDP</strong></td><td><strong>160</strong></td><td class="wrapcell">sum</td></tr>
+            </tbody>
+          </table></div>
+
+          <p class="formula">The tiller &mdash; playpipe</p>
+          <div class="tablewrap"><table>
+            <thead><tr><th scope="col">Term</th><th scope="col">psi</th><th scope="col">Where it comes from</th></tr></thead>
+            <tbody>
+              <tr><td>N &mdash; 1&frac12;&Prime; tip</td><td>80</td><td class="wrapcell"><strong>MANUAL</strong> &mdash; master-stream smooth bore, 80 psi, 600 gpm</td></tr>
+              <tr><td>A &mdash; playpipe</td><td>15</td><td class="wrapcell"><strong>MANUAL</strong> &mdash; appliance loss, playpipe</td></tr>
+              <tr><td>E &mdash; ladder elevation</td><td>35</td><td class="wrapcell"><strong>ON SCENE</strong> &mdash; 70 ft &times; .5 psi/ft</td></tr>
+              <tr><td>F &mdash; 3&Prime; on the ladder</td><td>36</td><td class="wrapcell"><strong>ON SCENE</strong> &mdash; 100 ft at 600 gpm; Q&sup2; = 36 psi per 100 ft</td></tr>
+              <tr><td>F &mdash; 5&Prime; lay</td><td>7.2</td><td class="wrapcell"><strong>ON SCENE</strong> &mdash; 200 ft at 600 gpm; Q&sup2; &divide; 10 = 3.6 psi per 100 ft</td></tr>
+              <tr><td><strong>PDP</strong></td><td><strong>170</strong></td><td class="wrapcell">173.2, rounded down</td></tr>
+            </tbody>
+          </table></div>
+
+          <p><strong>The one trap in the pre-plumbed line.</strong> The manual writes that entry as
+          &ldquo;25 psi <em>+/&minus; elevation</em>&rdquo;, which looks like elevation belongs inside A. It
+          does not &mdash; that is the same E term, and it is counted once. A is 25. Elevation is E.</p>
+          <p><strong>The one trap in the playpipe line.</strong> Its manual entry lists four things &mdash;
+          Q&sup2; for the 3&Prime;, elevation of the ladder, 15 psi appliance, nozzle pressure. Those are not
+          four appliance losses; they are the F, E, A and N of everything downstream of your LDH. The only
+          term you add on top is the friction loss in the 5&Prime; you laid to the truck.</p>
+          <p class="srcline">Assembled from OFD Hydraulic Manual &mdash; Appliance Loss (Aerial Master
+          Stream), Friction Loss field methods, Elevation Loss, and Standard GPM for master-stream smooth
+          bore tips &middot; rig assignment per my 2026-08-30 ruling &middot; rounding per my 2026-08-29
+          ruling. Lengths and tip heights are placeholders, not Orem specifications.</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Nozzle reaction &mdash; why &ldquo;properly secure device&rdquo; is a number</summary><div class="dbody">
+          <p class="formula">NR = 1.57 &times; d&sup2; &times; NP</p>
+          <p>1.57 is a constant, <em>d</em> is the nozzle diameter in inches, <em>NP</em> is nozzle pressure
+          in psi. A 2&Prime; master-stream tip at the manual's 80 psi:
+          1.57 &times; 4 &times; 80 = <strong>502 lb</strong> of reaction force pushing back on the aerial.
+          A 1&frac12;&Prime; tip at 80 psi is 1.57 &times; 2.25 &times; 80 = <strong>283 lb</strong>.</p>
+          <p>The manual also carries a field shortcut &mdash; <strong>one-third of the flow</strong> for a
+          smooth bore, half the flow for a fog straight stream. At 1,000 gpm that shortcut estimates 333 lb
+          against the formula's 502. Treat it as an estimating aid; the formula is the calculation.</p>
+          <p>This is the arithmetic behind the first step of the master-stream sequence. It is also why a tip
+          change is not a small change: doubling nothing else, going from 1&frac12;&Prime; to 2&Prime; adds
+          roughly 220 lb of reaction at the same nozzle pressure.</p>
+          <p class="srcline">OFD Hydraulic Manual, Nozzle Reaction (smooth bore and fog) &middot; tip
+          pressures from Standard GPM for Solid Stream / Smooth Bore Tips, master streams column.
+          Reaction figures worked from the manual's own formula.</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>NPDP &mdash; how much work the pump is really doing</summary><div class="dbody">
+          <p class="formula">NPDP = PDP &minus; intake psi</p>
+          <p>No work is being performed on the suction side of the pump, so the incoming pressure is
+          subtracted from the discharge pressure. A PDP of 150 psi on a 90 psi intake is a net of 60 psi.
+          On an elevated stream, where the PDP is high, this is the number that tells you whether you have
+          any margin left.</p>
+          <p class="srcline">OFD Hydraulic Manual, Net Pump Discharge Pressure (NPDP<sub>pps</sub>)</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Can this hydrant give me more? &mdash; the 1st digit method</summary><div class="dbody">
+          <p>Printed step 12 is <em>monitor residual</em>. This is what you do with it. You noted the static
+          pressure when you refilled the tank; watch the drop to residual and read it against the first digit
+          of that static. Worked at a 90 psi static:</p>
+          <div class="tablewrap"><table>
+            <thead><tr><th scope="col">Multiple</th><th scope="col">Residual drop</th><th scope="col">Like volumes remaining</th></tr></thead>
+            <tbody>
+              <tr><td>90 &times; 1 = 9</td><td>1&ndash;9 psi</td><td>3 like volumes</td></tr>
+              <tr><td>90 &times; 2 = 18</td><td>10&ndash;18 psi</td><td>2 like volumes</td></tr>
+              <tr><td>90 &times; 3 = 27</td><td>19&ndash;27 psi</td><td>1 like volume</td></tr>
+              <tr><td>&mdash;</td><td>28+ psi</td><td>0 like volumes</td></tr>
+            </tbody>
+          </table></div>
+          <p class="srcline">OFD Hydraulic Manual, Calculating Like Volumes &middot; Engine Company
+          Operations 2023 V-1, Ch.1 Firefighter Assignments, p.1-11</p>
+        </div></details>
+      </div>
+    </section>
+
+    <section class="phase cdig study" aria-labelledby="manual">
+      <h2 id="manual">What the manual teaches &mdash; elevated master streams and getting water to them</h2>
+
+      <div class="manblock">
+        <details class="disc"><summary>What counts as a master stream, and where an elevated stream sits</summary><div class="dbody">
+          <p>Most structure fires an Engine Company meets are handled with handlines. Occasionally a fire
+          cannot be controlled with them and the engine has to deliver large quantities of water from a great
+          distance.</p>
+          <p>By most definitions, <strong>any stream greater than 350 gpm that requires mechanical assistance
+          for handling</strong> is a master stream. Also called large-caliber streams (LCS), these
+          long-reaching, high-volume streams may be <strong>portable</strong> (ground-based),
+          <strong>elevated</strong> &mdash; including ladder pipes and nozzles attached to elevating platforms
+          &mdash; or mounted atop the engine apparatus itself. This evolution is the elevated case, supplied
+          by the engine.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.7-1. The printed text hyphenates
+          &ldquo;mechan-ical&rdquo; across a line break; corrected here.</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Not the deck gun, not the Stinger, not the R.A.M. &mdash; and why the difference is money</summary><div class="dbody">
+          <p>Chapter 7 spends most of its length on the engine's own master streams. They are different
+          appliances with different losses, and grabbing the wrong figure is the easiest way to mis-pump this
+          evolution.</p>
+          <div class="tablewrap"><table>
+            <thead><tr><th scope="col">Appliance</th><th scope="col">Whose</th><th scope="col">Appliance loss</th></tr></thead>
+            <tbody>
+              <tr><td class="wrapcell">Aerial master stream &mdash; pre-plumbed waterway</td><td>Ladder 32</td><td class="wrapcell">25 psi &plusmn; elevation</td></tr>
+              <tr><td class="wrapcell">Aerial master stream &mdash; playpipe</td><td>The tiller</td><td class="wrapcell">Q&sup2; for the 3&Prime; &middot; ladder elevation &middot; 15 psi &middot; NP</td></tr>
+              <tr><td class="wrapcell">Deck gun / ground monitor</td><td>The engine</td><td>25 psi</td></tr>
+              <tr><td class="wrapcell">Rapid Attack Monitor (R.A.M.)</td><td>The engine</td><td>10 psi</td></tr>
+              <tr><td class="wrapcell">Standpipe</td><td>The building</td><td class="wrapcell">25 psi regardless of flow</td></tr>
+            </tbody>
+          </table></div>
+          <p>The manual's descriptions of the engine's own devices, for the contrast: the <strong>Stinger</strong>
+          is a dual-purpose break-apart monitor plumbed to an outlet on top of the engine, so it goes into
+          operation without running a supply line to it. Its drawback is that the deck-gun configuration may
+          require the engine to be parked close enough to get reach &mdash; which puts the apparatus in a
+          potentially dangerous position. Removed from the engine it mounts to a portable <strong>base</strong>
+          with a single 5&Prime; LDH inlet and folding legs, which is how you get the device away from the
+          apparatus. The <strong>R.A.M.</strong> is a light, compact portable monitor a single firefighter can
+          deploy, supplied by 2&frac12;&Prime; or 3&Prime; hose, with a maximum delivery of 500 gpm at 75 psi
+          nozzle pressure and a waterway designed for minimal appliance loss.</p>
+          <p>None of that is what you are pumping here. On evolution 1.9 the device belongs to the truck and
+          sits at the tip of a raised aerial &mdash; which is why the appliance term, and the elevation term
+          with it, come from the aerial entry and nowhere else.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, pp.7-4, 7-5 and 7-6 &middot; OFD Hydraulic
+          Manual, Appliance Loss &mdash; large appliances. Chapter 7's Stinger paragraph prints
+          &ldquo;A disadvantaged of using the Stinger&rdquo;; wording corrected, sense unchanged.</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Everyone backed out first &mdash; the source of the STOP gate</summary><div class="dbody">
+          <p>Master stream operations require a coordinated effort from the companies operating on scene,
+          &ldquo;one of which is ensuring that all department members have been backed out of the building
+          prior to flowing any master stream or <strong>elevated ladder pipe</strong>.&rdquo; The manual names
+          the elevated case explicitly. That is the gate in the master-stream section above.</p>
+          <p>Putting master streams into service generally means interior offensive operations have been
+          abandoned and a defensive posture is being employed &mdash; but &ldquo;generally&rdquo; is not
+          &ldquo;always&rdquo;, which is exactly why the confirmation is a two-way acknowledgement.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.7-1</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Positioning &mdash; corners, never the front, and the collapse zone</summary><div class="dbody">
+          <p>The device must be positioned to provide an effective stream, because once the line is in
+          operation it must be shut down to be repositioned. <strong>The safest exterior positions are at the
+          corners of the building.</strong> Setting up in front &mdash; from the top of the engine or from the
+          ground &mdash; is &ldquo;a dangerous and ineffective tactic&rdquo;; firefighters operating the
+          stream are then in the collapse zone and may not have time to react to a sudden collapse of an
+          exterior wall.</p>
+          <p>If a front position is unavoidable it must be set back far enough not to be struck by falling
+          walls or debris. The collapse zone is <strong>one and one-half times the height of the tallest
+          exterior wall</strong> &mdash; a 20-foot wall gets 30 feet, the further the better.</p>
+          <p>This governs where you park too: your engine is tied to the truck by LDH, and setup step 3 pushes
+          you to keep that lay short. Short and out of the collapse zone, not short instead of it.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, pp.7-1&ndash;7-2. Two printed slips on
+          7-2 are corrected here without changing the sense: the front-of-building sentence is missing its
+          verb and reads &ldquo;so that is will not be struck&rdquo;, and the deck-gun paragraph below it
+          reads &ldquo;imposed by a narrow streets&rdquo;.</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Safety &mdash; what high flows do to the building</summary><div class="dbody">
+          <p>The first safety consideration the manual raises is not the appliance, it is the building:
+          <strong>higher flows are more likely to knock debris loose and send it through the air into people
+          or apparatus.</strong> An elevated stream is the highest-flow, highest-angle version of that.</p>
+          <p>The second consideration is portable-mode specific &mdash; a portable monitor has a limited
+          side-to-side range and can be tipped over by turning the nozzle too far left or right. It is listed
+          here because the same chapter covers both, not because it applies to an aerial.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.7-1</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Where the engine parks when a truck is coming</summary><div class="dbody">
+          <p>The Engineer of the first arriving engine has to give the Company Officer a sufficient view of
+          the fire building, and generally <strong>leave the front of the building open for the Truck's
+          aerial</strong> if needed. Other spotting considerations are water supply needs, FDC connections,
+          line placement, and fire location and intensity.</p>
+          <p>Positioning the first engine as close as possible to the fire building &ldquo;requires a
+          coordinated effort between the Engineer, the Engine Company Officer, and the first arriving Truck
+          Company for optimal placement.&rdquo; Second arriving engines position so as not to block apparatus
+          movement on the fireground.</p>
+          <p>And when stretching from the apparatus: &ldquo;The apparatus should be positioned so that it will
+          not interfere with Truck Company operations.&rdquo; A hydrant near the fire building may be used only
+          if it allows a rapid stretch <em>and</em> will not interfere with ladder company positioning.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, Ch.1 Firefighter Assignments, pp.1-9, 1-10 and 1-11</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Where the truck parks &mdash; and why it decides the length of your lay</summary><div class="dbody">
+          <p>Setup step 1 sends you to the ladder company for placement. The Truck Manual tells you what they
+          are thinking about. It breaks aerial positioning into four considerations &mdash; uninvolved to
+          involved, corners, inside vs. outside, and pull past / stop short &mdash; and two of them decide how
+          far you will be pumping.</p>
+          <ul>
+            <li><strong>Uninvolved to involved.</strong> The truck spots to create distance between where the
+            fire is and where it is going, which also sets them up &ldquo;to protect uninvolved portions of the
+            building if anticipating using aerial master streams.&rdquo;</li>
+            <li><strong>Inside vs. outside.</strong> An inside spot needs a longer throw. An <strong>outside
+            spot allows Engine companies to position closer to the building underneath the Truck's ladder</strong>
+            &mdash; it gets the waterway out of the way, gives a better climbing angle, and &ldquo;sets us up
+            for aerial master stream operations should the need arise.&rdquo;</li>
+          </ul>
+          <p>That is setup step 3 from the other side of the radio. The truck taking an outside spot is what
+          makes a short LDH lay possible; if they have to go inside, expect the lay &mdash; and the F term
+          &mdash; to grow.</p>
+          <p>The manual's own caution on the &ldquo;the Truck takes the numbers&rdquo; habit applies here too:
+          hose can be extended and ladders cannot, but a poorly positioned truck can delay an arriving engine
+          from laying to the fire.</p>
+          <p class="srcline">2026 OFD Truck Manual v3.1, Section 6 Apparatus Positioning, p.143</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Supply evolution vs attack evolution &mdash; you are running both</summary><div class="dbody">
+          <p>The reverse-lay section defines the two ways LDH is used:</p>
+          <ul>
+            <li><strong>Supply evolution</strong> &mdash; LDH connected between the suction side of the pump
+            and the hydrant.</li>
+            <li><strong>Attack evolution</strong> &mdash; LDH connected between the discharge side of the pump
+            and &ldquo;an appliance or master stream.&rdquo;</li>
+          </ul>
+          <p>Out-of-cab 6 is the supply evolution; out-of-cab 8 is the attack evolution. On a reverse lay the
+          engine sits at the water source and supplements hydrant pressure to the rig in front &mdash; which
+          is one way this evolution gets set up when the truck arrives first.</p>
+          <p>On the forward-lay side the department's rule is &ldquo;5&Prime; LDH first&rdquo;: the connection
+          shall be made using 5&Prime; LDH, and only if that cannot be secured on the hydrant are a minimum of
+          two 3&Prime; hoses connected, one on each side.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.5-9 and Ch.1 Firefighter Assignments, p.1-11</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Getting enough water to an elevated stream</summary><div class="dbody">
+          <p>An elevated master stream is a high-flow load, so the supply question is a real one before you
+          ever set a PDP.</p>
+          <ul>
+            <li><strong>Provide one 5-inch hose line for every 1,000 gpm to be delivered.</strong>
+            <span class="srcline">p.5-5</span></li>
+            <li>A <strong>double 2&frac12;&Prime; hydrant</strong> &mdash; two 2&frac12;&Prime; outlets fed by
+            a 4&Prime; main, no steamer &mdash; should be expected to give <strong>less than 600 gpm</strong>.
+            That will not carry a large tip. <span class="srcline">p.5-4</span></li>
+            <li>A single 5&Prime; line may not flow all of the water available from a hydrant or water main.
+            <span class="srcline">p.5-5</span></li>
+          </ul>
+          <p>When one hydrant is not enough, the manual ranks the tactics from least to best preferred. It
+          introduces them as &ldquo;three basic tactics&rdquo; and then prints four &mdash; all four are
+          reproduced here:</p>
+          <ol>
+            <li>Multiple supply lines from a single hydrant.</li>
+            <li>Pumping the hydrant with the 2nd or 3rd due engine supplying the attack pumper.</li>
+            <li>Multiple supply lines from different hydrants sharing the same water main.</li>
+            <li>Multiple supply lines from different hydrants <em>not</em> sharing the same water main.</li>
+          </ol>
+          <p>If the water is remote, relay pumping applies: a water supply pumper at the source (the largest
+          pumping capacity available), relay pumpers boosting pressure down the line, and the fire attack
+          pumper at the scene supplying the lines and appliances. Orem uses the Constant Pressure Relay method.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, pp.5-4 and 5-5, p.5-13, pp.5-14 and 5-15.
+          The remaining flow bullets printed on 5-5 conflict with 5-4 and are on the error list &mdash; not
+          published here.</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>If the water is far away &mdash; the Constant Pressure Relay, step by step</summary><div class="dbody">
+          <p>Orem uses the <strong>Constant Pressure Relay</strong> method. An elevated stream is exactly the
+          load that forces the question, because the flow you need may be more than one hydrant near the fire
+          can give.</p>
+          <ol>
+            <li>Position the attack pumper.</li>
+            <li>Position the source pumper at the &ldquo;key&rdquo; hydrant.</li>
+            <li>Lay out hose and place relay pumpers at <strong>750-foot intervals</strong>.</li>
+            <li>All pumpers except the source pumper open a discharge to exhaust air from the lines.</li>
+            <li>Source pumper throttles up to <strong>175 psi</strong>.</li>
+            <li>The 1st relay pumper closes its unused discharge once a steady stream flows through it, then
+            throttles up to 175 psi &mdash; and every successive relay pumper follows the same procedure.</li>
+            <li>All driver/operators set their intake relief valves.</li>
+            <li>The attack pumper adjusts PDP to supply the attack lines, maintaining water flow during
+            temporary shutdowns by using one or more discharges as waste or dump lines.</li>
+          </ol>
+          <p>Source and relay pumpers hold <strong>175 psi PDP</strong>; the attack pumper adjusts as needed
+          and dumps excess pressure. That 175 accounts for <strong>20 psi residual pressure for the next
+          pumper in the relay</strong>.</p>
+          <p>The ceiling on the whole operation is the hose layout. Maximum volume at 750 feet:</p>
+          <div class="tablewrap"><table>
+            <thead><tr><th scope="col">Layout</th><th scope="col">One 2&frac12;</th><th scope="col">One 3</th><th scope="col">One 4</th><th scope="col">One 5</th><th scope="col">Two 2&frac12;&rsquo;s</th><th scope="col">One 2&frac12; &amp; one 3</th><th scope="col">Two 3&rsquo;s</th></tr></thead>
+            <tbody>
+              <tr><td>Max flow (gpm)</td><td>321</td><td>508</td><td>1,017</td><td>1,607</td><td>643</td><td>830</td><td>1,017</td></tr>
+            </tbody>
+          </table></div>
+          <p>Read that against the tip you are feeding. A single 5&Prime; relay leg tops out at 1,607 gpm, so a
+          2&Prime; tip at 1,000 gpm fits; a single 3&Prime; leg at 508 gpm does not even carry a
+          1&frac12;&Prime; tip. One mile is 5,280 feet, which is seven 750-foot intervals.</p>
+          <p class="srcline">OFD Hydraulic Manual, Constant Pressure Relay (Limited Max Volume) &mdash;
+          implementing steps, maximum volume table and key positions &middot; Engine Company Operations
+          2023 V-1, p.5-15</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>The changeover &mdash; why the printed order is the order</summary><div class="dbody">
+          <p>Transitioning from tank water to a pressurised external source is its own task with its own nine
+          steps. The ones that bite on this evolution:</p>
+          <ul>
+            <li><strong>Step 1</strong> &mdash; position safely and immobilize: parking brake and
+            <strong>chock the wheels</strong>.</li>
+            <li><strong>Step 6</strong> &mdash; set the relief valve or pressure governor. Sixth of nine,
+            before pressure is put to the line, not last.</li>
+            <li><strong>Step 8</strong> &mdash; when the external supply becomes available, open the intake
+            while closing the tank-to-pump, and divert enough water through the tank-fill line to replenish
+            the tank.</li>
+          </ul>
+          <p>Air in the empty supply hose causes problems if it enters the pump while the pump is supplying
+          lines under pressure &mdash; open the bleeder on the gated intake so air escapes as the line fills,
+          and close it once the air is out. Then open the intake very slowly while watching the intake and
+          discharge gauges. A full tank is a limited reserve if the external supply is lost unexpectedly.</p>
+          <p class="srcline">ADO Task #19 Basic Pump Skills &mdash; Changeover (Transition to an External
+          Water Supply)</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>What the Engineer is expected to know at the panel</summary><div class="dbody">
+          <p>The Engineer &ldquo;must know how many hose lines, size, length, nozzles, and the flow rates of
+          their apparatus (per OFD hydraulic standard)&rdquo; &mdash; which is why the sheet's note about
+          different nozzles and tip sizes on the truck's elevated master stream is a calculation instruction,
+          not a footnote.</p>
+          <p>In order to establish and maintain proper pumping pressures, all Engineers must know how many
+          hoselines, the size and length of the hoseline, the type of nozzles being used, and their flow. They
+          must listen closely to the radio at all times for traffic concerning charging, shutting down or
+          adjusting hose line pressures, and monitor the residual pressure of the pump master intake gauge to
+          determine the capability of supplying additional volumes.</p>
+          <p>The Engineer's suppression duties are listed as water supply, pump operations, and observing the
+          condition of all hoselines stretched &mdash; and the Engineer must recognise the need for and
+          initiate supply line operations when required.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, Ch.1 Firefighter Assignments, pp.1-8, 1-9 and 1-11</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Who else is doing what &mdash; the assignment picture</summary><div class="dbody">
+          <p>On residential, mid-rise and commercial alike the 1st Truck Company positions to cover side
+          Alpha. The 2nd Truck Company covers side Charlie &mdash; &ldquo;when possible&rdquo; on residential,
+          stated without that qualifier on mid-rise and commercial. On a mid-rise, ladder drivers remain with
+          the rig to set the aerial device and work with other ladder drivers or crew on exterior operations,
+          ventilation and utility control.</p>
+          <p>On the engine side the 2nd Engine Company completes water supply and pumps the hydrant for the
+          1st engine if needed; on commercial the 4th engine initiates a 2nd water supply on a
+          &ldquo;working fire&rdquo;. If you are the one pumping the truck, know which engine owes you the
+          hydrant.</p>
+          <p class="srcline">OFD Quick Reference Guide for Initial Company Operations, May 2024. The guide
+          states it is a quick reference and does not replace the full manuals.</p>
+        </div></details>
+      </div>
+    </section>
+
+  </div><!-- /sheet -->
+
+  <nav class="pagenav" aria-label="Evolutions">
+    <a data-nav="evo18" href="evo-1-8.html">&larr; Evolution 1.8 &mdash; Pumping a hydrant as the attack pumper</a>
+    <a data-nav="evo20" href="evo-2-0.html">Evolution 2.0 &mdash; Foam operations with Pro/Pak &rarr;</a>
+  </nav>
+
+  <div class="docfoot">
+    <p><strong>Sources.</strong> ADO-Pumper Task Book, Evolution 1.9 (September 2024 version) &mdash;
+    objective, setup, in-cab and out-of-cab steps verbatim with the printed numbering, including the Engine 34
+    pump shift block and the manual-relief-valve rigs. Steps marked &ldquo;+&rdquo; and the master-stream
+    order are merged in from
+    <a href="engine-flow.html">Engine Evolution</a>
+    per my 2026-08-30 review. Manual material: Engine Company Operations 2023 V-1 &mdash; Chapter 7 (Master
+    Stream Operations, pp.7-1 to 7-6), Chapter 5 (Water Supply, pp.5-4 to 5-15) and Chapter 1 (Firefighter
+    Assignments, pp.1-8 to 1-11); 2026 OFD Truck Manual v3.1 Section 6 (Apparatus Positioning, p.143);
+    ADO Task #19 (Changeover); OFD Quick Reference Guide, May 2024; OFD Hydraulic Manual for every figure in
+    The numbers. Engine Company Operations and the Truck Manual are cited by the page number printed in each
+    manual's own footer &mdash; per chapter in Engine Ops (7-1, 5-9), continuous in the Truck Manual.</p>
+    <p>Version: prototype &middot; Last reviewed 2026-08-30</p>
+  </div>
+
+</div>
+
+<details class="secmenu" id="secMenu">
+  <summary aria-label="Open sections menu">Sections</summary>
+  <nav class="secpanel" aria-label="Jump to section">
+    <a class="swtr" href="#incab">In-cab operations</a>
+    <a class="ssup" href="#outcab">Out-of-cab operations</a>
+    <a class="smst" href="#master">Master stream</a>
+    <a class="sfom" href="#numbers">The numbers</a>
+    <a class="sdig" href="#manual">The manual</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  // night mode
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // modes — page-unique storage key
+  var KEY='evo19';
+  var refBtn=document.getElementById('refBtn'),checkBtn=document.getElementById('checkBtn');
+  var resetBtn=document.getElementById('resetBtn'),prog=document.getElementById('progress');
+  var boxes=[].slice.call(document.querySelectorAll('.tick input'));
+  function setMode(m){
+    document.body.classList.toggle('checkoff',m==='check');
+    refBtn.setAttribute('aria-pressed',m==='ref');
+    checkBtn.setAttribute('aria-pressed',m==='check');
+    sessionStorage.setItem(KEY+'-mode',m);
+    update();
+  }
+  refBtn.addEventListener('click',function(){setMode('ref')});
+  checkBtn.addEventListener('click',function(){setMode('check')});
+  function update(){
+    var done=0;
+    boxes.forEach(function(b){
+      b.closest('.step').classList.toggle('done',b.checked);
+      if(b.checked)done++;
+    });
+    prog.textContent=done+' / '+boxes.length+' done';
+  }
+  boxes.forEach(function(b,i){
+    b.checked=sessionStorage.getItem(KEY+'-s'+i)==='1';
+    b.addEventListener('change',function(){
+      sessionStorage.setItem(KEY+'-s'+i,b.checked?'1':'0');update();
+    });
+  });
+  resetBtn.addEventListener('click',function(){
+    boxes.forEach(function(b,i){b.checked=false;sessionStorage.removeItem(KEY+'-s'+i)});update();
+  });
+  setMode(sessionStorage.getItem(KEY+'-mode')||'ref');
+
+  // floating Sections menu — close on link tap (works without JS too; this is a nicety)
+  var menu=document.getElementById('secMenu');
+  if(menu){
+    [].slice.call(menu.querySelectorAll('a')).forEach(function(a){
+      a.addEventListener('click',function(){menu.removeAttribute('open')});
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

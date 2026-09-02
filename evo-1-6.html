@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Evolution 1.6 — Standpipe Supply</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+/* ============================================================
+   Field-instrument system · same tokens as engine-flow.html
+   (rev 2026-08-30 — section colour identities, floating mobile
+   Sections menu). Official evolution page: Evolution 1.6.
+   Production note: self-host WOFF2 for offline use.
+   ============================================================ */
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  /* section palette — muted, one identity per phase */
+  --c-pos:#3D5A80;  --c-pos-t:#E9EEF5;
+  --c-wtr:#0F6F78;  --c-wtr-t:#DFEEEF;
+  --c-sup:#5B4E9E;  --c-sup-t:#ECE9F6;
+  --c-mst:#7C3F87;  --c-mst-t:#F4E9F5;
+  --c-fom:#2F7D4F;  --c-fom-t:#E4F2E9;
+  --c-dig:#8A6116;  --c-dig-t:#F6EEDC;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --c-pos:#9FBCDF; --c-pos-t:#18232F;
+    --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+    --c-sup:#B7ADE9; --c-sup-t:#231E38;
+    --c-mst:#D9A2DB; --c-mst-t:#301D33;
+    --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+    --c-dig:#DFBC77; --c-dig-t:#332A15;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --c-pos:#9FBCDF; --c-pos-t:#18232F;
+  --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+  --c-sup:#B7ADE9; --c-sup-t:#231E38;
+  --c-mst:#D9A2DB; --c-mst-t:#301D33;
+  --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+  --c-dig:#DFBC77; --c-dig-t:#332A15;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2)}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:18px 0 8px}
+.kicker{font-family:var(--head);font-weight:700;font-size:14px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1.1;
+  margin:0 0 10px;text-wrap:balance}
+.objective{font-size:19px;line-height:1.45;color:var(--text);margin:0;max-width:64ch}
+.objective strong{font-family:var(--head)}
+
+/* mode bar */
+.modebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0 6px}
+.mode{display:flex;border:1.5px solid var(--divider);border-radius:12px;overflow:hidden;background:var(--surface)}
+.mode button{min-height:56px;min-width:120px;padding:0 20px;border:0;background:transparent;
+  font-weight:700;font-size:16px;color:var(--text2)}
+.mode button[aria-pressed="true"]{background:var(--accent-tint);color:var(--text)}
+#resetBtn{min-height:56px;padding:0 18px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);font-weight:600;font-size:15px;color:var(--text2);display:none}
+body.checkoff #resetBtn{display:inline-block}
+.progress{font-size:15px;color:var(--text2);display:none;font-variant-numeric:tabular-nums}
+body.checkoff .progress{display:inline}
+
+/* jump to phase — sticky on wide screens */
+.jump{position:sticky;top:0;z-index:10;background:var(--canvas);padding:10px 0;
+  display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--divider)}
+.jump a{min-height:44px;display:inline-flex;align-items:center;padding:6px 14px;
+  border:1.5px solid var(--divider);border-radius:999px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:14.5px}
+.jump a:hover{border-color:var(--accent)}
+
+/* floating Sections menu — mobile only; <details> so it works with JS off */
+.secmenu{display:none}
+@media (max-width:640px){
+  .jump{display:none}
+  .secmenu{display:block;position:fixed;right:16px;bottom:16px;z-index:40}
+  .secmenu > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+    min-height:56px;min-width:56px;padding:0 22px;border:1.5px solid var(--divider);border-radius:999px;
+    background:var(--surface);color:var(--text);font-family:var(--head);font-weight:700;font-size:16px;
+    cursor:pointer;box-shadow:0 4px 14px rgba(10,30,28,.22)}
+  .secmenu > summary::-webkit-details-marker{display:none}
+  .secmenu[open] > summary{border-color:var(--accent);color:var(--accent)}
+  .secpanel{position:absolute;bottom:calc(100% + 10px);right:0;min-width:230px;
+    background:var(--surface);border:1.5px solid var(--divider);border-radius:14px;
+    box-shadow:0 8px 24px rgba(10,30,28,.25);padding:8px;display:grid;gap:2px}
+  .secpanel a{display:flex;align-items:center;min-height:48px;padding:6px 14px;border-radius:10px;
+    text-decoration:none;color:var(--text);font-weight:600;font-size:16px;border-left:5px solid transparent}
+  .secpanel a.sdig{border-left-color:var(--c-dig)}
+  .secpanel a.spos{border-left-color:var(--c-pos)}
+  .secpanel a.swtr{border-left-color:var(--c-wtr)}
+  .secpanel a.smst{border-left-color:var(--c-mst)}
+  .secpanel a.ssup{border-left-color:var(--c-sup)}
+}
+
+/* the one procedure surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:18px;overflow:hidden}
+
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:18px 24px 4px;scroll-margin-top:70px}
+
+/* section colour identities — tinted ground + matching header accent,
+   never colour alone: every tint is paired with its coloured heading + left rule */
+.phase.cdig{background:var(--c-dig-t);border-left:6px solid var(--c-dig)}
+.phase.cdig > h2{color:var(--c-dig)}
+.phase.cpos{background:var(--c-pos-t);border-left:6px solid var(--c-pos)}
+.phase.cpos > h2{color:var(--c-pos)}
+.phase.cwtr{background:var(--c-wtr-t);border-left:6px solid var(--c-wtr)}
+.phase.cwtr > h2{color:var(--c-wtr)}
+.phase.cmst{background:var(--c-mst-t);border-left:6px solid var(--c-mst)}
+.phase.cmst > h2{color:var(--c-mst)}
+
+.step{display:flex;align-items:flex-start;gap:16px;padding:16px 24px;min-height:76px;
+  border-top:1px solid var(--divider)}
+.step[id]{scroll-margin-top:70px}
+.phase > h2 + .step{border-top:0}
+.stepnum{font-family:var(--head);font-weight:700;font-size:36px;line-height:1;color:var(--text2);
+  min-width:56px;font-variant-numeric:tabular-nums;padding-top:2px}
+.stepnum.sub{font-size:22px;padding-top:10px}
+.stepbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:21px;line-height:1.35;margin:0}
+.subaction{font-weight:600;font-size:18px;line-height:1.35;margin:0;font-style:italic}
+.stepsrc{font-size:14px;color:var(--text2);margin:6px 0 0;max-width:62ch}
+
+/* setup prose rows */
+.setrow{padding:14px 24px;border-top:1px solid var(--divider)}
+.phase > h2 + .setrow{border-top:0}
+.setrow p{margin:0;max-width:64ch;font-size:18px}
+.setrow p + p{margin-top:8px}
+.drill{display:flex;align-items:baseline;gap:14px;margin-top:10px;flex-wrap:wrap}
+.drill .dname{font-family:var(--head);font-weight:800;font-size:15px;letter-spacing:.04em;
+  color:var(--c-dig);min-width:9ch}
+.drill .dval{font-size:18px;font-weight:600}
+
+/* small attached Orem tag on a line */
+.oretag{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;max-width:100%;
+  margin-top:8px;margin-right:8px;
+  font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.02em;
+  color:var(--accent);background:var(--accent-tint);border-radius:8px;padding:5px 10px}
+
+/* rig-note sub-block inside a phase (Engine 34 pump shift) */
+.rignote{margin:8px 24px 16px;border:1.5px dashed var(--divider);border-radius:12px;
+  background:var(--surface);padding:12px 16px}
+.rignote .rigrow{display:flex;gap:10px;align-items:baseline;padding:4px 0}
+.rignote .rignum{font-family:var(--head);font-weight:700;font-size:18px;color:var(--text2);min-width:26px;
+  font-variant-numeric:tabular-nums}
+.rignote .action{font-size:18px}
+
+/* small plain note attached to a step */
+.plainnote{margin:8px 0 0;font-size:15px;color:var(--text2);max-width:62ch}
+
+/* check-off */
+.tick{display:none;flex:0 0 auto;padding-top:2px}
+body.checkoff .tick{display:block}
+.tick input{width:32px;height:32px;margin:12px;accent-color:var(--accent);cursor:pointer}
+body.checkoff .step.done .action,body.checkoff .step.done .subaction{color:var(--text2)}
+body.checkoff .step.done .stepnum{color:var(--accent)}
+
+/* disclosures — one per step, labeled by content */
+details.disc{margin-top:8px}
+details.disc > summary{list-style:none;display:inline-flex;align-items:center;min-height:44px;
+  padding:6px 14px;border:1.5px solid var(--divider);border-radius:10px;color:var(--accent);
+  font-weight:600;font-size:15px;cursor:pointer;background:transparent}
+details.disc > summary::-webkit-details-marker{display:none}
+details.disc > summary::after{content:"▾";margin-left:8px;font-size:12px;transition:transform .15s}
+details.disc[open] > summary::after{transform:rotate(180deg)}
+details.disc > .dbody{background:var(--expanded);border-radius:12px;padding:14px 18px;margin-top:8px;
+  font-size:16px}
+details.disc > .dbody p{margin:0 0 10px;max-width:64ch}
+details.disc > .dbody p:last-child{margin:0}
+.srcline{font-size:14px;color:var(--text2)}
+blockquote{margin:0 0 10px;padding:0 0 0 14px;border-left:3px solid var(--accent);color:var(--text)}
+
+/* closing note — the 20 psi line from the card */
+.noterow{border-top:1px solid var(--divider);display:flex;align-items:flex-start;gap:16px;
+  padding:18px 24px;background:var(--accent-tint)}
+.noterow .bignum{font-family:var(--head);font-weight:800;font-size:38px;line-height:1;
+  color:var(--accent);min-width:56px;font-variant-numeric:tabular-nums;padding-top:2px}
+.noterow .action{font-size:21px}
+.noterow .why{font-size:16px;color:var(--text2);margin:6px 0 0;max-width:60ch}
+
+/* the manual library — clearly-headed drop-down blocks */
+.library{margin-top:22px;background:var(--c-sup-t);border:1px solid var(--divider);
+  border-left:6px solid var(--c-sup);border-radius:16px;overflow:hidden}
+.library > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--c-sup);margin:0;padding:18px 24px 4px;scroll-margin-top:70px}
+.library > p.libintro{margin:4px 24px 12px;max-width:66ch;font-size:16px;color:var(--text2)}
+details.lib{border-top:1px solid var(--divider)}
+details.lib > summary{list-style:none;display:flex;align-items:center;gap:12px;min-height:64px;
+  padding:12px 24px;cursor:pointer;font-family:var(--head);font-weight:700;font-size:18px}
+details.lib > summary::-webkit-details-marker{display:none}
+details.lib > summary::after{content:"▾";margin-left:auto;font-size:14px;color:var(--c-sup);
+  transition:transform .15s}
+details.lib[open] > summary::after{transform:rotate(180deg)}
+details.lib > .dbody{background:var(--surface);padding:16px 24px 20px;font-size:16.5px}
+details.lib > .dbody p{margin:0 0 12px;max-width:66ch}
+details.lib > .dbody ul{margin:0 0 12px;padding-left:22px;max-width:64ch}
+details.lib > .dbody li{margin:0 0 6px}
+details.lib > .dbody p:last-child,details.lib > .dbody ul:last-child{margin-bottom:0}
+
+/* wide content never widens the page — it scrolls inside its own box */
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 12px;
+  border:1px solid var(--divider);border-radius:10px;background:var(--surface)}
+table.calc{border-collapse:collapse;width:100%;min-width:430px;font-size:15.5px}
+table.calc th,table.calc td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--divider);
+  vertical-align:top}
+table.calc thead th{font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--text2)}
+table.calc tr:last-child td{border-bottom:0}
+table.calc td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}
+table.calc tr.total td{font-weight:700;border-top:2px solid var(--c-sup)}
+
+/* footer evolution nav */
+.evonav{display:flex;justify-content:space-between;gap:12px;margin-top:26px;flex-wrap:wrap}
+.evonav a{min-height:48px;display:inline-flex;align-items:center;flex-wrap:wrap;padding:10px 18px;
+  border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:15.5px}
+.evonav a:hover{border-color:var(--accent)}
+
+.docfoot{margin-top:26px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+@media (max-width:640px){
+  .wrap{padding-bottom:110px} /* clear the floating Sections button */
+}
+@media (max-width:560px){
+  .step{padding:14px 16px;gap:12px}
+  .stepnum{font-size:30px;min-width:44px}
+  .action{font-size:19px}
+  .phase > h2,.setrow,.noterow{padding-left:16px;padding-right:16px}
+  .rignote{margin-left:16px;margin-right:16px}
+  .library > h2,.library > p.libintro{padding-left:16px;padding-right:16px}
+  details.lib > summary,details.lib > .dbody{padding-left:16px;padding-right:16px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.modebar,.jump,.nightbtn,.secmenu,.evonav{display:none}
+  .sheet,.library{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  /* a step never splits; a long phase may break between steps */
+  .step,.setrow,.rignote,.noterow{break-inside:avoid;min-height:0}
+  .step,.setrow{padding:8px 12px}
+  .phase{break-inside:auto;background:#fff!important;border-left:none}
+  .phase.cdig,.phase.cpos,.phase.cwtr,.phase.cmst{border-left:6px solid #000}
+  .phase > h2{color:#000!important;break-after:avoid;break-inside:avoid}
+  .sheet{overflow:visible}
+  /* the drop-down library is screen reading, not a field print-out */
+  .library,.screenonly{display:none}
+  .rignote{border:1px dashed #000}
+  .plainnote,.stepsrc{color:#000}
+  .tick{display:block}
+  .tick input{width:14pt;height:14pt;margin:2pt 8pt}
+  details.disc{display:none}
+  .oretag{background:#fff;border:1px solid #000;color:#000}
+  .noterow{background:#fff;border-top:2px solid #000}
+  .noterow .bignum{color:#000}
+  .stepnum{color:#000;font-size:16pt;min-width:30pt}
+  .action{font-size:12pt}
+}
+/* FAB clearance — the floating Sections button must never cover the last content */
+@media (max-width:640px){ .wrap{ padding-bottom:132px } }
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="ehome" href="engine-home.html">Engine Operations</a><span>›</span>Evolution 1.6</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <p class="kicker">Official evolution · ADO-Pumper Task Book · September 2024</p>
+    <h1>Evolution 1.6 — Utilize a standpipe to charge lines on a multi-story structure</h1>
+    <p class="objective"><strong>Objective:</strong> Supply water to the 2.5&Prime; initial attack line on a
+    multi-story building through the standpipe system.</p>
+  </header>
+
+  <div class="modebar">
+    <div class="mode" role="group" aria-label="Sheet mode">
+      <button type="button" id="refBtn" aria-pressed="true">Reference</button>
+      <button type="button" id="checkBtn" aria-pressed="false">Check-off</button>
+    </div>
+    <button type="button" id="resetBtn">Reset all</button>
+    <span class="progress" id="progress"></span>
+  </div>
+
+  <div class="sheet">
+
+    
+
+    <section class="phase cpos" aria-labelledby="incab">
+      <h2 id="incab">In-Cab Operations</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: right foot on brake"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">Right foot on brake</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set parking brake"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">Set parking brake</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift transmission to neutral"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">Shift transmission to neutral</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift from road to pump"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">Shift from road to pump (engage the pump shift control lever)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: pump engaged light is on"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">Pump engaged light is on</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift transmission to Drive"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">Shift transmission to Drive (D)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: OK TO PUMP light is on"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">OK TO PUMP light is on</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: speedometer registers about 15 mph"></span>
+        <span class="stepnum sub">7a</span>
+        <div class="stepbody"><p class="subaction">Speedometer registers about 15 mph</p></div>
+      </div>
+      <div class="rignote">
+        <span class="oretag">Orem rigs: Engine 34 only</span>
+        <p class="plainnote" style="margin-top:6px"><strong>Engine 34 pump shift operations</strong> &mdash; on
+        Engine 34 the pump shift runs this sub-sequence instead of the lever shift above. Printed on the
+        task-book sheet as its own five-step block.</p>
+        <div class="rigrow"><span class="rignum">1</span><p class="action">Right foot on brake</p></div>
+        <div class="rigrow"><span class="rignum">2</span><p class="action">Neutral</p></div>
+        <div class="rigrow"><span class="rignum">3</span><p class="action">Park brake</p></div>
+        <div class="rigrow"><span class="rignum">4</span><p class="action">Engage &ldquo;water pump&rdquo; switch</p></div>
+        <div class="rigrow"><span class="rignum">5</span><p class="action">Green light indicator on</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: emergency and warning lights are on"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">Emergency/warning lights are on</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: change radio to correct channel"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">Change radio to correct channel</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: remove right foot from brake"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">Remove right foot from brake</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: apparatus does not move"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">Apparatus does not move</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: exit cab after looking both directions"></span>
+        <span class="stepnum">12</span>
+        <div class="stepbody"><p class="action">Exit cab after looking both directions</p></div>
+      </div>
+    </section>
+
+    <section class="phase cwtr" aria-labelledby="outcab">
+      <h2 id="outcab">Out-Of-Cab Operations</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: verify pump is engaged"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">Verify pump is engaged</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open tank to pump"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">Open Tank to Pump</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: crack re-circulating tank fill valve"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">Crack re-circulating/tank fill valve</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set to PSI mode"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">Set to PSI mode</p>
+          <span class="oretag">PSI/RPM mode: Engine 34 only</span>
+          <p class="plainnote">PSI/RPM button mode is a Pierce PUC control. At Orem that is Engine 34 &mdash;
+          the other pumps have no PSI mode, so on those rigs the pressure is set at the pressure governor
+          instead. The task book&rsquo;s PSI mode and the changeover task&rsquo;s transfer valve are two
+          different controls, not two names for one action.</p>
+          <p class="stepsrc">Engineer Jason Anderson, 2026-08-29 &mdash; rig-specific controls ruling.</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: prime pump if necessary"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">Prime Pump (if necessary)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set wheel chocks"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">Set wheel chocks</p>
+          <details class="disc"><summary>Why &amp; source</summary><div class="dbody">
+            <blockquote>&ldquo;Position the apparatus in a safe positon, and immobilize it by setting the
+            parking brake and chocking the wheels.&rdquo;</blockquote>
+            <p>Evolution 1.6 prints the chock step. Some other evolution sheets omit it; where they do, the
+            step is added to match this one.</p>
+            <p class="srcline">ADO Task #19 Basic Pump Skills-Changeover &mdash; Operating Procedure, Step 1</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: attach one 3 inch supply hose to building standpipe system"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">Attach one 3&Prime; supply hose to building standpipe system</p>
+          <details class="disc"><summary>Why 3&Prime;</summary><div class="dbody">
+            <blockquote>&ldquo;3&Prime; hose should be used to supply all standpipe systems.&rdquo;</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, 6-16 — Supplying Standpipe Systems</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: break line and attach to engine discharge port"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">Break line and attach to Engine discharge port</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: introduce hydrant and verbalize water supply established"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">Introduce hydrant and verbalize water supply established</p>
+          <p class="subaction">OPEN SUPPLY INTAKE SLOWLY (MONITOR GAUGES)</p>
+          <details class="disc"><summary>Opening the intake &mdash; bleeder first, then very slowly</summary><div class="dbody">
+            <blockquote>&ldquo;Air in the empty supply hose will cause problems if it enters the pump while
+            the pump is supplying attack lines under pressure. To purge this air, open the bleeder valve on
+            the gated intake line so that the air can escape as the supply line fills with water. When all
+            the air has been forced from the line, close the bleeder valve.&rdquo;</blockquote>
+            <blockquote>&ldquo;To begin the transition, the operator opens the intake valve from the supply
+            line very slowly while observing the pressure on the intake and discharge gauges. Start opening
+            intake valve and adjusting the discharge pressure until the intake is completely open.&rdquo;</blockquote>
+            <p class="srcline">ADO Task #19 Basic Pump Skills-Changeover &mdash; Transition to an External
+            Water Supply. The step above is from Engineer Jason Anderson&rsquo;s engine evolution.</p>
+          </div></details>
+          <details class="disc"><summary>Relief-valve pre-set before hydrant water</summary><div class="dbody">
+            <blockquote>&ldquo;Set the Discharge Relief Valve to about 150, rev up psi to 150 while gating
+            down the handlines to make sure they stay at the set pdp for them. then when i introduce hydrant
+            water there isnt as much of a pressure spike and the discharge relief valve will catch any extra.
+            then after hydrant is fully opened i can throttle back down.&rdquo;</blockquote>
+            <p class="srcline">Engineer Jason Anderson, 2026-08-30 &mdash; the full sequence lives in
+            <a data-nav="eflow" href="engine-flow.html">Engine Evolution</a>, Establish supply</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: close the tank to pump valve"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">Close the tank to pump valve</p>
+          <details class="disc"><summary>Leave the tank fill open until the tank is back</summary><div class="dbody">
+            <blockquote>&ldquo;After the intake valve is opened, the tank-to-pump valve can be closed.
+            However, the (tank-fill) valve should be left partially open until the water tank has been
+            refilled. Note: A full tank provides a limited reserve water supply in the event that the
+            external water supply is lost unexpectedly.&rdquo;</blockquote>
+            <p>The re-circulating/tank fill valve cracked at out-of-cab step 3 does this job once hydrant
+            water is in. The printed 1.6 sheet carries no separate refill step &mdash; the tank comes back
+            through step 3.</p>
+            <p class="srcline">ADO Task #19 Basic Pump Skills-Changeover &mdash; Transition to an External
+            Water Supply</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: mark or note intake gauge"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">Mark or note intake gauge</p>
+          <p class="subaction">*NOTE STATIC HYDRANT PRESSURE*</p>
+          <details class="disc"><summary>Why note it</summary><div class="dbody">
+            <p>USE 1ST DIGIT METHOD TO DETERMINE ADDITIONAL LIKE VOLUMES REMAINING.</p>
+            <p class="srcline">Engineer Jason Anderson&rsquo;s engine evolution &mdash; see
+            <a data-nav="eflow" href="engine-flow.html">My
+            Engine Evolution</a></p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step" id="pdp"><span class="tick"><input type="checkbox" aria-label="Done: charge standpipe system to correct PDP"></span>
+        <span class="stepnum">12</span>
+        <div class="stepbody"><p class="action">Charge standpipe system to correct PDP. (FL+Elevation+Appliance+NP)</p>
+          <details class="disc"><summary>Elevation — to the nozzle floor</summary><div class="dbody">
+            <blockquote>&ldquo;Wherever the nozzle is. 5 psi per floor.&rdquo;</blockquote>
+            <p>Elevation is calculated to <strong>the floor the nozzle is on</strong>, not the hookup floor:
+            5 psi per floor, minus the first floor. Applying the sheet&rsquo;s own rule to its drills —
+            third floor: 5 &times; (3&minus;1) = <strong>10 psi</strong>. Fourth floor:
+            5 &times; (4&minus;1) = <strong>15 psi</strong>.</p>
+            <p class="srcline">Engineer Jason Anderson, 2026-08-30 &middot; elevation rule as printed on
+            the Evolution 1.6 setup. On a standpipe with a known pressure reducing valve the elevation term
+            is based on the total height of the standpipe instead &mdash; OFD Hydraulic Manual, appliance
+            loss &sect;2.c.</p>
+          </div></details>
+          <details class="disc"><summary>Appliance — 25 psi for the standpipe</summary><div class="dbody">
+            <p>The printed setup allows <strong>25 psi appliance loss for the standpipe</strong>. It sits in
+            the PDP alongside friction loss in all the hose, elevation, and nozzle pressure.</p>
+            <p class="srcline">ADO-Pumper Task Book, Evolution 1.6 setup &mdash; September 2024</p>
+          </div></details>
+          <p class="plainnote screenonly">The whole calculation &mdash; friction loss numbers, both drills worked out
+          end to end &mdash; is in <a href="#library">what the manual teaches</a>, below.</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: stretch second 3 inch standpipe supply line"></span>
+        <span class="stepnum">13</span>
+        <div class="stepbody"><p class="action">Stretch second 3&Prime; standpipe supply line</p>
+          <details class="disc"><summary>Why a second line</summary><div class="dbody">
+            <blockquote>&ldquo;It is important to provide an independent and a redundant water supply&hellip;
+            This ensures that firefighters advancing hoselines will have an uninterrupted supply of water
+            should a pumper suffer a mechanical failure or the FDC supplies only a single stairwell
+            riser.&rdquo;</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, 6-16 — Supplying Standpipe Systems</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: adjust pressure as needed"></span>
+        <span class="stepnum">14</span>
+        <div class="stepbody"><p class="action">Adjust pressure is needed.</p>
+          <p class="stepsrc">As printed on the task-book sheet.</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set manual discharge relief valve"></span>
+        <span class="stepnum">15</span>
+        <div class="stepbody"><p class="action"><strong>Set manual discharge relief valve</strong></p>
+          <span class="oretag">Manual valve: Engine 31 &middot; Engine 3820 &middot; Ladder 32</span>
+          <p class="plainnote">Printed last on the sheet. The changeover task sets it earlier &mdash; before
+          pressure is put to the line, not after &mdash; which is why the pre-set sits at step 9 above.</p>
+          <details class="disc"><summary>Where the changeover task puts it</summary><div class="dbody">
+            <blockquote>&ldquo;Step 5: Increase the throttle setting to obtain the desired pressure, priming
+            (if necessary). Step 6: Set the relief valve or pressure governor. Step 7: Open the circulator
+            valve or partially open the tank fill valve. Step 8: When an external supply becomes available,
+            open the intake valve while closing the tank-to-pump valve&hellip;&rdquo;</blockquote>
+            <p class="srcline">ADO Task #19 Basic Pump Skills-Changeover &mdash; Operating Procedure,
+            Steps 5&ndash;8</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+    <div class="noterow">
+      <span class="bignum">20</span>
+      <div class="stepbody">
+        <p class="action">Maintain 20 PSI intake pressure</p>
+        <p class="why">20 psi minimum protects from drawing a vacuum on the intake hose.
+        &mdash; Engineer Jason Anderson&rsquo;s engine evolution.</p>
+      </div>
+    </div>
+
+  </div><!-- /sheet -->
+
+  <section class="library" aria-labelledby="library">
+    <h2 id="library">WHAT THE MANUAL TEACHES ABOUT STANDPIPES</h2>
+    <p class="libintro">What Engine Company Operations Chapter 6 and the OFD Hydraulic Manual say about
+    the system you are pumping into, and about the pressure you owe it. Open what you need.</p>
+
+    <details class="lib"><summary>The pressure you owe the standpipe &mdash; F + E + A + N</summary><div class="dbody">
+      <p><strong>PDP = F + E + A + N.</strong> Start at the nozzle and work back to the pump. <strong>F</strong>
+      repeats for every additional line or hose segment in the layout; <strong>N</strong> is counted exactly
+      once &mdash; nozzle pressure is a component of PDP, not a component of friction loss.</p>
+      <ul>
+        <li><strong>F &mdash; friction loss.</strong> Standard per 100&#8242;: <strong>2&frac12;&Prime; at
+        265 GPM = 16 psi</strong> by the field method (14 psi by C&middot;Q&sup2;&middot;L);
+        <strong>3&Prime; at 300 GPM = 9 psi</strong> field (7.2 by C&middot;Q&sup2;&middot;L). Coefficients:
+        2&frac12;&Prime; = 2, 3&Prime; = 0.8. Field method for 2&frac12;&Prime; in the 100&ndash;300 GPM
+        range: take the first two digits of the GPM and subtract 10 (265 &rarr; 26 &minus; 10 = 16).</li>
+        <li><strong>E &mdash; elevation.</strong> Structural: <strong>5 psi per floor, minus the first
+        floor.</strong> Computed to the floor <em>the nozzle is on</em>, not the hookup floor. A sub-level is
+        a gain and is subtracted. <strong>Exception:</strong> on a standpipe with a known pressure reducing
+        valve, elevation is based on the <strong>total height of the standpipe</strong>.</li>
+        <li><strong>A &mdash; appliance.</strong> The standpipe is a large appliance: <strong>25 psi
+        regardless of flow.</strong> That is the same 25 psi the printed 1.6 setup allows.</li>
+        <li><strong>N &mdash; nozzle pressure.</strong> The 1&#8539;&Prime; smooth bore in the high-rise
+        shut-off flows <strong>265 GPM at 50 psi</strong> &mdash; the flow both 1.6 drills are written to.</li>
+      </ul>
+      <p><strong>Do not carry the 150 over.</strong> The 150 psi pumped into a sprinkler FDC is its own rule,
+      outside this math. A standpipe is calculated normally, with its own 25 psi appliance allowance.</p>
+      <p class="srcline">OFD Hydraulic Manual &mdash; Calculating Pump Discharge Pressure &sect;2 (FL / EL /
+      AL), Friction Loss Standard per 100&#8242; table, hose coefficient table, smooth-bore tip table ·
+      Engine Company Operations 2023 V-1, 6-6 (high-rise nozzle) and 6-14 (1&#8539;&Prime; at 50 psi
+      nozzle pressure). Nozzle pressure counted once, and elevation computed to the nozzle floor, per
+      Engineer Jason Anderson&rsquo;s 2026-08-29 and 2026-08-30 rulings.</p>
+    </div></details>
+
+    <details class="lib"><summary>The two printed drills, worked out</summary><div class="dbody">
+      <p>Every figure below is either printed on the 1.6 sheet or comes from the manual numbers in the block
+      above. Nothing is estimated.</p>
+      <div class="tscroll">
+        <table class="calc">
+          <thead><tr><th>Term</th>
+            <th>Drill 1 &mdash; 3rd floor<br>150&#8242; of 2&frac12;&Prime;, 265 GPM</th>
+            <th>Drill 2 &mdash; 4th floor<br>200&#8242; of 2&frac12;&Prime;, 265 GPM</th></tr></thead>
+          <tbody>
+            <tr><td>F &mdash; attack line</td><td class="num">16 &times; 1.5 = 24 psi</td><td class="num">16 &times; 2 = 32 psi</td></tr>
+            <tr><td>E &mdash; elevation to the nozzle floor</td><td class="num">5 &times; (3&minus;1) = 10 psi</td><td class="num">5 &times; (4&minus;1) = 15 psi</td></tr>
+            <tr><td>A &mdash; standpipe</td><td class="num">25 psi</td><td class="num">25 psi</td></tr>
+            <tr><td>N &mdash; 1&#8539;&Prime; smooth bore</td><td class="num">50 psi</td><td class="num">50 psi</td></tr>
+            <tr class="total"><td>Pressure the standpipe needs</td><td class="num">109 psi</td><td class="num">122 psi</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Then add the friction loss in your own supply lines.</strong> The sheet does not give a
+      length for the two 3&Prime; lines from the pump to the building connection, so that F term comes from
+      the lay you actually made. The totals above are what has to arrive <em>at the standpipe</em>.</p>
+      <p><strong>If the building has a known pressure reducing valve</strong>, the elevation term is not
+      5 psi per fire floor &mdash; it is based on the total height of the standpipe.</p>
+      <p class="srcline">Drill figures: ADO-Pumper Task Book, Evolution 1.6 setup, September 2024 ·
+      pressures: OFD Hydraulic Manual as cited above.</p>
+    </div></details>
+
+    <details class="lib"><summary>Standpipe assignments &mdash; whose job this evolution is</summary><div class="dbody">
+      <p>This evolution is the <strong>second arriving Engine&rsquo;s</strong> work on a first alarm. The
+      manual&rsquo;s assignment sheet gives the engineer the task by name:</p>
+      <blockquote>&ldquo;The Engineer shall establish the initial standpipe system and/or support a
+      combination system with primary connections. After securing a water supply, the Engineer should
+      proceed to the standpipe and/or combination system connection, make the connections, and begin
+      pumping operations.&rdquo;</blockquote>
+      <p>The rest of that crew is not standing by: the Back-up, Tailboard and Nozzle Firefighters
+      <strong>assist the engineer with the water supply and the standpipe connections</strong> before the
+      Back-up and Nozzle Firefighters go up with packs and tools. All equipment from the second engine is
+      placed outside the stairwell two floors below the fire, and the company then assists the first engine
+      with advancing the first line.</p>
+      <p>On the <strong>first</strong> engine the engineer does not stay at the pump panel &mdash; that
+      engineer takes the high-rise bag and pack and goes with the company to the standpipe outlet one floor
+      below the fire floor. Which is why the standpipe gets pumped by the second engine.</p>
+      <p>The Quick Response Guide gives the same second-engine function: <em>&ldquo;Establish water supply,
+      Pump standpipe if 1st Engine determines standpipe operations.&rdquo;</em></p>
+      <p class="srcline">Engine Company Operations 2023 V-1, 6-11 to 6-12 &mdash; Standpipe Assignments ·
+      OFD Quick Reference Guide (May 2024), 2nd Engine Company Functions</p>
+    </div></details>
+
+    <details class="lib"><summary>Wet, dry, and the three classes</summary><div class="dbody">
+      <p>Standpipe systems are categorized by outlet size and as <strong>wet</strong> or
+      <strong>dry</strong>. Wet systems hold water in the riser at all times, supplied by municipal main,
+      gravity tank, pressure tank, or a combination — often with fire pumps boosting pressure to the upper
+      floors. <strong>Dry systems have no automatic source of supply and depend solely on fire department
+      pumpers to provide the system demand.</strong> On a dry standpipe, &ldquo;fire department pumpers
+      provide the only water supply available for firefighting.&rdquo;</p>
+      <ul>
+        <li><strong>Class I</strong> — 2&frac12;&Prime; outlets, for fire department use only.</li>
+        <li><strong>Class II</strong> — 1&frac12;&Prime; outlet with 1&frac12;&Prime; hose, for occupant use.</li>
+        <li><strong>Class III</strong> — 2&frac12;&Prime; and 1&frac12;&Prime; outlets (or 2&frac12;&Prime;
+        reduced with a removable reducer), for occupant and firefighter use.</li>
+      </ul>
+      <p>A <strong>combined sprinkler/standpipe system</strong> incorporates the sprinkler water supply with
+      a Class III standpipe; most new systems are built this way, and they generally require a fire pump to
+      deliver adequate pressure at the upper levels. Engine companies should <strong>never</strong> use the
+      unlined linen occupant hose — it is often old, poorly maintained, and may fail at fire department
+      operating pressures. The one exception: a ladder or rescue company operating remotely from an engine
+      company during searches, to save civilian or firefighter lives.</p>
+      <p>Expect standpipes in multifamily residential buildings over three floors, high-rise residential
+      and office buildings, hospitals, terminals, warehouses, industrial buildings, enclosed malls,
+      theaters, stadiums, parking garages, bridges, and tunnels. Risers are usually in enclosed stairwells
+      but can be in public hallways or outside along fire escapes.</p>
+      <p class="srcline">Engine Company Operations 2023 V-1, 6-1 to 6-4 and 6-16 — Standpipe Systems /
+      Supplying Standpipe Systems</p>
+    </div></details>
+
+    <details class="lib"><summary>Who supplies the FDC — 2nd due pumps it, 3rd due relays</summary><div class="dbody">
+      <p>The first critical task facing the <strong>2nd due Engine Company</strong> at a standpipe-equipped
+      building is to establish a water supply by pumping into the FDC connections. The manual&rsquo;s
+      assignment:</p>
+      <blockquote>&ldquo;The second Engine Company arriving on the first alarm should take a position at the
+      appropriate FDC standpipe connection and supply two 3&Prime; lines into the FDC Siamese and connect to
+      the nearest hydrant. The third arriving Engine Company should relay pump to the second engine company
+      from the next nearest hydrant.&rdquo;</blockquote>
+      <p><strong>The two engine companies work in series, not in parallel.</strong> This evolution — one
+      engine, two 3&Prime; lines into the building connection — is exactly the 2nd-due engineer&rsquo;s job.
+      The redundancy the manual requires (&ldquo;two engine companies for each Siamese connection&rdquo;)
+      comes from the 3rd due relay-pumping into you from the next nearest hydrant, not from a second engine
+      on the same Siamese. Larger buildings often have multiple FDC connections on different street fronts —
+      later-arriving engines continue the procedure on those.</p>
+      <p>On wet standpipes the pumper <strong>augments</strong> the system so flow needs are met at adequate
+      pressure; on dry standpipes the pumper <strong>is</strong> the supply.</p>
+      <p class="srcline">Engine Company Operations 2023 V-1, 6-16 — Supplying Standpipe Systems ·
+      re-verified 2026-08-30</p>
+    </div></details>
+
+    <details class="lib"><summary>What the attack crews carry in</summary><div class="dbody">
+      <p><strong>High-rise bundles</strong> — four 50&#8242; lengths of 2&frac12;&Prime; hose packed in a
+      Denver load with straps; one bundle has the high-rise nozzle pre-attached. The manual requires
+      2&frac12;&Prime; hose and smooth-bore nozzles off standpipes in commercial and residential low-rise
+      and high-rise buildings, mainly because of the limited pressure in wet systems built before 1993 and
+      the extinguishing capability of 2&frac12;&Prime; hose. For residential occupancies and hotels, the
+      1&frac34;&Prime; Minuteman bundle can be attached to the high-rise shut-off, for overhaul and if fire
+      conditions allow.</p>
+      <p><strong>High-rise kit</strong> — a nylon bag with, at minimum: gate valve, spanner wrenches, door
+      wedges, pipe wrench, pressure gauge, 30-degree elbow, and PRD/PRV adjustment tools.</p>
+      <ul>
+        <li><strong>2&frac12;&Prime; high-rise nozzle</strong> — a ball-style shut-off with a built-in
+        2&frac12;&Prime;-to-1&frac12;&Prime; reducer taking the 1&#8539;&Prime; smooth bore tip; the
+        shut-off also lets the crew turn off the water and extend the stretch at the nozzle.</li>
+        <li><strong>Gate valve</strong> — gives the firefighter at the outlet control over discharge
+        pressure and redundancy if the outlet valve or PRD/PRV fails.</li>
+        <li><strong>In-line pressure gauge</strong> — attached to the gate valve&rsquo;s 2&frac12;&Prime;
+        outlet before the hose, so the company can dial in the correct pressure for the hose stretched.</li>
+        <li><strong>Elbow</strong> — reduces bends or kinks at the outlet and eases hookup inside a hallway
+        hose cabinet.</li>
+      </ul>
+      <p class="srcline">Engine Company Operations 2023 V-1, 6-5 to 6-8 — Standpipe Hose and Equipment /
+      Operating from Standpipe Systems</p>
+    </div></details>
+
+    <details class="lib"><summary>Getting up the building — stairs, elevators, and the hookup floor</summary><div class="dbody">
+      <p>In low-rise buildings, fire attack crews do not use elevators — hose and equipment go up the
+      stairs. <strong>Crews may use the elevators in buildings over six stories, provided that an Elevator
+      Operator is in place and the crews exit the elevator a minimum of two floors below the fire
+      floor.</strong></p>
+      <p>Pick the hose outlet in the stairway closest to the fire to minimize the stretch. <strong>All
+      primary standpipe hookups must be made on the floor below the fire.</strong> Additional hoselines may have
+      to connect two floors below the fire or in more distant stairways — second- and third-line companies
+      should anticipate this and add lengths to their stretch. Under no circumstances hook up at an outlet
+      that does not protect the crew from heat and smoke, such as in a corridor or hallway.</p>
+      <p>Charging the line: in commercial buildings the line is always charged within the confines of the
+      stairway. A bedroom or kitchen fire in a residential building may allow a dry stretch to the apartment
+      door — but with a more developed fire, wind, or an open apartment door, the stairway is the only safe
+      option. <strong>If any doubt exists, charge the line in the stairway.</strong></p>
+      <p class="srcline">Engine Company Operations 2023 V-1, 6-8 to 6-10 — Operating from Standpipe Systems</p>
+    </div></details>
+
+    <details class="lib"><summary>Four operations at the outlet valve before hose goes on</summary><div class="dbody">
+      <ul>
+        <li><strong>1 — Make sure the hose outlet valve is closed</strong> before removing the outlet cap.
+        On dry systems, outlet valves may sit open on other floors — firefighters must be assigned to shut
+        them so they don&rsquo;t rob pressure from the system.</li>
+        <li><strong>2 — Remove or adjust the pressure-regulating device</strong> if present. Some PRDs
+        remove; non-removable ones must be adjusted fully open (adjustment tools are in the high-rise kit).
+        A third type can neither be removed nor field-adjusted — the most dangerous kind, which should be
+        identified during pre-fire planning and disseminated to all affected companies.</li>
+        <li><strong>3 — Flush the system</strong> through the open outlet valve. Garbage and debris collect
+        in risers, and flushing keeps the nozzle from clogging — it also proves the outlet valve works.</li>
+        <li><strong>4 — Attach the gate valve and in-line gauge</strong>, then the hose, ready to charge on
+        the officer&rsquo;s orders. Pressure adjustments are made on the in-line gauge with the nozzle fully
+        open and flowing.</li>
+      </ul>
+      <p class="srcline">Engine Company Operations 2023 V-1, 6-9 to 6-10 — Operating from Standpipe Systems</p>
+    </div></details>
+
+    <details class="lib"><summary>Pressure-regulating devices — what you may find on the outlet</summary><div class="dbody">
+      <p><strong>Flow restricting devices</strong> (most commonly an orifice plate) restrict flow through a
+      reduced opening sized to a specific pressure and rate. They do <strong>not</strong> reduce static
+      pressure, so higher pressures appear at lower flows.</p>
+      <p><strong>Pressure reducing valves (PRVs)</strong> limit downstream pressure at all flow rates —
+      static and flowing — and are set for a specific pressure, usually not adjustable without special
+      tools. They are often installed where risers feed the sprinklers on individual floors as well as on
+      hose outlets. PRVs removed the old ~20-story-per-zone height limit that flow restrictors imposed.</p>
+      <p>The hazard the manual flags: departments have found PRVs not properly set for the required
+      discharge pressure, leaving crews with inadequate or excessive hoseline pressures. Standards now
+      require a test/drain riser next to PRV-equipped risers so settings can be checked during regular
+      inspections.</p>
+      <p>Background on outlet pressures: before 1993, NFPA 14 required only 65 psi residual at the topmost
+      outlet — adequate for 2&frac12;&Prime; smooth-bore work but not for 1&frac34;&Prime; lines with fog
+      nozzles. The present standard requires a minimum of 100 psi at the top outlet. Know which buildings in
+      the district fall under the old standard, and remember these minimums assume a properly maintained,
+      100%-dependable system — &ldquo;a scenario we must realize does not exist in many buildings.&rdquo;</p>
+      <p class="srcline">Engine Company Operations 2023 V-1, 6-4 and 6-13 to 6-15 — Standpipe Systems /
+      Pressure Reducing Devices</p>
+    </div></details>
+
+  </section>
+
+  <nav class="evonav" aria-label="Evolution pages">
+    <a data-nav="evo15" href="evo-1-5.html">‹ Evolution 1.5 — Sprinkler system supply</a>
+    <a data-nav="evo17" href="evo-1-7.html">Evolution 1.7 — Pumping a hydrant as the supply pumper ›</a>
+  </nav>
+
+  <div class="docfoot">
+    <p><strong>Source.</strong> ADO-Pumper Task Book, Evolution 1.6 &mdash; September 2024 version.
+    Task-book steps verbatim, in printed order, with the printed numbering. Manual material: OFD Engine
+    Company Operations 2023 V-1, Chapter 6 (Standpipe Operations); the OFD Hydraulic Manual (PDP, friction
+    loss, elevation and appliance loss); ADO Task #19 Basic Pump Skills-Changeover; and the OFD Quick
+    Reference Guide (May 2024) &mdash; each cited per block. Elevation computed to the nozzle floor, nozzle
+    pressure counted once, the rig-specific reading of PSI mode, and the relief-valve pre-set are per
+    Engineer Jason Anderson&rsquo;s 2026-08-29 and 2026-08-30 rulings; the merged muscle-memory steps come
+    from his engine evolution, transcribed 2026-08-28.</p>
+    <p>Version: prototype · Last reviewed 2026-08-30 · Compiled by Engineer Jason Anderson</p>
+  </div>
+
+</div>
+
+<details class="secmenu" id="secMenu">
+  <summary aria-label="Open sections menu">Sections</summary>
+  <nav class="secpanel" aria-label="Jump to section">
+    <a class="spos" href="#incab">In-cab operations</a>
+    <a class="swtr" href="#outcab">Out-of-cab operations</a>
+    <a class="swtr" href="#pdp">Charge to PDP</a>
+    <a class="ssup" href="#library">The manual on standpipes</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  // night mode
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // modes
+  var refBtn=document.getElementById('refBtn'),checkBtn=document.getElementById('checkBtn');
+  var resetBtn=document.getElementById('resetBtn'),prog=document.getElementById('progress');
+  var boxes=[].slice.call(document.querySelectorAll('.tick input'));
+  function setMode(m){
+    document.body.classList.toggle('checkoff',m==='check');
+    refBtn.setAttribute('aria-pressed',m==='ref');
+    checkBtn.setAttribute('aria-pressed',m==='check');
+    sessionStorage.setItem('evo16-mode',m);
+    update();
+  }
+  refBtn.addEventListener('click',function(){setMode('ref')});
+  checkBtn.addEventListener('click',function(){setMode('check')});
+  function update(){
+    var done=0;
+    boxes.forEach(function(b){
+      b.closest('.step').classList.toggle('done',b.checked);
+      if(b.checked)done++;
+    });
+    prog.textContent=done+' / '+boxes.length+' done';
+  }
+  boxes.forEach(function(b,i){
+    b.checked=sessionStorage.getItem('evo16-s'+i)==='1';
+    b.addEventListener('change',function(){
+      sessionStorage.setItem('evo16-s'+i,b.checked?'1':'0');update();
+    });
+  });
+  resetBtn.addEventListener('click',function(){
+    boxes.forEach(function(b,i){b.checked=false;sessionStorage.removeItem('evo16-s'+i)});update();
+  });
+  setMode(sessionStorage.getItem('evo16-mode')||'ref');
+
+  // floating Sections menu — close on link tap (works without JS too; this is a nicety)
+  var menu=document.getElementById('secMenu');
+  if(menu){
+    [].slice.call(menu.querySelectorAll('a')).forEach(function(a){
+      a.addEventListener('click',function(){menu.removeAttribute('open')});
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

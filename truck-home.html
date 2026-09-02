@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Truck Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2)}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(30px,5vw,42px);line-height:1.08;
+  margin:14px 0 8px;text-wrap:balance}
+.lede{font-size:18px;color:var(--text2);margin:0 0 26px;max-width:60ch}
+
+h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;color:var(--text2);
+  margin:34px 0 10px}
+.secnote{font-size:15px;color:var(--text2);margin:-4px 0 10px;max-width:66ch}
+
+/* the sequence — quiet rows on one surface */
+.panel{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);overflow:hidden}
+.seqrow{display:flex;align-items:baseline;gap:16px;padding:18px 24px;border-top:1px solid var(--divider)}
+.seqrow:first-child{border-top:0}
+.seqnum{font-family:var(--head);font-weight:700;font-size:30px;color:var(--text2);
+  min-width:48px;font-variant-numeric:tabular-nums}
+.seqbody{flex:1;min-width:0}
+.seqname{font-weight:700;font-size:20px;margin:0}
+.seqpract{font-size:14.5px;color:var(--text2);margin:4px 0 0}
+.seqpract a{font-weight:600}
+
+/* the safety gate — permanent full-width interruption; not red-alone */
+.gate{border-top:1px solid var(--divider);background:var(--safety-tint);padding:20px 24px}
+.gate .gtag{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:800;
+  font-size:15px;letter-spacing:.06em;color:var(--safety);margin:0 0 8px}
+.gate .gtag::before{content:"";width:0;height:0;border-left:11px solid transparent;
+  border-right:11px solid transparent;border-bottom:19px solid currentColor}
+.gate h3{font-family:var(--head);font-weight:800;font-size:21px;line-height:1.25;margin:0 0 8px;
+  border-left:5px solid var(--safety);padding-left:14px}
+.gate p{margin:0 0 12px;max-width:62ch;font-size:16px}
+.gate .ack{min-height:64px;padding:0 26px;border:2.5px solid var(--safety);border-radius:12px;
+  background:var(--surface);font-weight:700;font-size:17px}
+.gate .srcline{display:block;margin-top:10px;font-size:14px;color:var(--text2)}
+
+/* evolutions + resource rows */
+.evorow{display:flex;align-items:baseline;gap:16px;padding:16px 24px;border-top:1px solid var(--divider)}
+.evorow:first-child{border-top:0}
+.evoid{font-family:var(--head);font-weight:700;font-size:20px;min-width:52px;
+  font-variant-numeric:tabular-nums;color:var(--text2)}
+.evobody{flex:1;min-width:0}
+.evoname{font-weight:600;font-size:18px;margin:0}
+a.evoname{text-decoration:none}
+a.evoname:hover{text-decoration:underline}
+.evopract{font-size:14.5px;color:var(--text2);margin:3px 0 0}
+.evorow.islink .evoid{color:var(--accent)}
+
+/* held marker — dashed, never colour-alone */
+.held{display:inline-flex;align-items:center;font-family:var(--head);font-weight:700;
+  font-size:12.5px;letter-spacing:.04em;color:var(--text2);background:var(--surface);
+  border:2px dashed var(--text2);border-radius:8px;padding:3px 10px;margin:8px 0 0}
+
+.rolenote{border-top:1px solid var(--divider);padding:14px 24px;font-size:15px;color:var(--text)}
+.rolenote strong{font-weight:700}
+.rolenote .srcline{display:block;margin-top:4px;font-size:14px;color:var(--text2)}
+
+.buildnote{font-size:14.5px;color:var(--text2);margin:12px 2px 0;max-width:66ch}
+.srcline{font-size:14px;color:var(--text2)}
+
+.docfoot{margin-top:26px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+@media (max-width:560px){
+  .seqrow,.evorow,.gate,.rolenote{padding-left:16px;padding-right:16px}
+}
+@media print{
+  body{background:#fff;color:#000}
+  .top,.nightbtn{display:none}
+  .panel{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  .gate{background:#fff;border-top:3px double #000;border-bottom:3px double #000}
+  .gate h3{border-left:5px solid #000}
+  .held{border:2px dashed #000;color:#000;background:#fff}
+  .seqrow,.evorow{break-inside:avoid}
+}
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html" aria-current="true">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html" aria-current="true">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="home" href="index.html">Home</a><span>›</span>Truck Operations</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <h1>Truck Operations</h1>
+  <p class="lede">The aerial sequence I run, the roof and search operations, and the department&rsquo;s
+  official aerial evolutions.</p>
+
+  <h2>AERIAL EVOLUTION</h2>
+  <div class="panel">
+    <div class="seqrow"><span class="seqnum">01</span>
+      <div class="seqbody"><p class="seqname">Positioning</p>
+        <p class="seqpract">Full steps in <a data-nav="tflow" href="truck-flow.html">Aerial Evolution</a></p></div>
+    </div>
+    <div class="seqrow"><span class="seqnum">02</span>
+      <div class="seqbody"><p class="seqname">Secure the rig</p>
+        <p class="seqpract">Full steps in <a data-nav="tflow" href="truck-flow.html">Aerial Evolution</a></p></div>
+    </div>
+    <div class="seqrow"><span class="seqnum">03</span>
+      <div class="seqbody"><p class="seqname">Prepare</p>
+        <p class="seqpract">Full steps in <a data-nav="tflow" href="truck-flow.html">Aerial Evolution</a></p></div>
+    </div>
+    <div class="seqrow"><span class="seqnum">04</span>
+      <div class="seqbody"><p class="seqname">Deploy</p>
+        <p class="seqpract">Full steps in <a data-nav="tflow" href="truck-flow.html">Aerial Evolution</a></p></div>
+    </div>
+    <div class="seqrow"><span class="seqnum">05</span>
+      <div class="seqbody"><p class="seqname">Water</p>
+        <p class="seqpract">Full steps in <a data-nav="tflow" href="truck-flow.html">Aerial Evolution</a></p></div>
+    </div>
+
+    <div class="gate">
+      <p class="gtag">STOP — COMMAND CONFIRMATION REQUIRED</p>
+      <h3>Confirm all department members are out of the building before flowing the master stream.</h3>
+      <p>Affirmative acknowledgement, not a one-way notification. A master stream must be shut down to be
+      repositioned — the safest positions are the building corners; the front is dangerous, ineffective,
+      and inside the collapse zone.</p>
+      <button class="ack" type="button" id="ackBtn">Confirmed with Command</button>
+      <span class="srcline">Engine Company Operations 2023 V-1, p.133 (7-1)</span>
+    </div>
+  </div>
+
+  <h2>ROOF OPERATIONS</h2>
+  <p class="secnote">Three separate operations. Never mixed.</p>
+  <div class="panel">
+    <div class="evorow islink"><span class="evoid">R1</span>
+      <div class="evobody"><a class="evoname" data-nav="roofres" href="roof-residential.html">Residential — walkable</a>
+        <p class="evopract">Crew of 2 · single ladder — the Engineer is usually first: sounds, passes the
+        hook back, takes the saw · drilled in aerial evolution 1.0</p></div>
+    </div>
+    <div class="evorow islink"><span class="evoid">R2</span>
+      <div class="evobody"><a class="evoname" data-nav="roofsteep" href="roof-steep.html">Residential — steep pitch</a>
+        <p class="evopract">Crew of 2 · same single-ladder pattern · drilled in aerial evolution 1.1</p></div>
+    </div>
+    <div class="evorow islink"><span class="evoid">R3</span>
+      <div class="evobody"><a class="evoname" data-nav="roofcom" href="roof-commercial.html">Commercial</a>
+        <p class="evopract">Crew of 3 or more · Lead Hook goes first and sounds; the Engineer makes the inspection
+        cut · drilled in aerial evolution 1.2</p></div>
+    </div>
+    <div class="rolenote"><strong>Engineer = Lead Saw — fixed.</strong> Lead Hook and every other role go
+      to whoever is on the crew that day.
+      <span class="srcline">OFD Truck Manual v3.1 — the Engineer is the Lead Saw and leads the roof
+      operation. Crew sizes: Truck Manual and ADO-Aerial Task Book, evolutions 1.0–1.2.</span>
+    </div>
+  </div>
+
+  <h2>SEARCH</h2>
+  <div class="panel">
+    <div class="evorow islink"><span class="evoid">S</span>
+      <div class="evobody"><a class="evoname" data-nav="searchpg" href="search.html">Search</a>
+        <p class="evopract">OFD Truck Manual v3.1, Section 5 — Search and Rescue, p.62</p></div>
+    </div>
+  </div>
+
+  <h2>OFFICIAL AERIAL EVOLUTIONS · ADO-Aerial Task Book, September 2024</h2>
+  <div class="panel">
+    <div class="evorow islink"><span class="evoid">1.0</span>
+      <div class="evobody"><a class="evoname" data-nav="roofres" href="roof-residential.html">Residential roof operation — walkable</a>
+        <p class="evopract">Engineer runs a walkable pitch residential roof operation</p></div>
+    </div>
+    <div class="evorow islink"><span class="evoid">1.1</span>
+      <div class="evobody"><a class="evoname" data-nav="roofsteep" href="roof-steep.html">Steep pitch roof operation</a>
+        <p class="evopract">Vertical vent on a steep pitch</p></div>
+    </div>
+    <div class="evorow islink"><span class="evoid">1.2</span>
+      <div class="evobody"><a class="evoname" data-nav="roofcom" href="roof-commercial.html">Commercial roof operation</a>
+        <p class="evopract">Perform vertical ventilation and cut a heat hole on commercial flat roof</p></div>
+    </div>
+    <div class="evorow"><span class="evoid">1.3</span>
+      <div class="evobody"><p class="evoname">Window/balcony picks for rescue operations</p>
+        <p class="evopract">Place aerial device to window or balcony to rescue victims</p>
+        <span class="held">⏸ HELD — manufacturer-conflict review · Pierce operator&rsquo;s manual</span></div>
+    </div>
+    <div class="evorow"><span class="evoid">1.4</span>
+      <div class="evobody"><p class="evoname">Play pipe operation on Tiller 33</p>
+        <p class="evopract">Set up play pipe on Tiller 33 and pump the master stream device</p>
+        <span class="held">⏸ HELD — manufacturer-conflict review · Pierce operator&rsquo;s manual</span></div>
+    </div>
+    <div class="evorow"><span class="evoid">1.5</span>
+      <div class="evobody"><p class="evoname">Rope and pulley system set up</p>
+        <p class="evopract">Set up rope and pulley system for a rescue operation</p>
+        <span class="held">⏸ HELD — manufacturer-conflict review · Pierce operator&rsquo;s manual</span></div>
+    </div>
+  </div>
+  <p class="buildnote">Evolutions 1.3, 1.4 and 1.5 conflict with the Pierce Ascendant aerial operator&rsquo;s
+  manual on personnel and loading limits. Those conflicts are held for a chief-level decision, and the three
+  pages are not published until they are resolved.</p>
+
+  <h2>FROM THE MANUAL · 2026 OFD Truck Manual Version 3.1</h2>
+  <div class="panel">
+    <div class="evorow"><span class="evoid">§6</span>
+      <div class="evobody"><p class="evoname">Apparatus positioning</p>
+        <p class="evopract">Section 6, p.143</p></div>
+    </div>
+    <div class="evorow"><span class="evoid">§5</span>
+      <div class="evobody"><p class="evoname">Ground ladders — choices, techniques, and positioning</p>
+        <p class="evopract">Section 5, p.88</p></div>
+    </div>
+    <div class="evorow"><span class="evoid">§5</span>
+      <div class="evobody"><p class="evoname">Ventilation</p>
+        <p class="evopract">Section 5, p.45</p></div>
+    </div>
+    <div class="evorow"><span class="evoid">§5</span>
+      <div class="evobody"><p class="evoname">VES — window-based search</p>
+        <p class="evopract">Section 5, p.75 — &ldquo;anytime the expression of VES is used, assume it is
+        merely a starting point, unless hallway conditions dictate otherwise&rdquo;</p></div>
+    </div>
+    <div class="evorow"><span class="evoid">§5</span>
+      <div class="evobody"><p class="evoname">Elevator rescue operations</p>
+        <p class="evopract">Section 5, p.116</p></div>
+    </div>
+  </div>
+
+  <div class="docfoot">
+    <p>Sequence: my own aerial evolution card. Evolutions: ADO-Aerial Task Book, September 2024 — six
+    drill-ground evolutions, each performed at least twice, once with an engineer. Manual rows: 2026 OFD
+    Truck Manual Version 3.1.</p>
+    <p>Version: prototype · Last reviewed 2026-08-29 · Compiled by Engineer Jason Anderson</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){nb.textContent=(document.documentElement.getAttribute('data-theme')==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var next=(document.documentElement.getAttribute('data-theme')==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+  var ack=document.getElementById('ackBtn');
+  ack.addEventListener('click',function(){
+    ack.textContent='✓ Confirmed with Command';
+    ack.setAttribute('aria-pressed','true');
+  });
+})();
+</script>
+
+</body>
+</html>

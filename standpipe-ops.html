@@ -1,0 +1,1191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Standpipe Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+/* ============================================================
+   Field-instrument system — adopted spec, same tokens and
+   components as engine-flow.html.
+   Learning page: jump bar (wide) + floating Sections menu
+   (narrow, built as <details> so it works with JS off).
+   Section colour is never carried alone — tinted ground +
+   coloured heading + left rule, every time (R-50).
+   Designed at 390px first. Citations re-derived from the
+   printed per-chapter footers in source-extracts/engine.txt.
+   Production note: self-host WOFF2 for offline use.
+   ============================================================ */
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  /* section palette — muted, one identity per section */
+  --c-pos:#3D5A80;  --c-pos-t:#E9EEF5;
+  --c-wtr:#0F6F78;  --c-wtr-t:#DFEEEF;
+  --c-sup:#5B4E9E;  --c-sup-t:#ECE9F6;
+  --c-mst:#7C3F87;  --c-mst-t:#F4E9F5;
+  --c-fom:#2F7D4F;  --c-fom-t:#E4F2E9;
+  --c-dig:#8A6116;  --c-dig-t:#F6EEDC;
+  --c-prd:#A0522A;  --c-prd-t:#F6EAE2;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --c-pos:#9FBCDF; --c-pos-t:#18232F;
+    --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+    --c-sup:#B7ADE9; --c-sup-t:#231E38;
+    --c-mst:#D9A2DB; --c-mst-t:#301D33;
+    --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+    --c-dig:#DFBC77; --c-dig-t:#332A15;
+    --c-prd:#E0A180; --c-prd-t:#33201A;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --c-pos:#9FBCDF; --c-pos-t:#18232F;
+  --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+  --c-sup:#B7ADE9; --c-sup-t:#231E38;
+  --c-mst:#D9A2DB; --c-mst-t:#301D33;
+  --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+  --c-dig:#DFBC77; --c-dig-t:#332A15;
+  --c-prd:#E0A180; --c-prd-t:#33201A;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;overflow-wrap:break-word}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2);margin:0}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:16px 0 14px}
+.kicker{font-family:var(--head);font-weight:700;font-size:14px;color:var(--accent);
+  letter-spacing:.04em;margin:0 0 6px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1.1;
+  margin:0 0 10px;text-wrap:balance}
+.objective{font-size:18px;color:var(--text2);margin:0;max-width:60ch}
+.objective .src{font-size:14px;display:block;margin-top:6px}
+
+/* jump to section — sticky on wide screens */
+.jump{position:sticky;top:0;z-index:10;background:var(--canvas);padding:10px 0;
+  display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--divider)}
+.jump a{min-height:44px;display:inline-flex;align-items:center;gap:8px;padding:6px 14px;
+  border:1.5px solid var(--divider);border-radius:999px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:14.5px}
+.jump a::before{content:"";width:10px;height:10px;border-radius:50%;flex:0 0 auto;
+  background:var(--divider)}
+.jump a:hover{border-color:var(--accent)}
+.jump a.ssys::before{background:var(--c-pos)}
+.jump a.sgear::before{background:var(--c-wtr)}
+.jump a.sup::before{background:var(--c-sup)}
+.jump a.shook::before{background:var(--c-fom)}
+.jump a.sprd::before{background:var(--c-prd)}
+.jump a.sasn::before{background:var(--c-dig)}
+.jump a.ssupply::before{background:var(--c-mst)}
+
+/* floating Sections menu — narrow screens only; <details> so it works with JS off */
+.secmenu{display:none}
+@media (max-width:640px){
+  .jump{display:none}
+  .secmenu{display:block;position:fixed;right:14px;bottom:14px;z-index:40}
+  .secmenu > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+    min-height:56px;min-width:56px;padding:0 22px;border:1.5px solid var(--divider);border-radius:999px;
+    background:var(--surface);color:var(--text);font-family:var(--head);font-weight:700;font-size:16px;
+    cursor:pointer;box-shadow:0 4px 14px rgba(10,30,28,.22)}
+  .secmenu > summary::-webkit-details-marker{display:none}
+  .secmenu[open] > summary{border-color:var(--accent);color:var(--accent)}
+  .secpanel{position:absolute;bottom:calc(100% + 10px);right:0;min-width:236px;max-width:80vw;
+    background:var(--surface);border:1.5px solid var(--divider);border-radius:14px;
+    box-shadow:0 8px 24px rgba(10,30,28,.25);padding:8px;display:grid;gap:2px;
+    max-height:74vh;overflow-y:auto}
+  .secpanel a{display:flex;align-items:center;min-height:56px;padding:6px 14px;border-radius:10px;
+    text-decoration:none;color:var(--text);font-weight:600;font-size:16px;border-left:5px solid transparent}
+  .secpanel a.ssys{border-left-color:var(--c-pos)}
+  .secpanel a.sgear{border-left-color:var(--c-wtr)}
+  .secpanel a.sup{border-left-color:var(--c-sup)}
+  .secpanel a.shook{border-left-color:var(--c-fom)}
+  .secpanel a.sprd{border-left-color:var(--c-prd)}
+  .secpanel a.sasn{border-left-color:var(--c-dig)}
+  .secpanel a.ssupply{border-left-color:var(--c-mst)}
+}
+
+/* the one learning surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:18px;overflow:hidden}
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:18px 22px 4px;scroll-margin-top:70px}
+.phase > .pnote{font-size:15.5px;color:var(--text2);margin:0;padding:0 22px 10px;max-width:66ch}
+
+/* section colour identities — tinted ground + matching coloured heading + left rule.
+   Colour is never carried alone: every tint below is paired with its own coloured h2 and rule. */
+.phase.cpos{background:var(--c-pos-t);border-left:6px solid var(--c-pos);--phase:var(--c-pos)}
+.phase.cpos > h2{color:var(--c-pos)}
+.phase.cwtr{background:var(--c-wtr-t);border-left:6px solid var(--c-wtr);--phase:var(--c-wtr)}
+.phase.cwtr > h2{color:var(--c-wtr)}
+.phase.csup{background:var(--c-sup-t);border-left:6px solid var(--c-sup);--phase:var(--c-sup)}
+.phase.csup > h2{color:var(--c-sup)}
+.phase.cmst{background:var(--c-mst-t);border-left:6px solid var(--c-mst);--phase:var(--c-mst)}
+.phase.cmst > h2{color:var(--c-mst)}
+.phase.cfom{background:var(--c-fom-t);border-left:6px solid var(--c-fom);--phase:var(--c-fom)}
+.phase.cfom > h2{color:var(--c-fom)}
+.phase.cdig{background:var(--c-dig-t);border-left:6px solid var(--c-dig);--phase:var(--c-dig)}
+.phase.cdig > h2{color:var(--c-dig)}
+.phase.cprd{background:var(--c-prd-t);border-left:6px solid var(--c-prd);--phase:var(--c-prd)}
+.phase.cprd > h2{color:var(--c-prd)}
+
+/* headline fact rows */
+.step{display:flex;align-items:flex-start;gap:15px;padding:15px 22px;min-height:64px;
+  border-top:1px solid var(--divider)}
+.phase > h2 + .step,.phase > .pnote + .step{border-top:0}
+.stepnum{font-family:var(--head);font-weight:700;font-size:32px;line-height:1.05;color:var(--text2);
+  min-width:48px;font-variant-numeric:tabular-nums;padding-top:2px}
+.stepbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:20px;line-height:1.33;margin:0}
+.action em{font-style:normal;text-decoration:underline;text-underline-offset:3px}
+.detail{font-size:16px;color:var(--text2);margin:6px 0 0;max-width:64ch}
+.detail strong{color:var(--text)}
+.plainnote{margin:7px 0 0;font-size:15px;color:var(--text2);max-width:62ch}
+
+/* value rows — a number carrying the section colour */
+.tiprow{display:flex;align-items:flex-start;gap:16px;padding:16px 22px;min-height:76px;
+  border-top:1px solid var(--divider)}
+.tipval{font-family:var(--head);font-weight:800;font-size:34px;line-height:1.05;
+  color:var(--phase,var(--accent));min-width:126px;font-variant-numeric:tabular-nums;padding-top:2px}
+.tipval small{display:block;font-family:var(--body);font-weight:600;font-size:13.5px;
+  color:var(--text2);letter-spacing:.01em;margin-top:4px}
+.tipval.words{font-size:26px}
+.tipbody{flex:1;min-width:0}
+
+/* big pull quote — the manual's own line, full width in the sheet */
+.pull{padding:19px 22px;border-top:1px solid var(--divider)}
+.pull blockquote{margin:0;padding:0 0 0 15px;border-left:4px solid var(--phase,var(--accent));
+  font-weight:600;font-size:20px;line-height:1.4;max-width:62ch}
+.pull .srcline{display:block;margin-top:8px}
+
+/* small attached Orem tag on a line */
+.oretag{display:inline-flex;align-items:center;gap:6px;margin-top:8px;margin-right:8px;
+  font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.02em;
+  color:var(--accent);background:var(--accent-tint);border-radius:8px;padding:5px 10px}
+
+/* labeled disclosures — the manual's fuller wording, closed by default */
+details.disc{margin-top:9px}
+details.disc > summary{list-style:none;display:inline-flex;align-items:center;min-height:56px;
+  padding:6px 15px;border:1.5px solid var(--divider);border-radius:10px;color:var(--accent);
+  font-weight:600;font-size:15px;cursor:pointer;background:transparent}
+details.disc > summary::-webkit-details-marker{display:none}
+details.disc > summary::after{content:"\25BE";margin-left:8px;font-size:12px;transition:transform .15s}
+details.disc[open] > summary::after{transform:rotate(180deg)}
+details.disc > .dbody{background:var(--expanded);border-radius:12px;padding:14px 17px;margin-top:8px;
+  font-size:16px}
+details.disc > .dbody p{margin:0 0 10px;max-width:64ch}
+details.disc > .dbody p:last-child{margin:0}
+details.disc > .dbody ul,details.disc > .dbody ol{margin:0 0 10px;padding-left:22px;max-width:64ch}
+details.disc > .dbody li{margin:0 0 7px}
+.srcline{font-size:14px;color:var(--text2)}
+blockquote{margin:0 0 10px;padding:0 0 0 14px;border-left:3px solid var(--accent);color:var(--text)}
+blockquote.inq{margin:10px 0 8px;border-left:4px solid var(--phase,var(--accent));font-weight:600;
+  font-size:18px;line-height:1.4;max-width:62ch}
+
+/* boxed sub-sequence inside a section */
+.rignote{margin:8px 22px 16px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);padding:14px 17px}
+.rignote h3{font-family:var(--head);font-weight:700;font-size:17px;margin:0 0 8px}
+.rignote ol{margin:0;padding-left:26px}
+.rignote li{font-weight:600;font-size:17.5px;padding:4px 0;overflow-wrap:anywhere}
+.rignote .plainnote{margin-top:10px}
+.rignote .rn-lead{margin-top:0}
+.rignote .rn-src{margin-top:9px}
+
+/* safety gate — full-width interruption; never red alone */
+.gate{border-top:1px solid var(--divider);background:var(--safety-tint);padding:19px 22px}
+.gate .gtag{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:800;
+  font-size:15px;letter-spacing:.06em;color:var(--safety);margin:0 0 8px}
+.gate .gtag::before{content:"";width:0;height:0;border-left:11px solid transparent;
+  border-right:11px solid transparent;border-bottom:19px solid currentColor}
+.gate h3{font-family:var(--head);font-weight:800;font-size:20px;line-height:1.25;margin:0 0 8px;
+  border-left:5px solid var(--safety);padding-left:14px}
+.gate p{margin:0 0 8px;max-width:62ch;font-size:16px}
+.gate .srcline{display:block;margin-top:6px}
+
+/* pending / unresolved item */
+.pending{margin:0;padding:18px 22px;background:var(--expanded);border-top:1px solid var(--divider)}
+.pending .ptag{display:inline-flex;align-items:center;gap:8px;font-family:var(--head);font-weight:700;
+  font-size:14px;letter-spacing:.04em;color:var(--text);background:var(--surface);
+  border:2px dashed var(--text2);border-radius:8px;padding:6px 12px;margin:0 0 10px}
+.pending h3{font-family:var(--head);font-weight:800;font-size:19px;line-height:1.25;margin:0 0 8px}
+.pending p{margin:0 0 9px;max-width:66ch;font-size:16px}
+.pending p:last-child{margin:0}
+.pending blockquote{font-size:15.5px}
+
+/* wide content never pushes the page sideways */
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 6px;padding-bottom:2px}
+.tblwrap table{border-collapse:collapse;min-width:430px;font-size:15.5px}
+.tblwrap th,.tblwrap td{text-align:left;padding:8px 14px 8px 0;border-bottom:1px solid var(--divider);
+  vertical-align:top}
+.tblwrap th{font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.04em;
+  color:var(--text2);white-space:nowrap}
+.tblwrap td.num{font-family:var(--head);font-weight:700;font-variant-numeric:tabular-nums;
+  white-space:nowrap}
+.scrollhint{font-size:13.5px;color:var(--text2);margin:0 0 9px}
+.tblblock{padding:16px 22px;border-top:1px solid var(--divider)}
+.tbllabel{font-family:var(--head);font-weight:800;font-size:13.5px;letter-spacing:.05em;
+  color:var(--phase,var(--accent));margin:0 0 4px;text-transform:uppercase}
+.reconstructed{display:inline-block;font-family:var(--head);font-weight:700;font-size:12.5px;
+  letter-spacing:.05em;color:var(--text);background:var(--surface);border:2px dashed var(--text2);
+  border-radius:8px;padding:4px 10px;margin:0 0 10px}
+
+.docfoot{margin-top:22px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+@media (max-width:640px){
+  .wrap{padding-bottom:126px} /* clear the floating Sections button */
+}
+@media (max-width:560px){
+  body{font-size:16.5px}
+  .step,.tiprow,.pull,.tblblock{padding-left:15px;padding-right:15px;gap:12px}
+  .stepnum{font-size:27px;min-width:38px}
+  .action{font-size:18.5px}
+  .pull blockquote{font-size:18.5px}
+  .phase > h2,.phase > .pnote,.pending,.gate{padding-left:15px;padding-right:15px}
+  .rignote{margin-left:15px;margin-right:15px;padding:13px 15px}
+}
+/* very narrow: stack the value above its body so neither column is squeezed */
+@media (max-width:460px){
+  .tiprow{display:block}
+  .tipval{display:block;min-width:0;padding-top:0;margin-bottom:8px}
+  .tipval small{display:inline-block;margin:0 0 0 10px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.jump,.nightbtn,.secmenu,.scrollhint{display:none}
+  .sheet{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  .step,.tiprow,.pull,.tblblock{break-inside:avoid;min-height:0;padding:8px 12px}
+  .phase{break-inside:avoid-page;background:#fff!important}
+  .phase.cpos,.phase.cwtr,.phase.csup,.phase.cmst,.phase.cfom,.phase.cdig,.phase.cprd{
+    border-left:6px solid #000}
+  .phase > h2{color:#000!important}
+  details.disc{display:none}
+  .rignote{border:1.5px solid #000;border-radius:0}
+  .pending{border:2px dashed #000;background:#fff}
+  .gate{background:#fff;border-top:3px double #000;border-bottom:3px double #000}
+  .gate h3{border-left:5px solid #000}
+  .stepnum{color:#000;font-size:15pt;min-width:28pt}
+  .tipval{color:#000!important;font-size:15pt;min-width:66pt}
+  .action{font-size:12pt}
+  .tbllabel,.reconstructed{color:#000}
+  .pull blockquote{font-size:12pt;border-left:3px solid #000}
+  .tblwrap{overflow:visible}
+}
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="ehome" href="engine-home.html">Engine Operations</a><span>&rsaquo;</span>Standpipe Operations</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <p class="kicker">Engine Company Operations 2023 V-1 &middot; Chapter 6</p>
+    <h1>Standpipe Operations</h1>
+    <p class="objective">&ldquo;Of the many types of firefighting tactics that an Engine Company may face,
+    stretching and advancing hose lines from the standpipe can be a taxing and complicated
+    operation.&rdquo;<span class="src srcline">Engine Company Operations 2023 V-1, p.6-1</span></p>
+  </header>
+
+  <nav class="jump" aria-label="Jump to section">
+    <a class="ssys" href="#systems">The system</a>
+    <a class="sgear" href="#gear">What you carry</a>
+    <a class="sup" href="#goingup">Going up</a>
+    <a class="shook" href="#hookup">The hookup</a>
+    <a class="sprd" href="#prd">PRDs &amp; PRVs</a>
+    <a class="sasn" href="#assignments">Assignments</a>
+    <a class="ssupply" href="#supply">Supplying it</a>
+  </nav>
+
+  <div class="sheet">
+
+    <!-- ============ 1 · THE SYSTEM ============ -->
+    <section class="phase cpos" aria-labelledby="systems">
+      <h2 id="systems">THE SYSTEM IN THE BUILDING</h2>
+      <p class="pnote">Three critical tasks fall to the Engine Company at a standpipe fire: carry the
+      hose, nozzles, fittings and tools to the outlet you have chosen; stretch and advance a line to
+      control and extinguish; and supply or augment the system so there is volume at proper
+      pressure. &mdash; p.6-1</p>
+
+      <div class="tiprow">
+        <div class="tipval words">WET<small>water in the riser</small></div>
+        <div class="tipbody">
+          <p class="action">A wet system holds water at all times &mdash; and you still pump it.</p>
+          <p class="detail">Supplied by municipal main, gravity tank, pressure tank, or a combination.
+          Manual or automatic fire pumps often boost pressure on the upper floors of tall buildings.
+          On a wet system, <strong>fire department pumpers must augment the system</strong> so flow
+          needs are met at adequate pressures.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, pp.6-2, 6-16</p>
+        </div>
+      </div>
+
+      <div class="tiprow">
+        <div class="tipval words">DRY<small>no automatic supply</small></div>
+        <div class="tipbody">
+          <p class="action">A dry system has no water in it until you put it there. You are the water
+          supply &mdash; the only one.</p>
+          <p class="detail">Dry systems &ldquo;have no automatic source of supply and depend solely on
+          fire department pumpers to provide the system demand.&rdquo; Dry risers are charged when
+          hose lines are connected to the fire department connection.</p>
+          <blockquote class="inq">&ldquo;In the case of dry standpipe systems, fire department pumpers
+          provide the only water supply available for firefighting.&rdquo;</blockquote>
+          <p class="srcline">Engine Company Operations 2023 V-1, pp.6-2, 6-3, 6-16</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">I</span>
+        <div class="stepbody">
+          <p class="action">Class I &mdash; 2&frac12;&Prime; outlets, fire department use only.</p>
+          <p class="detail">The one you are trained to work off.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-2 &middot; NFPA 14 (1993 ed.) classes</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">II</span>
+        <div class="stepbody">
+          <p class="action">Class II &mdash; 1&frac12;&Prime; outlet with 1&frac12;&Prime; hose, for occupant use.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-2</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">III</span>
+        <div class="stepbody">
+          <p class="action">Class III &mdash; both. 2&frac12;&Prime; and 1&frac12;&Prime;, or a 2&frac12;&Prime;
+          reduced to 1&frac12;&Prime; with a removable reducer.</p>
+          <p class="detail">For fire department <em>or</em> occupant use. Usually 1&frac12;&Prime;
+          occupant-use hose is provided.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-3</p>
+
+          <details class="disc"><summary>Combined sprinkler / standpipe systems &mdash; the manual&rsquo;s wording</summary>
+            <div class="dbody">
+              <p>&ldquo;Incorporates a water supply for automatic sprinklers with a Class III standpipe
+              system (in some cases the occupant hose connections are not required when automatic
+              sprinklers are provided.)&rdquo;</p>
+              <p>&ldquo;Until the 1970s, many building codes required either separate Class I and Class II
+              standpipes, or a Class III system. Many of the older buildings utilize Class II standpipe
+              outlets (for occupant use) to be supplied by the building&rsquo;s domestic water system, and
+              permit dry standpipes to meet Class I requirements. The dry standpipe risers are charged
+              with water when hose lines are connected to the fire department connection (FDC).&rdquo;</p>
+              <p>&ldquo;Since the 1970s, the trend has been to require automatic sprinkler systems in
+              almost all new commercial buildings. Most new systems are installed as combined
+              sprinkler/standpipe systems, and some older Class I or Class III standpipe systems have
+              been converted to combined systems to supply water for retrofit automatic sprinkler
+              systems.&rdquo;</p>
+              <p>&ldquo;Combined sprinkler/standpipe systems generally require a fire pump to increase
+              the pressure coming in from the public water system, in order to deliver adequate pressure
+              at the upper levels of the building. These pumps may be electrically driven or powered by
+              internal combustion (generally diesel) engines. Some codes require a backup water supply
+              system on the premises, in case the public water system is out of service due to an
+              earthquake, or other disruption.&rdquo;</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, pp.6-3&ndash;6-4</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">&#9679;</span>
+        <div class="stepbody">
+          <p class="action">Know your buildings before the tones. Newer buildings feed everything off a
+          single set of connections; older ones can have a different FDC for every stairwell, area or
+          system.</p>
+          <p class="detail">&ldquo;Therefore, it is important for firefighters to have information about
+          the water supply and connections for each specific building. This information should be
+          gathered during pre-fire planning.&rdquo;</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-4</p>
+
+          <details class="disc"><summary>Where standpipes are found &mdash; the manual&rsquo;s list</summary>
+            <div class="dbody">
+              <p>Standpipes turn up in multifamily residential buildings over three floors in height, and
+              in commercial or residential low-rise and high-rise buildings. They are usually in enclosed
+              stairwells, but can be in the public hallway or on the exterior of the building alongside
+              fire escapes. &mdash; p.6-1</p>
+              <p>&ldquo;Locations often equipped with standpipe systems:&rdquo;</p>
+              <ul>
+                <li>High-rise residential and office buildings</li>
+                <li>Large-area buildings such as hospitals, terminals, warehouses</li>
+                <li>Manufacturing facilities, and industrial buildings</li>
+                <li>Enclosed shopping malls</li>
+                <li>Theaters, stadiums, and arenas</li>
+                <li>Above- and below-grade parking garages</li>
+                <li>Bridges and tunnels</li>
+              </ul>
+              <p class="srcline">Engine Company Operations 2023 V-1, pp.6-1, 6-4</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="tiprow">
+        <div class="tipval">65<small>psi &mdash; the pre-1993 building</small></div>
+        <div class="tipbody">
+          <p class="action">Some buildings in your district were only ever built to give 65 psi at the
+          top outlet. Know which ones.</p>
+          <p class="detail">Before 1993, 65 psi residual at the topmost outlet was all that was required,
+          with the riser providing 500 gpm at that pressure and any additional risers 250 gpm each. A
+          100-foot 1&frac34;&Prime; hotel pack &mdash; using 10 feet of 3&Prime; as a leader line &mdash;
+          needs 110 psi to flow 150 gpm at a 75-psi nozzle pressure. That building will not give it to
+          you.</p>
+          <p class="detail"><strong>This is the reason the manual puts 2&frac12;&Prime; and a smooth bore
+          in your hands.</strong> The present standard requires a minimum of 100 psi at the top outlet
+          &mdash; enough for either 1&frac34;&Prime; or 2&frac12;&Prime; packs &mdash; but those minimums
+          assume a properly maintained, 100% dependable system, &ldquo;a scenario we must realize does not
+          exist in many buildings.&rdquo;</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-4</p>
+
+          <details class="disc"><summary>The old-standard warning &mdash; the manual&rsquo;s line</summary>
+            <div class="dbody">
+              <blockquote>&ldquo;It is imperative that companies become familiar with their districts and
+              know which high-rise buildings fall under this old standard, in order to be properly
+              equipped with the right diameter hose line.&rdquo;</blockquote>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.6-4</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2 · WHAT YOU CARRY ============ -->
+    <section class="phase cwtr" aria-labelledby="gear">
+      <h2 id="gear">WHAT YOU CARRY UP</h2>
+      <p class="pnote">Every Engine Company assigned to fire attack brings all four 2&frac12;&Prime; hose
+      bundles, the high-rise kit, and the forcible entry tools. How the load is split among the crew is
+      the Company Officer&rsquo;s call. &mdash; p.6-8</p>
+
+      <div class="tiprow">
+        <div class="tipval">200<small>feet &mdash; the bundle</small></div>
+        <div class="tipbody">
+          <p class="action">Four 50-foot lengths of 2&frac12;&Prime;, packed in a Denver load with straps.
+          One bundle carries the high-rise nozzle pre-attached.</p>
+          <p class="detail">Four lengths is the printed tool assignment on both the 1st and 2nd due
+          engine.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, pp.6-5, 6-11, 6-12</p>
+        </div>
+      </div>
+
+      <div class="tiprow">
+        <div class="tipval">1&#8539;&Prime;<small>tip &middot; 50 psi &middot; 265 gpm</small></div>
+        <div class="tipbody">
+          <p class="action">The high-rise nozzle is one assembly, not a choice. There is no tip menu.</p>
+          <p class="detail">A 2&frac12;&Prime; ball-style shut-off with a <strong>built-in
+          2&frac12;&Prime;&nbsp;&rarr;&nbsp;1&frac12;&Prime; reducer</strong>, into which the
+          1&#8539;&Prime; smooth bore tip threads. Assembled, those components <em>are</em> the high-rise
+          nozzle.</p>
+          <p class="detail">Second thing that shut-off buys you: <strong>kill the water, break the tip
+          off, and add hose at the nozzle</strong> to extend the stretch.</p>
+          <span class="oretag">NP 50 psi &middot; 265 gpm</span>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-6 &middot; flow per the OFD
+          Hydraulic Manual, Solid Stream / Smooth Bore Tips</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">&#9633;</span>
+        <div class="stepbody">
+          <p class="action">The gate valve is your pressure control &mdash; and your backup when the
+          building&rsquo;s valve fights you.</p>
+          <p class="detail">&ldquo;The Gate Valve allows the firefighter located at the standpipe outlet
+          to have better control over the discharge pressure. It also provides for redundancy if problems
+          arise with the standpipe outlet valve or PRD/PRV.&rdquo;</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-7</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">&#9678;</span>
+        <div class="stepbody">
+          <p class="action">Gauge goes on the gate valve <em>before</em> the hose does.</p>
+          <p class="detail">The in-line pressure gauge attaches to the 2&frac12;&Prime; outlet on the gate
+          valve. Attach it first. It is what lets you dial in the right pressure for the amount of hose
+          you actually stretched.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-6</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">&#8735;</span>
+        <div class="stepbody">
+          <p class="action">The elbow kills the kink at the outlet.</p>
+          <p class="detail">It reduces bends and kinks in the hose attached to the standpipe outlet, and
+          lets you make the connection inside a public hallway hose cabinet.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-6</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">&#9856;</span>
+        <div class="stepbody">
+          <p class="action">The high-rise kit is a nylon bag &mdash; know what is in it without looking.</p>
+          <p class="detail">Minimum contents: <strong>gate valve &middot; spanner wrenches &middot; door
+          wedges &middot; pipe wrench &middot; pressure gauge &middot; 30-degree elbow &middot; PRD/PRV
+          adjustment tools</strong>.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-5</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">&#9679;</span>
+        <div class="stepbody">
+          <p class="action">Minuteman on the high-rise shut-off &mdash; residential and hotels only, and
+          only if the Company Officer says the fire allows it.</p>
+          <p class="detail">For residential occupancies and hotels the 1&frac34;&Prime; Minuteman bundle
+          can be attached to the high-rise shut-off nozzle, <strong>for overhaul and if fire conditions
+          allow</strong>.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-5</p>
+
+          <details class="disc"><summary>When the Minuteman is justified &mdash; the manual&rsquo;s test</summary>
+            <div class="dbody">
+              <p>&ldquo;This manual requires that 2 &frac12;&rdquo; hose and smooth-bore nozzles are to be
+              used when operating off standpipes in both commercial and residential low-rise and high-rise
+              buildings. The main reason for this is the limited pressure available in wet standpipe
+              systems built prior to 1993 (65psi) and the extinguishing capability of 2 &frac12;&rdquo;
+              hose.&rdquo;</p>
+              <p>&ldquo;The 1 &frac34;&rdquo; minuetman bundle may be attached to the 2 1/2&quot; shutoff
+              in certain situations when fighting fires in residential buildings. The decision to use the
+              minuetman bundle should be made only when the Company Officer feels the fire conditions (no
+              fire in the public hallway); stairwell size and configuration, and mobility needed will
+              quickly extinguish a fire contained to one unit.&rdquo;</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.6-8</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 3 · GOING UP ============ -->
+    <section class="phase csup" aria-labelledby="goingup">
+      <h2 id="goingup">GOING UP &mdash; AND PICKING THE OUTLET</h2>
+
+      <div class="tiprow">
+        <div class="tipval words">6+<small>stories &middot; elevator gate</small></div>
+        <div class="tipbody">
+          <p class="action">In a low-rise you walk. Over six stories you may ride &mdash; with an Elevator
+          Operator, and you get off <em>two floors below the fire floor</em>.</p>
+          <p class="detail">&ldquo;In low-rise buildings, elevators should not be used by fire attack crews
+          necessitating that hose and other equipment be carried up the stairs. Crews may use the elevators
+          in buildings over six stories, provided that an Elevator Operator is in place and the crews exit
+          the elevator a minimum of two floors below the fire floor.&rdquo;</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-8</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">1</span>
+        <div class="stepbody">
+          <p class="action">Three things decide the stretch: what floor and occupancy the fire is in, how
+          far it is from the nearest outlet, and whether you have the people &mdash; two companies
+          &mdash; to get the first line in service promptly.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-8</p>
+
+          <details class="disc"><summary>Why it is two companies &mdash; from the hoseline chapter</summary>
+            <div class="dbody">
+              <p>&ldquo;In order to assure efficient and timely stretching of the fire attack line in
+              multiple story buildings, the services of the first two engine companies should be utilized.
+              The pairing of engine companies will in most cases result in a more rapid and efficient
+              hoseline stretch.&rdquo;</p>
+              <p>The same page lists the <strong>standpipe stretch with high-rise bundles</strong> alongside
+              the well-hole stretch, the utility rope stretch via the exterior, and the bundle drop stretch
+              as the ways to minimize the number of lengths required in a multiple-floor occupancy.</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.4-9</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">2</span>
+        <div class="stepbody">
+          <p class="action">Take the outlet in the stairway closest to the fire. Shortest stretch wins.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-8</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">3</span>
+        <div class="stepbody">
+          <p class="action">Every primary hookup is made on the <em>floor below the fire</em>. No
+          exceptions.</p>
+          <p class="detail">The first officer to reach the fire floor reports the location of the fire and
+          the conditions in the public hallway.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-8</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">4</span>
+        <div class="stepbody">
+          <p class="action">Second and third lines: expect to hook up two floors below, or in a more
+          distant stairway &mdash; so carry extra lengths.</p>
+          <p class="detail">&ldquo;Engine Companies responsible for the second and third lines should
+          anticipate this fact and should add additional lengths of hose to their stretch.&rdquo;</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-9</p>
+        </div>
+      </div>
+
+      <div class="pull">
+        <blockquote>&ldquo;Under no circumstances should a hookup be made to a hose outlet that does not
+        afford the fire attack Engine Company protection from heat and smoke, such as in a corridor or
+        hallway.&rdquo;
+        <span class="srcline">Engine Company Operations 2023 V-1, p.6-9</span></blockquote>
+      </div>
+    </section>
+
+    <!-- ============ 4 · THE HOOKUP ============ -->
+    <section class="phase cfom" aria-labelledby="hookup">
+      <h2 id="hookup">THE HOOKUP &mdash; FOUR THINGS BEFORE THE HOSE GOES ON</h2>
+      <p class="pnote">&ldquo;After the hookup point is chosen, four important operations must be
+      performed at the hose outlet valve before the hose can be attached.&rdquo; &mdash; p.6-9</p>
+
+      <div class="step"><span class="stepnum">1</span>
+        <div class="stepbody">
+          <p class="action">Confirm the outlet valve is <em>closed</em> before you pull the cap.</p>
+          <p class="detail">On a dry system, outlet valves may be sitting open on other floors.
+          <strong>Assign firefighters to go shut them</strong> &mdash; every open outlet robs pressure
+          from your line.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-9</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">2</span>
+        <div class="stepbody">
+          <p class="action">Remove the pressure-regulating device &mdash; or drive it to fully open.</p>
+          <p class="detail">Some PRDs come off. Others are permanently affixed and must be adjusted to the
+          <strong>fully open</strong> position; the method varies by manufacturer, and the adjustment tools
+          are in the high-rise kit. They show up in buildings only six or eight stories tall.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-9</p>
+
+          <details class="disc"><summary>The three kinds of PRD you will meet &mdash; full wording</summary>
+            <div class="dbody">
+              <p>&ldquo;Remove or adjust the pressure-regulating device if present. PRDs routinely are
+              installed on standpipe outlets to reduce, restrict, or otherwise control pressures. It is
+              possible to find PRD&rsquo;s in buildings that are only six or eight stories in height. Some
+              types of PRD&rsquo;s can be removed, but others are permanently affixed and cannot be
+              removed--at least not in any reasonable amount of time. Non-removable PRD&rsquo;s must be
+              adjusted to the fully open position. The method by which this is accomplished varies by
+              manufacturer. It is important to recognize that special tools and training may be required to
+              adjust these devices. Various adjustment tools can are located in the high-rise kit. A third
+              type of PRD exists, and it is the most dangerous. It cannot be removed and is not
+              field-adjustable. The presence of permanently affixed, nonadjustable PRD&rsquo;s should be
+              noted during pre-fire planning inspections, and this information must be disseminated to all
+              affected fire companies.&rdquo;</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.6-9</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">3</span>
+        <div class="stepbody">
+          <p class="action">Flush the outlet. Hard. Nothing in NFPA 14 puts a screen or strainer in that
+          riser.</p>
+          <p class="detail">Garbage and debris accumulate in the riser and piping and will clog your
+          nozzle or wreck the stream of the first line. Flushing also proves the outlet valve works and
+          will take a pressure adjustment.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-9</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">4</span>
+        <div class="stepbody">
+          <p class="action">Gate valve on, in-line gauge on, then the hose. Now you can adjust pressure at
+          the outlet.</p>
+          <p class="detail">&ldquo;Pressure adjustments then are made by monitoring the in-line gauge and
+          turning the control wheel at the outlet <strong>with the nozzle fully open and
+          flowing</strong>.&rdquo;</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-10</p>
+        </div>
+      </div>
+
+      <div class="tiprow">
+        <div class="tipval words">CHARGE<small>where?</small></div>
+        <div class="tipbody">
+          <p class="action">Commercial: always in the stairway. Residential: you may stretch dry to the
+          apartment door &mdash; if the fire lets you.</p>
+          <p class="detail">A bedroom or kitchen fire in a residential building may allow a dry stretch to
+          the door. A more developed fire, wind as a factor, or an open apartment door making the public
+          hallway untenable, and the stairway is the only safe option.</p>
+          <p class="detail"><strong>&ldquo;If any doubt exists, charge the line in the stairway.&rdquo;</strong></p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-10</p>
+        </div>
+      </div>
+
+      <div class="gate">
+        <p class="gtag">SAFETY</p>
+        <h3>The third kind of PRD cannot be removed and cannot be adjusted &mdash; and the manual calls it
+        the most dangerous.</h3>
+        <p>You will not fix it at the outlet with a tool. The only defence is knowing it is there before
+        the fire: &ldquo;The presence of permanently affixed, nonadjustable PRD&rsquo;s should be noted
+        during pre-fire planning inspections, and this information must be disseminated to all affected
+        fire companies.&rdquo;</p>
+        <span class="srcline">Engine Company Operations 2023 V-1, p.6-9</span>
+      </div>
+
+      <div class="gate">
+        <p class="gtag">SAFETY</p>
+        <h3>Never fight fire with the building&rsquo;s own hose.</h3>
+        <p>&ldquo;Engine companies should never attempt to use the unlined, linen hose provided with
+        standpipe systems. It often is old and improperly maintained and may fail under fire department
+        operating pressures.&rdquo;</p>
+        <p>The manual gives exactly one exception: a ladder or rescue company operating remotely from an
+        engine company while performing searches, where &ldquo;stretching and operating occupant-use hose
+        would be justified in an attempt to save civilian and firefighter lives.&rdquo;</p>
+        <span class="srcline">Engine Company Operations 2023 V-1, p.6-3</span>
+      </div>
+    </section>
+
+    <!-- ============ 5 · PRDs & PRVs ============ -->
+    <section class="phase cprd" aria-labelledby="prd">
+      <h2 id="prd">PRESSURE REDUCING DEVICES</h2>
+      <p class="pnote">Two families of device get installed on standpipe outlets, and they behave
+      differently the moment you stop flowing water. &mdash; p.6-13</p>
+
+      <div class="step"><span class="stepnum">A</span>
+        <div class="stepbody">
+          <p class="action">Flow restricting device &mdash; squeezes the opening. It does <em>not</em>
+          touch static pressure.</p>
+          <p class="detail">It controls discharge pressure by restricting flow through a reduced opening
+          sized to a specific pressure and discharge rate; the common one is an orifice plate. Because it
+          leaves static pressure alone, <strong>you get higher pressures at lower flow rates</strong>. Some
+          jurisdictions require them to be adjustable or removable by the fire department.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-13</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">B</span>
+        <div class="stepbody">
+          <p class="action">Pressure reducing valve &mdash; holds a set pressure downstream at every flow
+          rate, flowing or static.</p>
+          <p class="detail">Set to deliver a specific pressure that will not be exceeded under any flow
+          condition. It must be set for that specific condition and is usually not adjustable without
+          special tools. They are also installed between the standpipe risers and the automatic sprinklers
+          on individual floors, not only on hose outlets.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-13</p>
+        </div>
+      </div>
+
+      <div class="tblblock">
+        <p class="tbllabel">NFPA 14 outlet pressure limits</p>
+        <p class="reconstructed">RECONSTRUCTED</p>
+        <p class="scrollhint">Table scrolls sideways &rarr;</p>
+        <div class="tblwrap">
+          <table>
+            <thead>
+              <tr><th scope="col">Limit</th><th scope="col">Pre-1993</th><th scope="col">Since 1993</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Minimum at the highest outlet</td><td class="num">65 psi residual</td><td class="num">100 psi flow pressure</td></tr>
+              <tr><td>Flow the primary riser had to provide</td><td class="num">500 gpm</td><td>&mdash;</td></tr>
+              <tr><td>Any additional riser</td><td class="num">250 gpm each</td><td>&mdash;</td></tr>
+              <tr><td>Maximum pressure at an outlet, flowing</td><td class="num">100 psi</td><td>&mdash;</td></tr>
+              <tr><td>Maximum static at any outlet</td><td class="num">175 psi</td><td class="num">175 psi</td></tr>
+              <tr><td>Applies to</td><td>1&frac12;&Prime; and 2&frac12;&Prime; alike</td><td>outlets larger than 1&frac12;&Prime;</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="srcline">The manual points to a &ldquo;Table 1&rdquo; and a &ldquo;Table 2&rdquo; that
+        were never printed in it. The figures above are <strong>reconstructed from the body text</strong> of
+        Engine Company Operations 2023 V-1, p.6-14, and are labelled as such. The missing tables are on the
+        committee list.</p>
+      </div>
+
+      <div class="step"><span class="stepnum">&#9679;</span>
+        <div class="stepbody">
+          <p class="action">The pre-1993 number was built around the nozzle you carry: 65 psi minus 15 psi
+          friction loss per 100 ft of 2&frac12;&Prime; leaves the 50 psi a 1&#8539;&Prime; smooth bore
+          needs.</p>
+          <p class="detail">That is the manual&rsquo;s own arithmetic for why the old standard was set at
+          65 psi at 500 gpm at the highest outlet &mdash; it assumed 2&frac12;&Prime; hose with a
+          1&#8539;&Prime; tip.</p>
+          <p class="detail"><strong>Which is exactly why your nozzle still works in those
+          buildings:</strong> &ldquo;Nozzles that are designed to operate at lower pressures (50 psi) will
+          be particularly useful when responding to buildings that have standpipe systems that were
+          designed to meet pre-1993 standards.&rdquo;</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-14</p>
+
+          <details class="disc"><summary>What changed in 1993, and why</summary>
+            <div class="dbody">
+              <p>&ldquo;The minimum and maximum pressure limitations were revised in 1993, after several
+              reports of fires where crews had difficulty operating effective hose streams due to
+              inadequate pressures. A large number of fire department were found to be using 1 3/4&rdquo;
+              or 2&rdquo; attack hose with combination fog nozzles, especially automatic nozzles, which
+              require at least 100 psi at the nozzle to operate properly. As a result, in 1993 the pressure
+              limit for all outlets greater than 1 1/2 inches was increased to 100 psi minimum flow
+              pressure, and 175 psi maximum static pressure.&rdquo;</p>
+              <p>&ldquo;The standard also specified that pressure reducing devices must be installed on 1
+              1/2 inch outlets that would exceed 100 psi flow pressure at the required flow rate. Pressure
+              reducing valves, which control water under flowing and static conditions, must be installed
+              on all outlets that exceed 175 psi static pressure.&rdquo;</p>
+              <p>&ldquo;The higher pressures that are required today for 2 1/2 inch and larger outlets are
+              intended to provide sufficient pressures for 2 1/2&rdquo; hose lines to be operated in excess
+              of one hundred feet, connected to outlets several floor below, and with nozzle pressures up
+              to 100 psi.&rdquo;</p>
+              <p><strong>On the 1&frac12;&Prime; outlets:</strong> &ldquo;The 1 1/2 inch valves were
+              limited to 100 psi residual pressure because these lines are usually considered occupant
+              attack lines. Pressures exceeding 100 psi may overwhelm occupant users.&rdquo;</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.6-14</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="tiprow">
+        <div class="tipval">234<small>psi at the base &middot; 275-ft building</small></div>
+        <div class="tipbody">
+          <p class="action">This is why PRVs exist &mdash; and why a mis-set one is a real problem.</p>
+          <p class="detail">In a 275-foot building it takes 234 psi at the base of the riser to overcome
+          elevation and still make the required 100 psi at the top outlet. At that pressure, a
+          2&frac12;&Prime; line with a 1&frac12;&Prime; tip would produce a nozzle reaction force of around
+          <strong>500 pounds</strong>. The PRV is there so the pressure at the outlet you open near the
+          base of that riser is inside a safe working range.</p>
+          <p class="detail">&ldquo;Some fire departments have encountered problems where the PRV&rsquo;s
+          were not properly set for the required discharge pressure. In these cases, firefighters faced
+          either inadequate or excessive hoseline pressures.&rdquo;</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-15</p>
+
+          <details class="disc"><summary>Why zone heights changed &mdash; and the test riser</summary>
+            <div class="dbody">
+              <p>&ldquo;In tall buildings, standpipe systems which utilize flow restricting devices were
+              limited to approximately 20 stories per zone, to stay within the limit of 175 psi maximum
+              static pressure. Each 20-story zone required its own fire pump(s) and fire department
+              connection (FDC).&rdquo;</p>
+              <p>&ldquo;Today, standpipe zone heights are no longer restricted if PRV&rsquo;s are used.
+              PRV&rsquo;s simplify the design and installation of sprinkler and standpipe systems by
+              allowing their installation without a height limitation.&rdquo;</p>
+              <p>&ldquo;The NFPA standard now requires a test/drain riser to be installed adjacent to the
+              standpipe risers that are equipped with PRV&rsquo;s so that flow and discharge pressure can
+              be set and checked during regular inspections.&rdquo;</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.6-15</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6 · ASSIGNMENTS ============ -->
+    <section class="phase cdig" aria-labelledby="assignments">
+      <h2 id="assignments">STANDPIPE ASSIGNMENTS &mdash; FIRST ALARM</h2>
+
+      <div class="rignote">
+        <h3>First arriving Engine</h3>
+        <ol>
+          <li>Company Officer establishes Investigation / Fire Attack Mode.</li>
+          <li>Company Officer establishes and announces the &ldquo;Fire Attack&rdquo; stairwell.</li>
+          <li>Engineer grabs the high-rise bag and pack off the first engine and goes with the company to
+          the standpipe outlet <strong>one floor below the fire floor</strong>.</li>
+          <li>Back-up &amp; Nozzle carry high-rise packs and tools to the floor below the fire; the Company
+          Officer helps carry when needed.</li>
+        </ol>
+        <p class="plainnote"><strong>Tools:</strong> high-rise bag &middot; 4 lengths of 2&frac12;&Prime;
+        in a high-rise bundle &middot; irons &middot; keys.</p>
+        <p class="srcline rn-src">Engine Company Operations 2023 V-1, p.6-11</p>
+      </div>
+
+      <div class="rignote">
+        <h3>Second arriving Engine</h3>
+        <ol>
+          <li>Company Officer assists the first engine with Investigation / Fire Attack Mode.</li>
+          <li><strong>Engineer establishes the standpipe system</strong> &mdash; secure a water supply,
+          proceed to the standpipe and/or combination system connection, make the connections, and begin
+          pumping operations.</li>
+          <li>Back-up, Tailboard &amp; Nozzle assist the Engineer with the water supply and the
+          connections.</li>
+          <li>Back-up &amp; Nozzle then help the Company Officer or Tailboard carry high-rise packs and
+          tools to <strong>two floors below the fire floor</strong>.</li>
+        </ol>
+        <p class="plainnote"><strong>Tools:</strong> high-rise bag &middot; 4 lengths of 2&frac12;&Prime;
+        in a high-rise bundle &middot; 4 air bottles &middot; irons.</p>
+        <p class="plainnote"><strong>Then:</strong> all equipment from this company is staged
+        <em>outside</em> the stairwell two floors below the fire, and the company goes to help the first
+        engine advance the first line.</p>
+        <p class="srcline rn-src">Engine Company Operations 2023 V-1, p.6-12</p>
+      </div>
+
+      <div class="step"><span class="stepnum">&#9679;</span>
+        <div class="stepbody">
+          <p class="action">Occupancy drives the load before you ever arrive.</p>
+          <p class="detail">&ldquo;Those occupancies that contain standpipe systems will require the Nozzle
+          Firefighter to bring hose bundles and other tools based on the Engine Company Officer&rsquo;s
+          size up and tactics.&rdquo;</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.1-12</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 7 · SUPPLYING IT ============ -->
+    <section class="phase cmst" aria-labelledby="supply">
+      <h2 id="supply">SUPPLYING THE SYSTEM &mdash; THE ENGINEER&rsquo;S SIDE</h2>
+      <p class="pnote">&ldquo;The first critical task facing the 2nd due Engine Companies arriving at a
+      fire in a standpipe-equipped building is to establish a water supply by pumping into the FDC
+      connections.&rdquo; &mdash; p.6-16</p>
+
+      <div class="tiprow">
+        <div class="tipval">3&Prime;<small>every standpipe, every time</small></div>
+        <div class="tipbody">
+          <p class="action">3&Prime; hose supplies every standpipe system. Wet or dry, commercial or
+          residential &mdash; it is not a judgement call.</p>
+          <p class="detail">&ldquo;3&rdquo; hose should be used to supply all standpipe systems.&rdquo;</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-16</p>
+        </div>
+      </div>
+
+      <div class="pull">
+        <blockquote>&ldquo;It is important to provide an independent and a redundant water supply by using
+        two engine companies for each Siamese connection.&rdquo;
+        <span class="srcline">Engine Company Operations 2023 V-1, p.6-16</span></blockquote>
+      </div>
+
+      <div class="step"><span class="stepnum">2</span>
+        <div class="stepbody">
+          <p class="action">2nd due takes the FDC: <em>both</em> 3&Prime; lines into the Siamese, and
+          connect to the nearest hydrant.</p>
+          <p class="detail">Both of your 3&Prime; lines go into the one Siamese. That is the whole job on
+          that connection &mdash; you are not sharing it with another engine.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-16</p>
+        </div>
+      </div>
+
+      <div class="step"><span class="stepnum">3</span>
+        <div class="stepbody">
+          <p class="action">3rd due <em>relay pumps into you</em> from the next nearest hydrant. That is
+          where the redundancy comes from.</p>
+          <p class="detail">The two engine companies on that Siamese are <strong>in series, not both on
+          the FDC</strong>. You are on the connection; the third engine is behind you on the next hydrant,
+          pushing into your intake. If your pump fails, the water is already staged behind it.</p>
+          <p class="detail">If the building has more FDC connections, the next arriving engines repeat the
+          pattern. The larger the building, the more likely there are multiple FDCs &mdash; often on
+          different street fronts.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.6-16</p>
+
+          <details class="disc"><summary>Why redundancy matters here &mdash; the manual&rsquo;s reason</summary>
+            <div class="dbody">
+              <p>&ldquo;This ensures that firefighters advancing hoselines will have an uninterrupted supply
+              of water should a pumper suffer a mechanical failure or the FDC supplies only a single
+              stairwell riser. This is common with dry standpipe systems.&rdquo;</p>
+              <p>&ldquo;The second Engine Company arriving on the first alarm should take a position at the
+              appropriate FDC standpipe connection and supply two 3&rdquo; lines into the FDC Siamese and
+              connect to the nearest hydrant. The third arriving Engine Company should relay pump to the
+              second engine company from the next nearest hydrant. This procedure should be continued by the
+              next arriving engine companies if additional FDC connections to the building are available.
+              The larger the building, the more likely multiple FDC connections will be present, often on
+              different street fronts.&rdquo;</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.6-16</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="tblblock">
+        <p class="tbllabel">What you are pumping to &mdash; the four pieces</p>
+        <p class="scrollhint">Table scrolls sideways &rarr;</p>
+        <div class="tblwrap">
+          <table>
+            <thead>
+              <tr><th scope="col">Piece</th><th scope="col">Value</th><th scope="col">Where it comes from</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Nozzle pressure</td><td class="num">50 psi</td><td>Smooth bore hand-line</td></tr>
+              <tr><td>Friction loss, 2&frac12;&Prime; at 265 gpm</td><td class="num">16 psi / 100 ft</td><td>Friction Loss Standard per 100&prime; (field)</td></tr>
+              <tr><td>Standpipe appliance</td><td class="num">25 psi</td><td>Regardless of flow</td></tr>
+              <tr><td>Elevation</td><td class="num">5 psi / floor &minus; 1st</td><td>Structural elevation loss</td></tr>
+              <tr><td>Friction loss, 3&Prime; at 300 gpm</td><td class="num">9 psi / 100 ft</td><td>Your supply lines into the FDC</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="srcline">OFD Hydraulic Manual &mdash; Friction Loss Standard per 100&prime;; Elevation
+        Loss, field hydraulic calculation; Appliance Loss, Large Appliances; Nozzle Pressure.</p>
+      </div>
+
+      <div class="tiprow">
+        <div class="tipval words">NOZZLE<small>not the hookup floor</small></div>
+        <div class="tipbody">
+          <p class="action">Elevation is counted to the floor <em>the nozzle is on</em>, minus the first
+          floor. 5 psi a floor.</p>
+          <p class="detail">You hook up one floor below the fire, but the nozzle goes up to the fire floor
+          &mdash; count to the nozzle. Fire on 8: (8 &minus; 1) &times; 5 = <strong>35 psi</strong> of
+          elevation, not 30.</p>
+          <p class="detail">On a standpipe with a <strong>known pressure reducing valve</strong>, elevation
+          is taken on the <strong>total height of the standpipe</strong> instead.</p>
+          <p class="srcline">OFD Hydraulic Manual, Elevation Loss &mdash; field hydraulic calculation;
+          Appliance Loss &mdash; Standpipe</p>
+        </div>
+      </div>
+
+      <div class="tiprow">
+        <div class="tipval">25<small>psi &middot; the standpipe itself</small></div>
+        <div class="tipbody">
+          <p class="action">The standpipe takes its own 25 psi &mdash; regardless of flow. It never scales
+          down because you flowed less.</p>
+          <p class="srcline">OFD Hydraulic Manual, Appliance Loss &mdash; Large Appliances, Standpipe</p>
+        </div>
+      </div>
+
+      <div class="rignote">
+        <h3>Worked example &mdash; one line, fire on floor 8</h3>
+        <p class="plainnote rn-lead">Full 200-ft bundle off the outlet on floor 7, high-rise
+        nozzle on floor 8, 1&#8539;&Prime; tip flowing 265 gpm.</p>
+        <ol>
+          <li>NP &mdash; 50</li>
+          <li>FL &mdash; 2&frac12;&Prime; at 265 gpm, 200 ft &rarr; 16 &times; 2 = 32</li>
+          <li>AL &mdash; standpipe = 25</li>
+          <li>EL &mdash; nozzle on floor 8 &rarr; (8 &minus; 1) &times; 5 = 35</li>
+          <li><strong>142 psi</strong> at the FDC</li>
+        </ol>
+        <p class="plainnote">Then add the friction loss in your own 3&Prime; supply lines from the pump to
+        the FDC, at the flow each line is actually carrying. Arithmetic on the published values in the
+        table above; no figure here is invented.</p>
+      </div>
+
+      <div class="pending">
+        <p class="ptag">UNRESOLVED &mdash; NEEDS A DECISION</p>
+        <h3>On a <em>commercial</em> building, is the FDC the 2nd due&rsquo;s or the 3rd due&rsquo;s
+        &mdash; and does it wait for a &ldquo;working fire&rdquo;?</h3>
+        <p>On a standpipe or mid-rise building the two documents agree: the <strong>2nd due</strong> takes
+        it. They part company on commercial, and on the trigger.</p>
+        <blockquote>&ldquo;The second Engine Company arriving on the first alarm should take a position at
+        the appropriate FDC standpipe connection and supply two 3&rdquo; lines into the FDC Siamese and
+        connect to the nearest hydrant.&rdquo;
+        <span class="srcline">Engine Company Operations 2023 V-1, p.6-16</span></blockquote>
+        <blockquote>&ldquo;Position on FDC. Pump FDC upon &lsquo;working fire&rsquo;. Stretch back-up line
+        to location of 1st Engine Company.&rdquo;
+        <span class="srcline">OFD Quick Reference Guide, May 2024 &mdash; Commercial column, 3rd Engine
+        Company Functions</span></blockquote>
+        <blockquote>&ldquo;Establish water supply, Pump standpipe if 1st Engine determines standpipe
+        operations.&rdquo;
+        <span class="srcline">OFD Quick Reference Guide, May 2024 &mdash; Mid Rise Structures 4 Floors and
+        Above, 2nd Engine</span></blockquote>
+        <p>The open questions: (1) commercial FDC &mdash; 2nd due or 3rd due? (2) Is the real difference
+        <strong>sprinkler FDC vs standpipe FDC</strong>? If the Quick Reference Guide&rsquo;s commercial
+        line means the sprinkler connection and Chapter 6 means the standpipe connection, there is no
+        conflict at all &mdash; but the pump pressures differ, so it is worth saying on the page.
+        (3) Does the FDC wait for a &ldquo;working fire&rdquo;? Chapter 6 makes the connection and begins
+        pumping as the 2nd due&rsquo;s <em>first critical task</em>, with no such condition.</p>
+        <p><strong>Decider:</strong> a chief and a captain. Until then, work the chapter: on a standpipe
+        building the FDC is the 2nd due&rsquo;s, and the 3rd due relays into it.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <p class="docfoot">
+    <span>Engine Company Operations 2023 V-1, Chapter 6 &mdash; Standpipe Operations, pp.6-1&ndash;6-16, in
+    full; plus p.1-12 (Nozzle Firefighter, responding) and p.4-9 (Stretching and Operating the Hoseline
+    &mdash; other tactical considerations). Hydraulic figures from the OFD Hydraulic Manual. The commercial
+    FDC question also quotes the OFD Quick Reference Guide, May 2024. Page numbers are chapter-relative, as
+    printed in the manual&rsquo;s own footers.</span>
+  </p>
+  <p class="docfoot"><span>Not on this page for lack of a source: the manual&rsquo;s &ldquo;Table 1&rdquo;
+  and &ldquo;Table 2&rdquo; were never printed &mdash; the pressure limits above are reconstructed from the
+  body text and labelled. Chapter 6 gives no pump discharge pressure for an FDC and no maximum inlet
+  pressure, so none is stated here.</span></p>
+
+</div>
+
+<details class="secmenu" id="secMenu">
+  <summary aria-label="Open sections menu">Sections</summary>
+  <nav class="secpanel" aria-label="Jump to section">
+    <a class="ssys" href="#systems">The system</a>
+    <a class="sgear" href="#gear">What you carry</a>
+    <a class="sup" href="#goingup">Going up</a>
+    <a class="shook" href="#hookup">The hookup</a>
+    <a class="sprd" href="#prd">PRDs &amp; PRVs</a>
+    <a class="sasn" href="#assignments">Assignments</a>
+    <a class="ssupply" href="#supply">Supplying it</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  // night mode
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // floating Sections menu — close on tap. Works without JS too; this is a nicety.
+  var menu=document.getElementById('secMenu');
+  if(menu){
+    [].slice.call(menu.querySelectorAll('a')).forEach(function(a){
+      a.addEventListener('click',function(){menu.removeAttribute('open')});
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

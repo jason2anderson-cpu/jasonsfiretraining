@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Emergency Pump Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  --sec-amber:#915E06;  --sec-amber-g:#F8EEDC;
+  --sec-blue:#24568D;   --sec-blue-g:#E4EDF7;
+  --sec-green:#2F6B3D;  --sec-green-g:#E5F0E6;
+  --sec-slate:#574A8C;  --sec-slate-g:#ECE9F4;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --sec-amber:#E3AC4A;  --sec-amber-g:#33290F;
+    --sec-blue:#82B4E6;   --sec-blue-g:#152736;
+    --sec-green:#8AC79A;  --sec-green-g:#182B1D;
+    --sec-slate:#B2A5E0;  --sec-slate-g:#241F36;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --sec-amber:#E3AC4A;  --sec-amber-g:#33290F;
+  --sec-blue:#82B4E6;   --sec-blue-g:#152736;
+  --sec-green:#8AC79A;  --sec-green-g:#182B1D;
+  --sec-slate:#B2A5E0;  --sec-slate-g:#241F36;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}
+  html{scroll-behavior:auto}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2)}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:18px 0 6px}
+.kicker{font-family:var(--head);font-weight:700;font-size:14px;color:var(--accent);
+  letter-spacing:.04em;margin:0 0 6px;text-transform:uppercase}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1.1;
+  margin:0;text-wrap:balance}
+
+/* mode bar */
+.modebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0 6px}
+.mode{display:flex;border:1.5px solid var(--divider);border-radius:12px;overflow:hidden;background:var(--surface)}
+.mode button{min-height:56px;min-width:120px;padding:0 20px;border:0;background:transparent;
+  font-weight:700;font-size:16px;color:var(--text2)}
+.mode button[aria-pressed="true"]{background:var(--accent-tint);color:var(--text)}
+#resetBtn{min-height:56px;padding:0 18px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);font-weight:600;font-size:15px;color:var(--text2);display:none}
+body.checkoff #resetBtn{display:inline-block}
+.progress{font-size:15px;color:var(--text2);display:none;font-variant-numeric:tabular-nums}
+body.checkoff .progress{display:inline}
+
+/* panels — each section carries its own colour ground + matching header accent */
+.panel{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:18px;overflow:hidden}
+.phase > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:18px 24px 4px}
+.panel.sec-red{background:var(--safety-tint)}
+.panel.sec-red .phase > h2{color:var(--safety);border-left:5px solid var(--safety);padding-left:19px}
+.panel.sec-amber{background:var(--sec-amber-g)}
+.panel.sec-amber .phase > h2{color:var(--sec-amber);border-left:5px solid var(--sec-amber);padding-left:19px}
+.panel.sec-blue{background:var(--sec-blue-g)}
+.panel.sec-blue .phase > h2{color:var(--sec-blue);border-left:5px solid var(--sec-blue);padding-left:19px}
+.panel.sec-green{background:var(--sec-green-g)}
+.panel.sec-green .phase > h2{color:var(--sec-green);border-left:5px solid var(--sec-green);padding-left:19px}
+.panel.sec-slate{background:var(--sec-slate-g)}
+.panel.sec-slate .phase > h2{color:var(--sec-slate);border-left:5px solid var(--sec-slate);padding-left:19px}
+.phase > .pnote{font-size:14.5px;color:var(--text2);margin:0;padding:2px 24px 6px;max-width:64ch}
+
+.step{display:flex;align-items:flex-start;gap:16px;padding:16px 24px;min-height:76px;
+  border-top:1px solid var(--divider)}
+.phase > h2 + .step, .phase > .pnote + .step{border-top:0}
+.stepnum{font-family:var(--head);font-weight:700;font-size:36px;line-height:1;color:var(--text2);
+  min-width:56px;font-variant-numeric:tabular-nums;padding-top:2px}
+.stepbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:21px;line-height:1.35;margin:0}
+.stepnote{font-size:16px;color:var(--text2);margin:6px 0 0;max-width:58ch}
+.stepnote strong{color:var(--text)}
+.sublist{margin:8px 0 0;padding:0 0 0 14px;list-style:none;border-left:3px solid var(--divider)}
+.sublist li{font-weight:600;font-size:18px;line-height:1.4;padding:4px 0;color:var(--text)}
+.sublist li::before{content:"·";margin-right:10px;color:var(--text2)}
+
+/* big-numeral figure row (20 PSI) */
+.figrow{display:flex;align-items:center;gap:20px;padding:20px 24px}
+.fignum{font-family:var(--head);font-weight:800;font-size:40px;line-height:1;
+  font-variant-numeric:tabular-nums;color:var(--sec-blue)}
+.figunit{font-size:18px;font-weight:700;color:var(--text2)}
+.figbody{flex:1;min-width:0}
+.figbody .action{font-size:20px}
+.figbody .why{font-size:16px;color:var(--text2);margin:4px 0 0;max-width:60ch}
+
+/* cavitation callout */
+.callout{padding:18px 24px 20px}
+.callout .action{font-size:21px;max-width:36ch}
+.callout .action strong{color:var(--sec-amber)}
+.callout .why{font-size:16px;color:var(--text2);margin:8px 0 0;max-width:60ch}
+
+/* check-off */
+.tick{display:none;flex:0 0 auto;padding-top:2px}
+body.checkoff .tick{display:block}
+.tick input{width:32px;height:32px;margin:12px;accent-color:var(--safety);cursor:pointer}
+body.checkoff .step.done .action{color:var(--text2)}
+body.checkoff .step.done .stepnum{color:var(--safety)}
+
+/* manual section prose */
+.manual{padding:6px 24px 20px}
+.manual p{margin:10px 0;max-width:66ch;font-size:17px}
+.srcline{font-size:14px;color:var(--text2)}
+blockquote{margin:0 0 10px;padding:0 0 0 14px;border-left:3px solid var(--sec-green);color:var(--text)}
+blockquote ul{margin:6px 0 0;padding-left:20px}
+blockquote li{margin:4px 0;font-size:17px}
+
+/* committee flag */
+.flagbox{padding:18px 24px 20px}
+.flagbox .ptag{display:inline-flex;align-items:center;gap:8px;font-family:var(--head);font-weight:700;
+  font-size:14px;letter-spacing:.04em;color:var(--sec-slate);background:var(--surface);
+  border:2px dashed var(--sec-slate);border-radius:8px;padding:6px 12px;margin:0 0 10px}
+.flagbox p{margin:0 0 8px;max-width:66ch;font-size:16px}
+.flagbox p:last-child{margin:0}
+
+.docfoot{margin-top:22px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+/* floating Sections menu — narrow screens; works without JS via <details> */
+.secnav{display:none;position:fixed;right:16px;bottom:16px;z-index:60}
+.secnav > summary{list-style:none;display:flex;align-items:center;justify-content:center;
+  min-width:56px;min-height:56px;padding:0 20px;border-radius:28px;background:var(--accent);
+  color:var(--canvas);font-family:var(--head);font-weight:700;font-size:16px;cursor:pointer;
+  box-shadow:0 4px 14px rgba(10,30,28,.3)}
+.secnav > summary::-webkit-details-marker{display:none}
+.secnav .navlist{position:absolute;right:0;bottom:64px;min-width:230px;background:var(--surface);
+  border:1.5px solid var(--divider);border-radius:14px;box-shadow:0 8px 24px rgba(10,30,28,.25);
+  padding:8px;margin:0;list-style:none}
+.secnav .navlist a{display:block;padding:12px 14px;min-height:44px;border-radius:9px;
+  text-decoration:none;font-weight:600;font-size:16px;color:var(--text)}
+.secnav .navlist a:hover{background:var(--expanded)}
+.secnav .navlist .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:10px}
+@media (max-width:700px){.secnav{display:block}}
+
+@media (max-width:560px){
+  .step,.figrow{padding:14px 16px;gap:12px}
+  .stepnum{font-size:30px;min-width:44px}
+  .action{font-size:19px}
+  .phase > h2,.phase > .pnote,.manual,.callout,.flagbox{padding-left:16px;padding-right:16px}
+  .panel.sec-red .phase > h2,.panel.sec-amber .phase > h2,.panel.sec-blue .phase > h2,
+  .panel.sec-green .phase > h2,.panel.sec-slate .phase > h2{padding-left:11px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.modebar,.nightbtn,.secnav{display:none}
+  .panel{border:1.5px solid #000;border-radius:0;box-shadow:none;background:#fff!important}
+  .step{break-inside:avoid;min-height:0;padding:8px 12px}
+  .phase{break-inside:avoid-page}
+  .phase > h2{color:#000!important}
+  .panel.sec-red .phase > h2{border-left:5px solid #000}
+  .tick{display:block}
+  .tick input{width:14pt;height:14pt;margin:2pt 8pt}
+  .flagbox .ptag{border:2px dashed #000;color:#000}
+  .stepnum{color:#000;font-size:16pt;min-width:30pt}
+  .action{font-size:12pt}
+  .fignum{font-size:20pt;color:#000}
+}
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="ehome" href="engine-home.html">Engine Operations</a><span>›</span>Emergency Pump Operations</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <p class="kicker">Loss of water</p>
+    <h1>Emergency Pump Operations</h1>
+  </header>
+
+  <div class="modebar">
+    <div class="mode" role="group" aria-label="Sheet mode">
+      <button type="button" id="refBtn" aria-pressed="true">Reference</button>
+      <button type="button" id="checkBtn" aria-pressed="false">Check-off</button>
+    </div>
+    <button type="button" id="resetBtn">Reset all</button>
+    <span class="progress" id="progress"></span>
+  </div>
+
+  <div class="panel sec-red">
+    <section class="phase" aria-labelledby="emg">
+      <h2 id="emg">EMERGENCY — THE SEQUENCE</h2>
+      <p class="pnote">You lose water on an attack line. One drilled sequence, top to bottom.</p>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: emergency idle"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">EMERGENCY IDLE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: notify command"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">NOTIFY COMMAND</p>
+          <p class="stepnote"><strong>The pump work comes first.</strong> Prime, close what needs
+          closing, open tank to pump — that is what keeps the interior crew alive. Notifying Command
+          is a later priority than restoring water.</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open tank to pump"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">OPEN TANK TO PUMP</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: primer"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">PRIMER</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: check gauges"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">CHECK GAUGES</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: check connections air tight"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">CHECK CONNECTIONS AIR TIGHT</p>
+          <ul class="sublist">
+            <li>Hose damage</li>
+            <li>Hose kinks</li>
+            <li>Hydrant Damage</li>
+            <li>Hydrant accidental Shut off</li>
+            <li>Drains</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: work backwards to cab"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">WORK BACKWARDS TO CAB</p></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="panel sec-amber">
+    <section class="phase" aria-labelledby="cav">
+      <h2 id="cav">IF THE SUPPLY CAVITATES</h2>
+      <div class="callout">
+        <p class="action">If the water supply cavitates and pulls a vacuum —
+        <strong>CLOSE THE SUPPLY</strong>, then <strong>OPEN TANK TO PUMP</strong>.</p>
+        <p class="why">Separate response, not part of the drilled sequence — this is what you do the
+        moment it happens.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="panel sec-blue">
+    <section class="phase" aria-labelledby="minintake">
+      <h2 id="minintake">MINIMUM INTAKE PRESSURE</h2>
+      <div class="figrow">
+        <span class="fignum">20 <span class="figunit">PSI</span></span>
+        <div class="figbody">
+          <p class="action">Maintain 20 PSI intake pressure.</p>
+          <p class="why">20 psi minimum protects from drawing a vacuum on the intake hose.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="panel sec-green">
+    <section class="phase" aria-labelledby="manual">
+      <h2 id="manual">WHAT THE OREM MANUAL SAYS</h2>
+      <div class="manual">
+        <p>The Engine Company Operations manual contains no loss-of-water, cavitation, or pump-overheat
+        troubleshooting procedure. Its one statement touching supply failure is on the back-up line —
+        the situations where the back-up line should be used:</p>
+        <blockquote>
+          <ul>
+            <li>An additional attack line is needed.</li>
+            <li>Pressure loss to the attack line.</li>
+            <li>Attack team is trapped by fire.</li>
+            <li>Search team members egress is cut off.</li>
+          </ul>
+        </blockquote>
+        <p class="srcline">Engine Company Operations 2023 V-1, Back-Up Line, 4-7</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="panel sec-slate">
+    <section class="phase" aria-labelledby="flag">
+      <h2 id="flag">GAP IN THE MANUAL</h2>
+      <div class="flagbox">
+        <p class="ptag">⚑ FOR THE TRAINING COMMITTEE</p>
+        <p>Orem's Engine Company Operations has no pump-emergency section — no loss-of-water,
+        cavitation, or pump-overheat troubleshooting procedure anywhere in the manual. Flagged for
+        the training committee.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="docfoot">
+    <p><strong>Sources.</strong> Drilled sequence: Engineer Jason Anderson's engine evolution card and
+    study card, merged per his 2026-08-30 ruling (Knowledge Library R-51); step wording verbatim from
+    the cards. Priority note on Notify Command and the cavitation response: the same ruling. 20 psi
+    intake minimum: his engine evolution card. Manual material: Orem Fire Department Engine Company
+    Operations 2023 V-1, page-cited.</p>
+    <p>Version: prototype · Last reviewed 2026-08-30 · Compiled by Engineer Jason Anderson</p>
+  </div>
+
+</div>
+
+<details class="secnav" id="secnav">
+  <summary aria-label="Jump to a section">Sections</summary>
+  <ul class="navlist">
+    <li><a href="#emg"><span class="dot" style="background:var(--safety)"></span>Emergency — the sequence</a></li>
+    <li><a href="#cav"><span class="dot" style="background:var(--sec-amber)"></span>If the supply cavitates</a></li>
+    <li><a href="#minintake"><span class="dot" style="background:var(--sec-blue)"></span>Minimum intake pressure</a></li>
+    <li><a href="#manual"><span class="dot" style="background:var(--sec-green)"></span>What the Orem manual says</a></li>
+    <li><a href="#flag"><span class="dot" style="background:var(--sec-slate)"></span>Gap in the manual</a></li>
+  </ul>
+</details>
+
+<script>
+(function(){
+  // night mode
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // modes
+  var refBtn=document.getElementById('refBtn'),checkBtn=document.getElementById('checkBtn');
+  var resetBtn=document.getElementById('resetBtn'),prog=document.getElementById('progress');
+  var boxes=[].slice.call(document.querySelectorAll('.tick input'));
+  function setMode(m){
+    document.body.classList.toggle('checkoff',m==='check');
+    refBtn.setAttribute('aria-pressed',m==='ref');
+    checkBtn.setAttribute('aria-pressed',m==='check');
+    sessionStorage.setItem('epump-mode',m);
+    update();
+  }
+  refBtn.addEventListener('click',function(){setMode('ref')});
+  checkBtn.addEventListener('click',function(){setMode('check')});
+  function update(){
+    var done=0;
+    boxes.forEach(function(b){
+      b.closest('.step').classList.toggle('done',b.checked);
+      if(b.checked)done++;
+    });
+    prog.textContent=done+' / '+boxes.length+' done';
+  }
+  boxes.forEach(function(b,i){
+    b.checked=sessionStorage.getItem('epump2-s'+i)==='1';
+    b.addEventListener('change',function(){
+      sessionStorage.setItem('epump2-s'+i,b.checked?'1':'0');update();
+    });
+  });
+  resetBtn.addEventListener('click',function(){
+    boxes.forEach(function(b,i){b.checked=false;sessionStorage.removeItem('epump2-s'+i)});update();
+  });
+  setMode(sessionStorage.getItem('epump-mode')||'ref');
+
+  // floating sections menu — close after a jump
+  var nav=document.getElementById('secnav');
+  nav.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click',function(){nav.open=false});
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Engine Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  --teal-g:#E4EFED;
+  --gold:#8A5800; --gold-g:#F7EEDC;
+  --blue:#3A5BA8; --blue-g:#E7ECF7;
+  --plum:#84457C; --plum-g:#F3E7F2;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#42201D;
+    --teal-g:#12292C;
+    --gold:#DCAF5E; --gold-g:#2E2513;
+    --blue:#9FB6EA; --blue-g:#1A2438;
+    --plum:#D8A3CF; --plum-g:#321F30;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#42201D;
+  --teal-g:#12292C;
+  --gold:#DCAF5E; --gold-g:#2E2513;
+  --blue:#9FB6EA; --blue-g:#1A2438;
+  --plum:#D8A3CF; --plum-g:#321F30;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2);font-weight:600}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(30px,5vw,42px);line-height:1.08;
+  margin:14px 0 22px;text-wrap:balance}
+
+h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;color:var(--text2);
+  margin:34px 0 10px}
+
+.panel{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);overflow:hidden}
+.panel + .panel{margin-top:14px}
+
+/* section colour identities — ground tint + matching header accent, never colour alone */
+.sec-teal{--sec-a:var(--accent);--sec-g:var(--teal-g)}
+.sec-red{--sec-a:var(--safety);--sec-g:var(--safety-tint)}
+.sec-gold{--sec-a:var(--gold);--sec-g:var(--gold-g)}
+.sec-blue{--sec-a:var(--blue);--sec-g:var(--blue-g)}
+.sec-plum{--sec-a:var(--plum);--sec-g:var(--plum-g)}
+.panel.sec{background:var(--sec-g);border-top:4px solid var(--sec-a)}
+.panel.sec .cardname{color:var(--sec-a)}
+h2.sec{color:var(--sec-a)}
+
+/* primary card rows */
+.cardrow{display:block;padding:22px 24px;min-height:56px;text-decoration:none;color:inherit}
+.cardrow:hover .cardname{text-decoration:underline}
+.cardname{font-family:var(--head);font-weight:700;font-size:21px;line-height:1.25;margin:0}
+.cardline{font-size:15px;color:var(--text2);margin:6px 0 0;line-height:1.6}
+.cardline b{font-weight:600;color:var(--text)}
+.phases{font-size:16.5px;font-weight:600;color:var(--text);margin:8px 0 0;line-height:1.7}
+.phases .sep{color:var(--text2);font-weight:400;padding:0 4px}
+.phases .ph-red{color:var(--safety);font-weight:700}
+
+/* evolutions + manual lists */
+.evorow{display:flex;align-items:baseline;gap:16px;padding:16px 24px;border-top:1px solid var(--divider)}
+.evorow:first-child{border-top:0}
+.evoid{font-family:var(--head);font-weight:700;font-size:20px;min-width:52px;
+  font-variant-numeric:tabular-nums;color:var(--sec-a,var(--text2))}
+.evobody{flex:1;min-width:0}
+.evoname{font-weight:600;font-size:17px;margin:0;letter-spacing:.01em}
+a.evoname{text-decoration:none;color:var(--text)}
+a.evoname:hover{text-decoration:underline}
+
+.chrow{padding:16px 24px;border-top:1px solid var(--divider)}
+.chrow:first-child{border-top:0}
+.chname{font-weight:600;font-size:17px;margin:0;letter-spacing:.01em}
+.chline{font-size:14.5px;color:var(--text2);margin:3px 0 0}
+
+.docfoot{margin-top:26px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+/* floating Sections menu — narrow screens only; plain details, works with JS off */
+.secfab{display:none}
+@media (max-width:700px){
+  .secfab{display:block;position:fixed;right:16px;bottom:16px;z-index:50}
+  .secfab summary{list-style:none;display:flex;align-items:center;justify-content:center;
+    min-width:56px;min-height:56px;padding:0 20px;border-radius:28px;background:var(--accent);
+    color:var(--canvas);font-family:var(--head);font-weight:700;font-size:15px;
+    box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer}
+  .secfab summary::-webkit-details-marker{display:none}
+  .seclist{position:absolute;right:0;bottom:64px;background:var(--surface);
+    border:1px solid var(--divider);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.28);
+    min-width:240px;padding:8px;margin:0;list-style:none}
+  .seclist a{display:block;padding:12px 14px;min-height:44px;font-weight:600;font-size:16px;
+    text-decoration:none;color:var(--text);border-radius:8px}
+  .seclist a:hover{background:var(--expanded)}
+  .seclist .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:10px}
+}
+
+@media (max-width:560px){
+  .cardrow,.evorow,.chrow{padding-left:16px;padding-right:16px}
+  .evoid{min-width:44px;font-size:18px}
+}
+@media print{
+  body{background:#fff;color:#000}
+  .top,.nightbtn,.secfab{display:none}
+  .panel,.panel.sec{border:1.5px solid #000;border-radius:0;box-shadow:none;background:#fff}
+  .cardname,h2.sec{color:#000}
+  .cardrow,.evorow,.chrow{break-inside:avoid}
+}
+.chname a{color:inherit;text-decoration:none}
+.chname a:hover{color:var(--accent);text-decoration:underline}
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb">Jason&rsquo;s Fire Training</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <h1>Engine Operations</h1>
+
+  <div class="panel sec sec-teal" id="myevo">
+    <a class="cardrow" data-nav="eflow" href="engine-flow.html">
+      <p class="cardname">ENGINE EVOLUTION</p>
+      <p class="phases">Positioning<span class="sep">&middot;</span><span class="ph-red">Secure the rig</span><span class="sep">&middot;</span>Get water moving<span class="sep">&middot;</span>Establish supply<span class="sep">&middot;</span>MASTER STREAM<span class="sep">&middot;</span>FOAM</p>
+    </a>
+  </div>
+
+  <div class="panel sec sec-red" id="epump">
+    <a class="cardrow" data-nav="epump" href="engine-emergency.html">
+      <p class="cardname">EMERGENCY PUMP OPERATIONS</p>
+      <p class="cardline">Lost water at the pump &mdash; <b>EMERGENCY IDLE</b> first, then the full sequence. Restoring water comes before notifying Command.</p>
+    </a>
+  </div>
+
+  <div class="panel sec sec-gold" id="erole">
+    <a class="cardrow" data-nav="erole" href="engine-role.html">
+      <p class="cardname">ENGINEER &mdash; ROLES, RESPONSIBILITIES &amp; FIRST-DUE</p>
+      <p class="cardline">Engine Company Operations 2023 V-1, Ch.&nbsp;1 Firefighter Assignments &mdash; Engineer, p.&nbsp;1-8 &middot; Quick Reference Guide, May 2024</p>
+    </a>
+  </div>
+
+  <h2 class="sec sec-blue" id="official">OFFICIAL EVOLUTIONS &middot; ADO-Pumper Task Book, September 2024</h2>
+  <div class="panel sec sec-blue">
+    <div class="evorow"><span class="evoid">1.0</span>
+      <div class="evobody"><a class="evoname" href="evo-1-0.html">POSITION ON HYDRANT &amp; ESTABLISH OWN WATER SUPPLY</a></div>
+    </div>
+    <div class="evorow"><span class="evoid">1.1</span>
+      <div class="evobody"><a class="evoname" data-nav="evo11" href="evo-1-1.html">SINGLE LINE ON TANK WATER &ndash; WITHOUT CHANGEOVER</a></div>
+    </div>
+    <div class="evorow"><span class="evoid">1.2</span>
+      <div class="evobody"><a class="evoname" data-nav="evo12" href="evo-1-2.html">CHANGEOVER &amp; SUPPLY VARIOUS HOSE LOADS</a></div>
+    </div>
+    <div class="evorow"><span class="evoid">1.3</span>
+      <div class="evobody"><a class="evoname" data-nav="evo13" href="evo-1-3.html">PLACE THE PORTABLE MONITOR IN SERVICE</a></div>
+    </div>
+    <div class="evorow"><span class="evoid">1.4</span>
+      <div class="evobody"><a class="evoname" data-nav="evo14" href="evo-1-4.html">PLACE THE DECK GUN IN SERVICE WHILE FLOWING ADDITIONAL HAND LINES</a></div>
+    </div>
+    <div class="evorow"><span class="evoid">1.5</span>
+      <div class="evobody"><a class="evoname" data-nav="evo15" href="evo-1-5.html">SUPPLY A FDC SPRINKLER SYSTEM</a></div>
+    </div>
+    <div class="evorow"><span class="evoid">1.6</span>
+      <div class="evobody"><a class="evoname" data-nav="evo16" href="evo-1-6.html">UTILIZE A STANDPIPE TO CHARGE LINES ON A MULTI-STORY STRUCTURE</a></div>
+    </div>
+    <div class="evorow"><span class="evoid">1.7</span>
+      <div class="evobody"><a class="evoname" data-nav="evo17" href="evo-1-7.html">PUMPING A HYDRANT AS THE SUPPLY PUMPER</a></div>
+    </div>
+    <div class="evorow"><span class="evoid">1.8</span>
+      <div class="evobody"><a class="evoname" data-nav="evo18" href="evo-1-8.html">PARTICIPATE IN PUMPING A HYDRANT AS THE ATTACK PUMPER</a></div>
+    </div>
+    <div class="evorow"><span class="evoid">1.9</span>
+      <div class="evobody"><a class="evoname" data-nav="evo19" href="evo-1-9.html">PUMP TO A LADDER COMPANY FOR AN ELEVATED STREAM</a></div>
+    </div>
+    <div class="evorow"><span class="evoid">2.0</span>
+      <div class="evobody"><a class="evoname" data-nav="evo20" href="evo-2-0.html">FOAM OPERATIONS WITH PRO/PAK</a></div>
+    </div>
+  </div>
+
+  <h2 class="sec sec-plum" id="manual">FROM THE MANUAL &middot; Engine Company Operations 2023 V-1</h2>
+  <div class="panel sec sec-plum">
+    <div class="chrow">
+      <p class="chname"><a href="water-supply.html">WATER SUPPLY</a></p>
+      <p class="chline">Hydrants &middot; Forward Lay &middot; Reverse Lay &middot; Split Lay &middot; High Flow Operations &mdash; Ch.&nbsp;5</p>
+    </div>
+    <div class="chrow">
+      <p class="chname"><a href="relay-pumping.html">RELAY PUMPING</a></p>
+      <p class="chline">Ch.&nbsp;5, p.&nbsp;5-14</p>
+    </div>
+    <div class="chrow">
+      <p class="chname"><a href="standpipe-ops.html">STANDPIPE OPERATIONS</a></p>
+      <p class="chline">Standpipe Systems &middot; Standpipe Hose and equipment &middot; Operating from Standpipe Systems &middot; Standpipe Assignments &middot; Pressure Reducing Devices &middot; Supplying Standpipe Systems &mdash; Ch.&nbsp;6</p>
+    </div>
+    <div class="chrow">
+      <p class="chname"><a href="qrg.html">QUICK REFERENCE GUIDE</a></p>
+      <p class="chline">Who does what by arriving order, per building type &mdash; OFD Quick Reference Guide, May 2024</p>
+    </div>
+    <div class="chrow">
+      <p class="chname"><a href="master-streams.html">MASTER STREAM OPERATIONS</a></p>
+      <p class="chline">Master Stream Operations &middot; Deck Gun &middot; Rapid Attack Monitor &mdash; Ch.&nbsp;7</p>
+    </div>
+  </div>
+
+  <div class="docfoot">
+    <p>Phases follow the engine evolution card; the EMERGENCY sequence is the merged emergency
+    procedure. Evolutions: OFD ADO-Pumper
+    Task Book, September 2024 Version, in official order. Chapters: Engine Company Operations
+    2023 V-1, Table of Contents.</p>
+    <p>Last reviewed 2026-08-30 &middot; Compiled by Engineer Jason Anderson</p>
+  </div>
+
+</div>
+
+<details class="secfab" id="secFab">
+  <summary>Sections</summary>
+  <ul class="seclist">
+    <li><a href="#myevo"><span class="dot" style="background:var(--accent)"></span>Engine Evolution</a></li>
+    <li><a href="#epump"><span class="dot" style="background:var(--safety)"></span>Emergency Pump Operations</a></li>
+    <li><a href="#erole"><span class="dot" style="background:var(--gold)"></span>Engineer Roles &amp; First-Due</a></li>
+    <li><a href="#official"><span class="dot" style="background:var(--blue)"></span>Official Evolutions</a></li>
+    <li><a href="#manual"><span class="dot" style="background:var(--plum)"></span>From the Manual</a></li>
+  </ul>
+</details>
+
+<script>
+(function(){
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){nb.textContent=(document.documentElement.getAttribute('data-theme')==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var next=(document.documentElement.getAttribute('data-theme')==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+  var fab=document.getElementById('secFab');
+  if(fab){fab.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click',function(){fab.removeAttribute('open')});
+  })}
+})();
+</script>
+
+</body>
+</html>

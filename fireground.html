@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Fireground Positioning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+:root{--canvas:#F3F6F5;--surface:#FFFFFF;--expanded:#E8EFED;--text:#162421;--text2:#53635F;
+--divider:#D2DDDA;--accent:#0F6F78;--accent-tint:#DCEEEF;--safety:#B42318;
+--ground:#EEF1EF;--asphalt:#DFE3E1;--bldgf:#C6D0CC;--bldgs:#33433E;--gridc:#C9D2CE;
+--sel:#B42318;--eng:#2F6D8F;--trk:#7C3F87;--cmd:#5B6B62;
+--head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+--body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+--canvas:#0C1516;--surface:#131F21;--expanded:#1D2B2D;--text:#F2F7F5;--text2:#A7B8B4;
+--divider:#2E3F3C;--accent:#6BC6C8;--accent-tint:#15383A;--safety:#FF766D;
+--ground:#101A1B;--asphalt:#182325;--bldgf:#21302E;--bldgs:#82988F;--gridc:#1E2B2C;
+--sel:#FF766D;--eng:#7FB4D0;--trk:#C3A0CB;--cmd:#8DA096;}}
+:root[data-theme="dark"]{--canvas:#0C1516;--surface:#131F21;--expanded:#1D2B2D;--text:#F2F7F5;
+--text2:#A7B8B4;--divider:#2E3F3C;--accent:#6BC6C8;--accent-tint:#15383A;--safety:#FF766D;
+--ground:#101A1B;--asphalt:#182325;--bldgf:#21302E;--bldgs:#82988F;--gridc:#1E2B2C;
+--sel:#FF766D;--eng:#7FB4D0;--trk:#C3A0CB;--cmd:#8DA096;}
+*{box-sizing:border-box} html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);font-size:17px;
+line-height:1.55;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+a{color:var(--accent)} :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+.wrap{max-width:940px;margin:0 auto;padding:18px 18px 80px}
+.crumb{font-size:15px;color:var(--text2);margin:0 0 12px} .crumb a{text-decoration:none;font-weight:600}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(28px,5.4vw,40px);line-height:1.06;margin:0 0 6px;letter-spacing:-.01em}
+.sub{color:var(--text2);margin:0 0 20px;font-size:16.5px;max-width:64ch}
+.occr,.unr{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px}
+.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 16px}
+.occ{min-height:66px;display:flex;flex-direction:column;justify-content:center;padding:10px 16px;
+border:1.5px solid var(--divider);border-radius:14px;background:var(--surface);cursor:pointer;
+font-family:var(--head);font-weight:700;font-size:17px;transition:background .15s,color .15s,box-shadow .15s}
+.occ span{font-family:var(--body);font-weight:400;font-size:12.5px;opacity:.85;margin-top:3px;line-height:1.3}
+.stage{background:var(--surface);border:1px solid var(--divider);border-radius:18px;padding:12px;
+box-shadow:0 1px 3px rgba(10,30,28,.07),0 10px 28px -18px rgba(10,30,28,.5)}
+.plan{display:none;width:100%;height:auto}
+.ground{fill:var(--ground)} .alley,.street{fill:var(--asphalt)} .stagestrip{fill:var(--expanded)}
+.grid{stroke:var(--gridc);stroke-width:.28;opacity:.55}
+.curb{stroke:var(--bldgs);stroke-width:.5;opacity:.5}
+.bldg{fill:var(--bldgf);stroke:var(--bldgs);stroke-width:1.5}
+.sideA{stroke:var(--bldgs);stroke-width:2.8}
+.side{font-family:var(--head);font-weight:800;font-size:5.4px;fill:var(--bldgs);text-anchor:middle}
+.side.sA{fill:var(--accent)}
+.bl{font-family:var(--head);font-weight:800;font-size:5px;fill:var(--bldgs);text-anchor:middle;letter-spacing:.3px}
+.bn{font-family:var(--body);font-size:3.4px;fill:var(--bldgs);text-anchor:middle;opacity:.75}
+.way{font-family:var(--head);font-weight:700;font-size:3.5px;fill:var(--bldgs);opacity:.55;letter-spacing:.5px}
+.entry rect{fill:var(--accent)}
+.entl{font-family:var(--head);font-weight:700;font-size:3px;fill:var(--accent);text-anchor:middle;letter-spacing:.3px}
+.hyd circle{fill:var(--safety)}
+.hydl{font-family:var(--head);font-weight:800;font-size:4px;fill:var(--safety);text-anchor:middle}
+.fdc circle{fill:none;stroke:var(--safety);stroke-width:1.1}
+.fdcl{font-family:var(--head);font-weight:800;font-size:4.2px;fill:var(--safety);text-anchor:start}
+.hose{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hose.sup{stroke:var(--eng);stroke-width:1.5}
+.hose.atk{stroke:var(--bldgs);stroke-width:1.1;stroke-dasharray:3 2.4}
+.rig{opacity:.72;transition:opacity .15s} .rig rect{stroke:var(--bldgs);stroke-width:.5}
+.rig.eng rect{fill:var(--eng)} .rig.trk rect{fill:var(--trk)} .rig.cmd rect{fill:var(--cmd)}
+.rl{font-family:var(--head);font-weight:800;font-size:5.2px;fill:#fff;text-anchor:middle}
+.scalebar line{stroke:var(--bldgs);stroke-width:.4;opacity:.7}
+.scl{font-family:var(--head);font-weight:700;font-size:3.4px;fill:var(--bldgs);text-anchor:middle;opacity:.75}
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:7px 16px;margin:12px 4px 2px;font-size:13.5px;color:var(--text2)}
+.lg{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.k{width:14px;height:9px;border-radius:2px;flex:0 0 auto}
+.k-eng{background:var(--eng)} .k-trk{background:var(--trk)} .k-cmd{background:var(--cmd)}
+.k-sup{height:3px;background:var(--eng)} .k-atk{height:0;border-top:3px dashed var(--bldgs);width:16px}
+.k-h{background:var(--safety);border-radius:50%;width:10px;height:10px}
+.railhead{font-family:var(--head);font-weight:700;font-size:13px;letter-spacing:.09em;text-transform:uppercase;
+color:var(--text2);margin:22px 2px 8px}
+.rail{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.rl-item{min-height:56px;display:inline-flex;align-items:center;gap:9px;padding:8px 16px 8px 9px;
+border:1.5px solid var(--divider);border-radius:14px;background:var(--surface);cursor:pointer;
+font-weight:700;font-size:15.5px;transition:background .15s,color .15s}
+.rl-tag{font-family:var(--head);font-weight:800;font-size:12.5px;min-width:30px;padding:4px 0;text-align:center;
+border-radius:8px;background:var(--expanded);color:var(--text2)}
+.rl-e .rl-tag{background:color-mix(in srgb,var(--eng) 18%,transparent);color:var(--eng)}
+.rl-t .rl-tag{background:color-mix(in srgb,var(--trk) 18%,transparent);color:var(--trk)}
+.panwrap{background:var(--surface);border:1px solid var(--divider);border-radius:18px;padding:20px 22px;
+box-shadow:0 1px 3px rgba(10,30,28,.07)}
+.pan{display:none}
+.pu{font-family:var(--head);font-weight:800;font-size:22px;margin:0 0 10px;color:var(--text);
+display:flex;align-items:center;gap:10px}
+.putag{font-size:13px;padding:4px 9px;border-radius:8px;background:var(--accent-tint);color:var(--accent)}
+.pq{margin:0 0 6px;font-size:17.5px}
+.pwhy{margin-top:14px;padding:12px 14px;background:var(--expanded);border-radius:12px;border-left:4px solid var(--accent)}
+.pw{margin:0 0 4px;font-size:16px}
+.pnone{margin:0;font-size:16.5px;color:var(--text2)}
+.psrc{margin:0;font-size:13.5px;color:var(--text2)}
+.docwrap{margin-top:22px;background:var(--surface);border:1px solid var(--divider);border-radius:18px;
+padding:4px 20px 16px;box-shadow:0 1px 3px rgba(10,30,28,.07)}
+.dochead{font-family:var(--head);font-weight:800;font-size:15px;letter-spacing:.07em;text-transform:uppercase;
+margin:18px 0 10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dochead .slot{font-family:var(--head);font-weight:800;font-size:15px;letter-spacing:.07em;
+text-transform:uppercase;color:var(--text)}
+.nodoc{display:none;margin:0 0 12px;font-size:16px;color:var(--text2)}
+.dr.bk-eng summary::before,.dr.bk-trk summary::before,.dr.bk-any summary::before{
+content:"";width:5px;align-self:stretch;margin-right:14px;border-radius:3px;flex:0 0 5px}
+.dr.bk-eng summary::before{background:var(--eng)}
+.dr.bk-trk summary::before{background:var(--trk)}
+.dr.bk-any summary::before{background:var(--cmd)}
+.dr{border-top:1px solid var(--divider)}
+.dr summary{list-style:none;cursor:pointer;min-height:56px;display:flex;align-items:center;
+padding:10px 34px 10px 0;font-size:17px;position:relative}
+.dr summary::-webkit-details-marker{display:none}
+.dr summary::after{content:"+";position:absolute;right:6px;font-family:var(--head);font-weight:700;
+font-size:20px;color:var(--accent)}
+.dr[open] summary::after{content:"–"}
+.drb{padding:0 0 16px}
+.dq{margin:0 0 6px;font-size:16.5px;color:var(--text);border-left:3px solid var(--divider);padding-left:14px}
+.note{margin-top:22px;font-size:14px;color:var(--text2)}
+#occ-res:checked~.stage .sc-res{display:block}
+#occ-res:checked~.tabs label[for="occ-res"]{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 10px rgba(15,111,120,.28)}
+#occ-mid:checked~.stage .sc-mid{display:block}
+#occ-mid:checked~.tabs label[for="occ-mid"]{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 10px rgba(15,111,120,.28)}
+#occ-com:checked~.stage .sc-com{display:block}
+#occ-com:checked~.tabs label[for="occ-com"]{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 10px rgba(15,111,120,.28)}
+#u-e1:checked~.stage .rig[data-u="e1"]{opacity:1}
+#u-e1:checked~.stage .rig[data-u="e1"] rect{stroke:var(--sel);stroke-width:1.9}
+#u-e1:checked~.rail label[for="u-e1"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+#u-e1:checked~.rail label[for="u-e1"] .rl-tag{background:rgba(255,255,255,.22);color:#fff}
+#u-e2:checked~.stage .rig[data-u="e2"]{opacity:1}
+#u-e2:checked~.stage .rig[data-u="e2"] rect{stroke:var(--sel);stroke-width:1.9}
+#u-e2:checked~.rail label[for="u-e2"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+#u-e2:checked~.rail label[for="u-e2"] .rl-tag{background:rgba(255,255,255,.22);color:#fff}
+#u-e3:checked~.stage .rig[data-u="e3"]{opacity:1}
+#u-e3:checked~.stage .rig[data-u="e3"] rect{stroke:var(--sel);stroke-width:1.9}
+#u-e3:checked~.rail label[for="u-e3"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+#u-e3:checked~.rail label[for="u-e3"] .rl-tag{background:rgba(255,255,255,.22);color:#fff}
+#u-e4:checked~.stage .rig[data-u="e4"]{opacity:1}
+#u-e4:checked~.stage .rig[data-u="e4"] rect{stroke:var(--sel);stroke-width:1.9}
+#u-e4:checked~.rail label[for="u-e4"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+#u-e4:checked~.rail label[for="u-e4"] .rl-tag{background:rgba(255,255,255,.22);color:#fff}
+#u-e5:checked~.stage .rig[data-u="e5"]{opacity:1}
+#u-e5:checked~.stage .rig[data-u="e5"] rect{stroke:var(--sel);stroke-width:1.9}
+#u-e5:checked~.rail label[for="u-e5"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+#u-e5:checked~.rail label[for="u-e5"] .rl-tag{background:rgba(255,255,255,.22);color:#fff}
+#u-t1:checked~.stage .rig[data-u="t1"]{opacity:1}
+#u-t1:checked~.stage .rig[data-u="t1"] rect{stroke:var(--sel);stroke-width:1.9}
+#u-t1:checked~.rail label[for="u-t1"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+#u-t1:checked~.rail label[for="u-t1"] .rl-tag{background:rgba(255,255,255,.22);color:#fff}
+#u-t2:checked~.stage .rig[data-u="t2"]{opacity:1}
+#u-t2:checked~.stage .rig[data-u="t2"] rect{stroke:var(--sel);stroke-width:1.9}
+#u-t2:checked~.rail label[for="u-t2"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+#u-t2:checked~.rail label[for="u-t2"] .rl-tag{background:rgba(255,255,255,.22);color:#fff}
+#u-hr:checked~.stage .rig[data-u="hr"]{opacity:1}
+#u-hr:checked~.stage .rig[data-u="hr"] rect{stroke:var(--sel);stroke-width:1.9}
+#u-hr:checked~.rail label[for="u-hr"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+#u-hr:checked~.rail label[for="u-hr"] .rl-tag{background:rgba(255,255,255,.22);color:#fff}
+#u-cp:checked~.stage .rig[data-u="cp"]{opacity:1}
+#u-cp:checked~.stage .rig[data-u="cp"] rect{stroke:var(--sel);stroke-width:1.9}
+#u-cp:checked~.rail label[for="u-cp"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+#u-cp:checked~.rail label[for="u-cp"] .rl-tag{background:rgba(255,255,255,.22);color:#fff}
+#occ-res:checked~.panwrap .p-res.p-e1{display:block}
+#occ-res:checked~.panwrap .p-res.p-e2{display:block}
+#occ-res:checked~.panwrap .p-res.p-e3{display:block}
+#occ-res:checked~.panwrap .p-res.p-e4{display:block}
+#occ-res:checked~.panwrap .p-res.p-e5{display:block}
+#occ-res:checked~.panwrap .p-res.p-t1{display:block}
+#occ-res:checked~.panwrap .p-res.p-t2{display:block}
+#occ-res:checked~.panwrap .p-res.p-hr{display:block}
+#occ-res:checked~.panwrap .p-res.p-cp{display:block}
+#occ-mid:checked~.panwrap .p-mid.p-e1{display:block}
+#occ-mid:checked~.panwrap .p-mid.p-e2{display:block}
+#occ-mid:checked~.panwrap .p-mid.p-e3{display:block}
+#occ-mid:checked~.panwrap .p-mid.p-e4{display:block}
+#occ-mid:checked~.panwrap .p-mid.p-e5{display:block}
+#occ-mid:checked~.panwrap .p-mid.p-t1{display:block}
+#occ-mid:checked~.panwrap .p-mid.p-t2{display:block}
+#occ-mid:checked~.panwrap .p-mid.p-hr{display:block}
+#occ-mid:checked~.panwrap .p-mid.p-cp{display:block}
+#occ-com:checked~.panwrap .p-com.p-e1{display:block}
+#occ-com:checked~.panwrap .p-com.p-e2{display:block}
+#occ-com:checked~.panwrap .p-com.p-e3{display:block}
+#occ-com:checked~.panwrap .p-com.p-e4{display:block}
+#occ-com:checked~.panwrap .p-com.p-e5{display:block}
+#occ-com:checked~.panwrap .p-com.p-t1{display:block}
+#occ-com:checked~.panwrap .p-com.p-t2{display:block}
+#occ-com:checked~.panwrap .p-com.p-hr{display:block}
+#occ-com:checked~.panwrap .p-com.p-cp{display:block}
+#u-e1:checked~.panwrap .pan:not(.p-e1){display:none}
+#u-e2:checked~.panwrap .pan:not(.p-e2){display:none}
+#u-e3:checked~.panwrap .pan:not(.p-e3){display:none}
+#u-e4:checked~.panwrap .pan:not(.p-e4){display:none}
+#u-e5:checked~.panwrap .pan:not(.p-e5){display:none}
+#u-t1:checked~.panwrap .pan:not(.p-t1){display:none}
+#u-t2:checked~.panwrap .pan:not(.p-t2){display:none}
+#u-hr:checked~.panwrap .pan:not(.p-hr){display:none}
+#u-cp:checked~.panwrap .pan:not(.p-cp){display:none}
+#u-e1:checked~.docwrap .dr:not(.du-e1){display:none}
+#u-e1:checked~.docwrap .slot:not(.du-e1){display:none}
+#u-e2:checked~.docwrap .dr:not(.du-e2){display:none}
+#u-e2:checked~.docwrap .slot:not(.du-e2){display:none}
+#u-e3:checked~.docwrap .dr:not(.du-e3){display:none}
+#u-e3:checked~.docwrap .slot:not(.du-e3){display:none}
+#u-e4:checked~.docwrap .dr:not(.du-e4){display:none}
+#u-e4:checked~.docwrap .slot:not(.du-e4){display:none}
+#u-e5:checked~.docwrap .dr:not(.du-e5){display:none}
+#u-e5:checked~.docwrap .slot:not(.du-e5){display:none}
+#u-t1:checked~.docwrap .dr:not(.du-t1){display:none}
+#u-t1:checked~.docwrap .slot:not(.du-t1){display:none}
+#u-t2:checked~.docwrap .dr:not(.du-t2){display:none}
+#u-t2:checked~.docwrap .slot:not(.du-t2){display:none}
+#u-hr:checked~.docwrap .dr:not(.du-hr){display:none}
+#u-hr:checked~.docwrap .slot:not(.du-hr){display:none}
+#u-cp:checked~.docwrap .dr:not(.du-cp){display:none}
+#u-cp:checked~.docwrap .slot:not(.du-cp){display:none}
+#occ-res:checked~.docwrap .dr[class*="oo-"]:not(.oo-res){display:none}
+#occ-mid:checked~.docwrap .dr[class*="oo-"]:not(.oo-mid){display:none}
+#occ-com:checked~.docwrap .dr[class*="oo-"]:not(.oo-com){display:none}
+#u-hr:checked~.docwrap .nodoc{display:block}
+#u-cp:checked~.docwrap .nodoc{display:block}
+@media (max-width:640px){.wrap{padding:14px 14px 64px}.tabs{grid-template-columns:1fr}
+.occ{min-height:58px;flex-direction:row;align-items:baseline;gap:8px}.occ span{margin-top:0}
+.rl-name{display:none}.rl-item{padding:8px 10px}.rl-tag{font-size:14px;min-width:34px}}
+@media print{body{background:#fff;color:#000}.plan{display:block!important}.pan{display:block!important}
+.dr[open] .drb,.drb{display:block!important}}
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html" aria-current="true">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html" aria-current="true">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+<div class="wrap">
+<p class="crumb"><a href="engine-home.html">Engine Operations</a> &rsaquo; Fireground Positioning</p>
+<h1>Fireground Positioning</h1>
+<p class="sub">Where each unit spots, and what it does when it gets there &mdash; by occupancy, straight off
+the Quick Reference Guide, with what the manuals say about it underneath.</p>
+<input class="occr" type="radio" name="occ" id="occ-res" checked><input class="occr" type="radio" name="occ" id="occ-mid"><input class="occr" type="radio" name="occ" id="occ-com"><input class="unr" type="radio" name="unit" id="u-e1" checked><input class="unr" type="radio" name="unit" id="u-e2"><input class="unr" type="radio" name="unit" id="u-e3"><input class="unr" type="radio" name="unit" id="u-e4"><input class="unr" type="radio" name="unit" id="u-e5"><input class="unr" type="radio" name="unit" id="u-t1"><input class="unr" type="radio" name="unit" id="u-t2"><input class="unr" type="radio" name="unit" id="u-hr"><input class="unr" type="radio" name="unit" id="u-cp">
+<div class="tabs"><label class="occ" for="occ-res"><b>Residential</b><span>& multi-family, 1–3 floors</span></label><label class="occ" for="occ-mid"><b>Mid-rise</b><span>4 floors and above</span></label><label class="occ" for="occ-com"><b>Commercial</b></label></div>
+<div class="stage"><svg class="plan sc-res" viewBox="0 0 200 138" role="img"
+  aria-label="Plan view of a house fire, apparatus positions">
+ <defs><filter id="sh-res" x="-20%" y="-20%" width="140%" height="140%">
+   <feDropShadow dx="0" dy="1.1" stdDeviation="1.1" flood-opacity=".2"/></filter></defs>
+ <rect class="ground" x="0" y="0" width="200" height="138"/>
+ <line class="grid" x1="20" y1="26" x2="20" y2="96"/><line class="grid" x1="40" y1="26" x2="40" y2="96"/><line class="grid" x1="60" y1="26" x2="60" y2="96"/><line class="grid" x1="80" y1="26" x2="80" y2="96"/><line class="grid" x1="100" y1="26" x2="100" y2="96"/><line class="grid" x1="120" y1="26" x2="120" y2="96"/><line class="grid" x1="140" y1="26" x2="140" y2="96"/><line class="grid" x1="160" y1="26" x2="160" y2="96"/><line class="grid" x1="180" y1="26" x2="180" y2="96"/>
+ <rect class="stagestrip" x="0" y="123" width="200" height="15"/>
+ <rect class="alley" x="0" y="2" width="200" height="23"/>
+ <text class="way" x="4" y="22">REAR ACCESS &#183; SIDE C</text>
+ <rect class="street" x="0" y="96" width="200" height="27"/>
+ <line class="curb" x1="0" y1="96" x2="200" y2="96"/>
+ <line class="curb" x1="0" y1="123" x2="200" y2="123"/>
+ <text class="way" x="4" y="120">STREET &#183; SIDE A</text>
+ <text class="way" x="4" y="136">STAGING</text>
+ <rect class="bldg" x="64" y="52" width="54" height="36" rx="0.8" filter="url(#sh-res)"/>
+ <line class="sideA" x1="64" y1="88" x2="118" y2="88"/>
+ <text class="side sA" x="91.0" y="94">A</text>
+ <text class="side" x="60" y="70.0">B</text>
+ <text class="side sA" x="91.0" y="49">C</text>
+ <text class="side" x="122" y="70.0">D</text>
+ <text class="bl" x="91.0" y="69.0">HOUSE</text>
+ <text class="bn" x="91.0" y="75.0">1–3 floors</text>
+ 
+ <g class="hyd"><circle cx="186" cy="92" r="2.6"/><text class="hydl" x="186" y="87">H</text></g>
+ <path class="hose sup" d="M186,94 L186,99 L182,99 L182,102"/><path class="hose sup" d="M158,110 L156,114 L154,114 L152,110"/><path class="hose atk" d="M136,102 L132,95 L112,88"/><g class="rig eng" data-u="e3"><rect x="14" y="102" width="32" height="8" rx="1.6"/><text class="rl" x="30.0" y="108.2">E3</text></g><g class="rig trk" data-u="t1"><rect x="68" y="102" width="45" height="8" rx="1.6"/><text class="rl" x="90.5" y="108.2">T1</text></g><g class="rig eng" data-u="e1"><rect x="120" y="102" width="32" height="8" rx="1.6"/><text class="rl" x="136.0" y="108.2">E1</text></g><g class="rig eng" data-u="e2"><rect x="158" y="102" width="32" height="8" rx="1.6"/><text class="rl" x="174.0" y="108.2">E2</text></g><g class="rig trk" data-u="t2"><rect x="68" y="9" width="45" height="8" rx="1.6"/><text class="rl" x="90.5" y="15.2">T2</text></g><g class="rig eng" data-u="e4"><rect x="10" y="125" width="32" height="8" rx="1.6"/><text class="rl" x="26.0" y="131.2">E4</text></g><g class="rig cmd" data-u="cp"><rect x="150" y="125" width="20" height="8" rx="1.6"/><text class="rl" x="160.0" y="131.2">CP</text></g>
+ <g class="scalebar"><line x1="104" y1="135" x2="144" y2="135"/>
+  <line x1="104" y1="133.2" x2="104" y2="136.8"/><line x1="124" y1="133.9" x2="124" y2="136.1"/>
+  <line x1="144" y1="133.2" x2="144" y2="136.8"/>
+  <text class="scl" x="124" y="132.2">40 ft</text></g>
+</svg><svg class="plan sc-mid" viewBox="0 0 200 138" role="img"
+  aria-label="Plan view of a mid-rise fire, apparatus positions">
+ <defs><filter id="sh-mid" x="-20%" y="-20%" width="140%" height="140%">
+   <feDropShadow dx="0" dy="1.1" stdDeviation="1.1" flood-opacity=".2"/></filter></defs>
+ <rect class="ground" x="0" y="0" width="200" height="138"/>
+ <line class="grid" x1="20" y1="26" x2="20" y2="96"/><line class="grid" x1="40" y1="26" x2="40" y2="96"/><line class="grid" x1="60" y1="26" x2="60" y2="96"/><line class="grid" x1="80" y1="26" x2="80" y2="96"/><line class="grid" x1="100" y1="26" x2="100" y2="96"/><line class="grid" x1="120" y1="26" x2="120" y2="96"/><line class="grid" x1="140" y1="26" x2="140" y2="96"/><line class="grid" x1="160" y1="26" x2="160" y2="96"/><line class="grid" x1="180" y1="26" x2="180" y2="96"/>
+ <rect class="stagestrip" x="0" y="123" width="200" height="15"/>
+ <rect class="alley" x="0" y="2" width="200" height="23"/>
+ <text class="way" x="4" y="22">REAR ACCESS &#183; SIDE C</text>
+ <rect class="street" x="0" y="96" width="200" height="27"/>
+ <line class="curb" x1="0" y1="96" x2="200" y2="96"/>
+ <line class="curb" x1="0" y1="123" x2="200" y2="123"/>
+ <text class="way" x="4" y="120">STREET &#183; SIDE A</text>
+ <text class="way" x="4" y="136">STAGING</text>
+ <rect class="bldg" x="52" y="30" width="76" height="58" rx="0.8" filter="url(#sh-mid)"/>
+ <line class="sideA" x1="52" y1="88" x2="128" y2="88"/>
+ <text class="side sA" x="90.0" y="94">A</text>
+ <text class="side" x="48" y="59.0">B</text>
+ <text class="side sA" x="90.0" y="27">C</text>
+ <text class="side" x="132" y="59.0">D</text>
+ <text class="bl" x="90.0" y="58.0">MID-RISE</text>
+ <text class="bn" x="90.0" y="64.0">4 floors and above</text>
+ <g class="entry"><rect x="61" y="86.4" width="10" height="3.2" rx="1"/><text class="entl" x="66" y="84">ENTRY</text></g><g class="fdc"><circle cx="120" cy="88" r="2.8"/><text class="fdcl" x="125" y="89.6">FDC</text></g>
+ <g class="hyd"><circle cx="186" cy="92" r="2.6"/><text class="hydl" x="186" y="87">H</text></g>
+ <g class="hyd"><circle cx="158" cy="13" r="2.6"/><text class="hydl" x="158" y="8">H</text></g><path class="hose sup" d="M186,94 L186,99 L182,99 L182,102"/><path class="hose sup" d="M150,110 L148,114 L142,114 L140,110"/><path class="hose sup" d="M120,102 L120,95 L120,90"/><path class="hose atk" d="M26,102 L34,95 L66,88"/><path class="hose sup" d="M152,13 L146,13 L142,13 L136,13"/><path class="hose sup" d="M104,13 L100,13 L98,13 L94,13"/><path class="hose atk" d="M78,17 L78,23 L78,30"/><g class="rig eng" data-u="e1"><rect x="10" y="102" width="32" height="8" rx="1.6"/><text class="rl" x="26.0" y="108.2">E1</text></g><g class="rig trk" data-u="t1"><rect x="56" y="102" width="45" height="8" rx="1.6"/><text class="rl" x="78.5" y="108.2">T1</text></g><g class="rig eng" data-u="e2"><rect x="108" y="102" width="32" height="8" rx="1.6"/><text class="rl" x="124.0" y="108.2">E2</text></g><g class="rig eng" data-u="e3"><rect x="150" y="102" width="32" height="8" rx="1.6"/><text class="rl" x="166.0" y="108.2">E3</text></g><g class="rig trk" data-u="t2"><rect x="6" y="9" width="45" height="8" rx="1.6"/><text class="rl" x="28.5" y="15.2">T2</text></g><g class="rig eng" data-u="e4"><rect x="62" y="9" width="32" height="8" rx="1.6"/><text class="rl" x="78.0" y="15.2">E4</text></g><g class="rig eng" data-u="e5"><rect x="104" y="9" width="32" height="8" rx="1.6"/><text class="rl" x="120.0" y="15.2">E5</text></g><g class="rig eng" data-u="hr"><rect x="52" y="125" width="32" height="8" rx="1.6"/><text class="rl" x="68.0" y="131.2">HR</text></g><g class="rig cmd" data-u="cp"><rect x="150" y="125" width="20" height="8" rx="1.6"/><text class="rl" x="160.0" y="131.2">CP</text></g>
+ <g class="scalebar"><line x1="104" y1="135" x2="144" y2="135"/>
+  <line x1="104" y1="133.2" x2="104" y2="136.8"/><line x1="124" y1="133.9" x2="124" y2="136.1"/>
+  <line x1="144" y1="133.2" x2="144" y2="136.8"/>
+  <text class="scl" x="124" y="132.2">40 ft</text></g>
+</svg><svg class="plan sc-com" viewBox="0 0 200 138" role="img"
+  aria-label="Plan view of a commercial fire, apparatus positions">
+ <defs><filter id="sh-com" x="-20%" y="-20%" width="140%" height="140%">
+   <feDropShadow dx="0" dy="1.1" stdDeviation="1.1" flood-opacity=".2"/></filter></defs>
+ <rect class="ground" x="0" y="0" width="200" height="138"/>
+ <line class="grid" x1="20" y1="26" x2="20" y2="96"/><line class="grid" x1="40" y1="26" x2="40" y2="96"/><line class="grid" x1="60" y1="26" x2="60" y2="96"/><line class="grid" x1="80" y1="26" x2="80" y2="96"/><line class="grid" x1="100" y1="26" x2="100" y2="96"/><line class="grid" x1="120" y1="26" x2="120" y2="96"/><line class="grid" x1="140" y1="26" x2="140" y2="96"/><line class="grid" x1="160" y1="26" x2="160" y2="96"/><line class="grid" x1="180" y1="26" x2="180" y2="96"/>
+ <rect class="stagestrip" x="0" y="123" width="200" height="15"/>
+ <rect class="alley" x="0" y="2" width="200" height="23"/>
+ <text class="way" x="4" y="22">REAR ACCESS &#183; SIDE C</text>
+ <rect class="street" x="0" y="96" width="200" height="27"/>
+ <line class="curb" x1="0" y1="96" x2="200" y2="96"/>
+ <line class="curb" x1="0" y1="123" x2="200" y2="123"/>
+ <text class="way" x="4" y="120">STREET &#183; SIDE A</text>
+ <text class="way" x="4" y="136">STAGING</text>
+ <rect class="bldg" x="26" y="44" width="130" height="44" rx="0.8" filter="url(#sh-com)"/>
+ <line class="sideA" x1="26" y1="88" x2="156" y2="88"/>
+ <text class="side sA" x="91.0" y="94">A</text>
+ <text class="side" x="22" y="66.0">B</text>
+ <text class="side sA" x="91.0" y="41">C</text>
+ <text class="side" x="160" y="66.0">D</text>
+ <text class="bl" x="91.0" y="65.0">COMMERCIAL</text>
+ <text class="bn" x="91.0" y="71.0">wide frontage, long span roof</text>
+ <g class="entry"><rect x="39" y="86.4" width="10" height="3.2" rx="1"/><text class="entl" x="44" y="84">ENTRY</text></g><g class="fdc"><circle cx="140" cy="88" r="2.8"/><text class="fdcl" x="145" y="89.6">FDC</text></g>
+ <g class="hyd"><circle cx="186" cy="92" r="2.6"/><text class="hydl" x="186" y="87">H</text></g>
+ <g class="hyd"><circle cx="158" cy="13" r="2.6"/><text class="hydl" x="158" y="8">H</text></g><path class="hose sup" d="M186,94 L186,99 L190,99 L190,102"/><path class="hose sup" d="M166,110 L164,114 L60,114 L58,110"/><path class="hose sup" d="M140,102 L140,95 L140,90"/><path class="hose atk" d="M42,102 L42,95 L44,88"/><path class="hose sup" d="M152,13 L146,13 L142,13 L136,13"/><path class="hose sup" d="M104,13 L100,13 L98,13 L94,13"/><path class="hose atk" d="M78,17 L78,30 L78,44"/><g class="rig eng" data-u="e1"><rect x="26" y="102" width="32" height="8" rx="1.6"/><text class="rl" x="42.0" y="108.2">E1</text></g><g class="rig trk" data-u="t1"><rect x="60" y="102" width="45" height="8" rx="1.6"/><text class="rl" x="82.5" y="108.2">T1</text></g><g class="rig eng" data-u="e3"><rect x="128" y="102" width="32" height="8" rx="1.6"/><text class="rl" x="144.0" y="108.2">E3</text></g><g class="rig eng" data-u="e2"><rect x="166" y="102" width="32" height="8" rx="1.6"/><text class="rl" x="182.0" y="108.2">E2</text></g><g class="rig trk" data-u="t2"><rect x="6" y="9" width="45" height="8" rx="1.6"/><text class="rl" x="28.5" y="15.2">T2</text></g><g class="rig eng" data-u="e4"><rect x="62" y="9" width="32" height="8" rx="1.6"/><text class="rl" x="78.0" y="15.2">E4</text></g><g class="rig eng" data-u="e5"><rect x="104" y="9" width="32" height="8" rx="1.6"/><text class="rl" x="120.0" y="15.2">E5</text></g><g class="rig eng" data-u="hr"><rect x="52" y="125" width="32" height="8" rx="1.6"/><text class="rl" x="68.0" y="131.2">HR</text></g><g class="rig cmd" data-u="cp"><rect x="150" y="125" width="20" height="8" rx="1.6"/><text class="rl" x="160.0" y="131.2">CP</text></g>
+ <g class="scalebar"><line x1="104" y1="135" x2="144" y2="135"/>
+  <line x1="104" y1="133.2" x2="104" y2="136.8"/><line x1="124" y1="133.9" x2="124" y2="136.1"/>
+  <line x1="144" y1="133.2" x2="144" y2="136.8"/>
+  <text class="scl" x="124" y="132.2">40 ft</text></g>
+</svg>
+<p class="legend"><span class="lg"><span class="k k-eng"></span>Engine</span><span class="lg"><span class="k k-trk"></span>Truck</span><span class="lg"><span class="k k-cmd"></span>Command / RIC</span><span class="lg"><span class="k k-sup"></span>Supply line</span><span class="lg"><span class="k k-atk"></span>Attack line</span><span class="lg"><span class="k k-h"></span>Hydrant</span></p>
+</div>
+<p class="railhead">Arrival order &mdash; tap a unit</p>
+<div class="rail"><label class="rl-item rl-e" for="u-e1"><span class="rl-tag">E1</span><span class="rl-name">1st Engine</span></label><label class="rl-item rl-t" for="u-t1"><span class="rl-tag">T1</span><span class="rl-name">1st Truck</span></label><label class="rl-item rl-e" for="u-e2"><span class="rl-tag">E2</span><span class="rl-name">2nd Engine</span></label><label class="rl-item rl-e" for="u-e3"><span class="rl-tag">E3</span><span class="rl-name">3rd Engine</span></label><label class="rl-item rl-e" for="u-e4"><span class="rl-tag">E4</span><span class="rl-name">4th Engine</span></label><label class="rl-item rl-e" for="u-e5"><span class="rl-tag">E5</span><span class="rl-name">5th Engine</span></label><label class="rl-item rl-t" for="u-t2"><span class="rl-tag">T2</span><span class="rl-name">2nd Truck</span></label><label class="rl-item rl-e" for="u-hr"><span class="rl-tag">HR</span><span class="rl-name">Heavy Rescue 21</span></label><label class="rl-item rl-c" for="u-cp"><span class="rl-tag">CP</span><span class="rl-name">Command</span></label></div>
+<div class="panwrap"><div class="pan p-res p-e1"><p class="pu"><span class="putag">E1</span>1st Engine</p><p class="pq">Size-up &amp; 360 if not completed. Stretch initial attack line to fire floor. Initiate water supply if determined by CO.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Close as possible to cut the number of lengths — but the front stays open for the Truck's aerial.</p><p class="psrc">Engine Company Operations 2023 V-1, p.1-9</p></div></div><div class="pan p-res p-e2"><p class="pu"><span class="putag">E2</span>2nd Engine</p><p class="pq">Complete water supply, Pump hydrant for 1st engine if needed. Stretch 2nd attack line (Outside, Floor above fire, Basement).</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Positioned so as not to block apparatus movement, and able to lay a supply line from the first-in engine to the hydrant.</p><p class="psrc">Engine Company Operations 2023 V-1, p.1-9</p></div></div><div class="pan p-res p-e3"><p class="pu"><span class="putag">E3</span>3rd Engine</p><p class="pq">Stretch back-up line to location of 1st Engine Company.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> The guide gives no position for the 3rd engine on a residential fire. The manual puts third due and later out of the way of the direct fire scene, or in the alley behind.</p><p class="psrc">Engine Company Operations 2023 V-1, p.1-9</p></div></div><div class="pan p-res p-e4"><p class="pu"><span class="putag">E4</span>4th Engine</p><p class="pq">Stage apparatus at second water supply. RIC Functions</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Staged at the second water supply — and on a residential fire the 4th Engine carries RIC. Heavy Rescue is not assigned here.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p></div></div><div class="pan p-res p-e5"><p class="pu"><span class="putag">E5</span>5th Engine</p><p class="pnone">The Quick Reference Guide prints no assignment for this unit on this occupancy. On a residential fire RIC is carried by the 4th Engine.</p></div><div class="pan p-res p-t1"><p class="pu"><span class="putag">T1</span>1st Truck</p><p class="pq">Position to cover side Alpha. Inside Team: Report to fire floor. Force entry, assist primary engine with locating the seat of the fire, conduct search operations, check extension. Topside Team: Ventilation.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Side Alpha. Spot for the aerial: uninvolved to involved, offside corner a few feet off it, tip kissing the roof with both beams — two ways on and off.</p><p class="psrc">Truck Manual v3.1, Section 6, pp.143–144</p></div></div><div class="pan p-res p-t2"><p class="pu"><span class="putag">T2</span>2nd Truck</p><p class="pq">Position to cover side Charlie when possible. Inside Team: Report to fire floor. Force entry, assist primary engine with locating the seat of the fire, conduct search operations, check extension. Outside Team: Rescue / VES, ladders, force egress, ventilation, utilities. Topside Team: Ventilation</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Side Charlie. Second-due trucks place to the opposite offside corner; secondary ladders go on their side of the building.</p><p class="psrc">Truck Manual v3.1, Section 6, p.144</p></div></div><div class="pan p-res p-hr"><p class="pu"><span class="putag">HR</span>Heavy Rescue 21</p><p class="pnone">The Quick Reference Guide prints no assignment for this unit on this occupancy. On a residential fire RIC is carried by the 4th Engine.</p></div><div class="pan p-res p-cp"><p class="pu"><span class="putag">CP</span>Command</p><p class="pq">1st Chief Officer: Establish command.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Command post. First chief officer establishes command.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p></div></div><div class="pan p-mid p-e1"><p class="pu"><span class="putag">E1</span>1st Engine</p><p class="pq">Size-up &amp; 360 if not completed. Stretch initial attack line to fire floor, using entrance closest to fire.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Uses the entrance closest to the fire, which on a mid-rise means the entrance serving the right stair.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p></div></div><div class="pan p-mid p-e2"><p class="pu"><span class="putag">E2</span>2nd Engine</p><p class="pq">Establish water supply, Pump standpipe if 1st Engine determines standpipe operations. Assist 1st Engine with hoseline advancement.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> On the standpipe FDC — it pumps the standpipe if the 1st Engine calls standpipe operations. 3″ hose supplies all standpipe systems.</p><p class="psrc">OFD Quick Reference Guide, May 2024 · Engine Company Operations, Ch. 6</p></div></div><div class="pan p-mid p-e3"><p class="pu"><span class="putag">E3</span>3rd Engine</p><p class="pq">Pump hydrant for 2nd engine. Stretch 2nd attack line (Outside, Floor above fire, Horizontal Exposure).</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Third due and later: out of the way of the direct fire scene, or take the alley behind the structure to provide additional lines more easily.</p><p class="psrc">Engine Company Operations 2023 V-1, p.1-9</p></div></div><div class="pan p-mid p-e4"><p class="pu"><span class="putag">E4</span>4th Engine</p><p class="pq">Initiate 2nd water supply, upon “working fire” lay line to cover side opposite side. Stretch attack line to 1) the floor above 2) horizontal exposures, 3) stand-by with line until directed.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Takes the far side with the second water supply. The guide's own wording reads “lay line to cover side opposite side” — a wording defect flagged for the training committee; read it as the side opposite the initial attack.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p></div></div><div class="pan p-mid p-e5"><p class="pu"><span class="putag">E5</span>5th Engine</p><p class="pq">Complete water supply, pump hydrant for 4th engine if needed. Stretch additional attack line (Outside, Floor above fire, Horizontal Exposure).</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Backs the 4th engine's supply — pumps its hydrant if needed.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p></div></div><div class="pan p-mid p-t1"><p class="pu"><span class="putag">T1</span>1st Truck</p><p class="pq">Position to cover side Alpha. “All In” Report to the Fire Floor, search, and assist the Engine with locating the fire. Note: Ladder Drivers will remain with the rig to set aerial device and work with other ladder drivers or crew to conduct exterior operations, ventilation, and utility control.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Side Alpha. Spot for the aerial: uninvolved to involved, offside corner a few feet off it, tip kissing the roof with both beams — two ways on and off.</p><p class="psrc">Truck Manual v3.1, Section 6, pp.143–144</p></div></div><div class="pan p-mid p-t2"><p class="pu"><span class="putag">T2</span>2nd Truck</p><p class="pq">Position to cover side Charlie. “All In” Report to the floor above the fire floor on multi-story structure for search and check for extension. “All Out”, 2nd ladder will report to the roof for ventilation.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Side Charlie. Second-due trucks place to the opposite offside corner; secondary ladders go on their side of the building.</p><p class="psrc">Truck Manual v3.1, Section 6, p.144</p></div></div><div class="pan p-mid p-hr"><p class="pu"><span class="putag">HR</span>Heavy Rescue 21</p><p class="pq">RIC Functions</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Rapid Intervention, staged clear of the working area.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p></div></div><div class="pan p-mid p-cp"><p class="pu"><span class="putag">CP</span>Command</p><p class="pq">1st Chief Officer: Establish command.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Command post. First chief officer establishes command.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p></div></div><div class="pan p-com p-e1"><p class="pu"><span class="putag">E1</span>1st Engine</p><p class="pq">Size-up &amp; 360 if not completed. Stretch initial attack line to fire floor, using entrance closest to fire. Initiate water supply if determined by CO.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Close as possible to cut the number of lengths — but the front stays open for the Truck's aerial.</p><p class="psrc">Engine Company Operations 2023 V-1, p.1-9</p></div></div><div class="pan p-com p-e2"><p class="pu"><span class="putag">E2</span>2nd Engine</p><p class="pq">Complete water supply. Pump hydrant for the 1st engine if needed. Stretch 2nd attack line (Outside, Floor above fire, Horizontal Exposure).</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Positioned so as not to block apparatus movement, and able to lay a supply line from the first-in engine to the hydrant.</p><p class="psrc">Engine Company Operations 2023 V-1, p.1-9</p></div></div><div class="pan p-com p-e3"><p class="pu"><span class="putag">E3</span>3rd Engine</p><p class="pq">Position on FDC. Pump FDC upon “working fire”. Stretch back-up line to location of 1st Engine Company.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> On the FDC, and it pumps on the “working fire” declaration — not on arrival.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p></div></div><div class="pan p-com p-e4"><p class="pu"><span class="putag">E4</span>4th Engine</p><p class="pq">Initiate 2nd water supply, upon “working fire” lay line to cover side Charlie. Stretch attack line to 1) the floor above 2) horizontal exposures, 3) stand-by with line until directed.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Lays to cover SIDE CHARLIE — the rear, working alongside the 2nd Truck.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p></div></div><div class="pan p-com p-e5"><p class="pu"><span class="putag">E5</span>5th Engine</p><p class="pq">Complete water supply, pump hydrant for 4th engine if needed. Stretch additional attack line (Outside, Floor above fire, Horizontal Exposure).</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Backs the 4th engine's supply — pumps its hydrant if needed.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p></div></div><div class="pan p-com p-t1"><p class="pu"><span class="putag">T1</span>1st Truck</p><p class="pq">Position to cover side Alpha. Outside Team: Force entry, force egress, utilities. Topside Team: Ventilation.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Side Alpha. On a commercial building the aerial is the primary ladder for roof operations — a one-story commercial is easy to ground-ladder but hard to get a crew off in a hurry.</p><p class="psrc">Truck Manual v3.1, Section 6, p.144</p></div></div><div class="pan p-com p-t2"><p class="pu"><span class="putag">T2</span>2nd Truck</p><p class="pq">Position to cover side Charlie. Outside Team: Force entry, force egress, utilities. Topside Team: Ventilation. Inside Team: Conduct search operations, check for extension.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Side Charlie. Second-due trucks place to the opposite offside corner; secondary ladders go on their side of the building.</p><p class="psrc">Truck Manual v3.1, Section 6, p.144</p></div></div><div class="pan p-com p-hr"><p class="pu"><span class="putag">HR</span>Heavy Rescue 21</p><p class="pq">RIC Functions</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Rapid Intervention, staged clear of the working area.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p></div></div><div class="pan p-com p-cp"><p class="pu"><span class="putag">CP</span>Command</p><p class="pq">1st Chief Officer: Establish command.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p><div class="pwhy"><p class="pw"><b>Where it sits.</b> Command post. First chief officer establishes command.</p><p class="psrc">OFD Quick Reference Guide, May 2024</p></div></div></div>
+<section class="docwrap"><h2 class="dochead"><span class="slot du-e1">1st due engine</span><span class="slot du-e2">2nd due engine</span><span class="slot du-e3">3rd due engine</span><span class="slot du-e4">4th due engine</span><span class="slot du-e5">5th due engine</span><span class="slot du-t1">1st due truck</span><span class="slot du-t2">2nd due truck</span><span class="slot du-hr">Heavy Rescue</span><span class="slot du-cp">Command</span></h2><p class="nodoc">The manuals give no spotting doctrine of its own for this unit — only the rule below, which applies to any apparatus arriving on scene.</p><details class="dr bk-eng du-e1"><summary><b>Give the officer a look at the building.</b></summary><div class="drb"><p class="dq">“On arrival the Engineer of the first arriving engine needs to make every attempt to provide the Company Officer with a sufficient view of the fire building.”</p><p class="psrc">Engine Company Operations 2023 V-1, p.1-9</p></div></details><details class="dr bk-eng du-e1"><summary><b>Leave the front open for the aerial.</b></summary><div class="drb"><p class="dq">“Generally, the first engine should leave the front of the building open for the Truck's aerial if needed.”</p><p class="psrc">Engine Company Operations 2023 V-1, p.1-9</p></div></details><details class="dr bk-eng du-e1"><summary><b>Get close — every length costs time.</b></summary><div class="drb"><p class="dq">“1st arriving Engine Company apparatus should be positioned as close as possible to the fire building to reduce the time, effort and number of lengths needed to connect to a water source. This tactic requires a coordinated effort between the Engineer, the Engine Company Officer, and the first arriving Truck Company for optimal placement.”</p><p class="psrc">Engine Company Operations 2023 V-1, p.1-9</p></div></details><details class="dr bk-eng du-e1"><summary><b>Nothing showing: park where a truck still gets in.</b></summary><div class="drb"><p class="dq">“1st Due — nothing showing and Alarms: 1. Park in a location that allows for easy access by ladder trucks. 2. Engineer/ADO should fully prepare his engine by completing all steps required to put the pump in service and supply water to hose.”</p><p class="psrc">Engine Company Operations 2023 V-1, p.1-9</p></div></details><details class="dr bk-eng du-e2"><summary><b>Don't block, and be able to lay.</b></summary><div class="drb"><p class="dq">“Second arriving engines should position so as not to block any apparatus movement on the fireground and be able to lay a supply line from the first-in engine to the hydrant.”</p><p class="psrc">Engine Company Operations 2023 V-1, p.1-9</p></div></details><details class="dr bk-eng du-e3 du-e4 du-e5"><summary><b>Out of the way — or take the alley.</b></summary><div class="drb"><p class="dq">“Third due engines and later-arriving engines should position their apparatus out of the way of the direct fire scene or consider taking a position in the alley behind the structure to provide additional lines more easily.”</p><p class="psrc">Engine Company Operations 2023 V-1, p.1-9</p></div></details><details class="dr bk-eng du-e1 du-e2 du-e3 du-e4 du-e5"><summary><b>Spot for what you will need.</b></summary><div class="drb"><p class="dq">“Other spotting considerations for the Engine Company include water supply needs, FDC connections, line placement, fire location and intensity.”</p><p class="psrc">Engine Company Operations 2023 V-1, p.1-9</p></div></details><details class="dr bk-trk du-t1 du-t2"><summary><b>Spot for the aerial and truck work.</b></summary><div class="drb"><p class="dq">“The trucks should make every effort to spot for use of the aerial device and truck company operations on the Fireground. If arriving first and the Truck Company Officer decides to initiate Fire Attack then the apparatus should be positioned as an Engine.”</p><p class="psrc">Truck Manual v3.1, Section 6, p.143</p></div></details><details class="dr bk-trk du-t1 du-t2"><summary><b>Uninvolved to involved.</b></summary><div class="drb"><p class="dq">“Spot the ladder to create distance between where the fire is and where it will be going. If going to the roof for ventilation crews will need time to assess the roof and perform ventilation operations. We will also be setup to protect uninvolved portions of the building if anticipating using aerial master streams.”</p><p class="psrc">Truck Manual v3.1, Section 6, p.143</p></div></details><details class="dr bk-trk du-t1"><summary><b>The offside corner — two ways off the roof.</b></summary><div class="drb"><p class="dq">“The ‘offside’ corner is where we aim to place our aerial ladder when going to the roof. By placing the ladder just a few feet off the corner this would allow for two ways on and off the ladder. This can come in handy if crews need to exit the roof in a hurry. The tip of the ladder should ‘kiss’ the roof with both beams. This takes the bounce out of the ladder and is much safer to maneuver up and down with tools. Stay away from placing the egress section on the roof and opt to place the beams on instead.”</p><p class="psrc">Truck Manual v3.1, Section 6, p.143</p></div></details><details class="dr bk-trk du-t1 du-t2"><summary><b>Take the outside spot.</b></summary><div class="drb"><p class="dq">“An outside spot allows Engine companies to position closer to the building underneath the Trucks ladder. This allows the waterway to get out of the way and produces a better climbing angle for crews going to the roof. By securing an outside spot this also sets us up for aerial master stream operations should the need arise.”</p><p class="psrc">Truck Manual v3.1, Section 6, p.143</p></div></details><details class="dr bk-trk du-t1 du-t2"><summary><b>Pull past, or stop short.</b></summary><div class="drb"><p class="dq">“Pulling past a structure could allow us to place our aerial ladder where needed. This also allows ground ladders to be pulled out right in front of the structure in a quick manner, whether for primary or secondary access/egress. Pulling past also allows the Engine the option of aligning their transverse bed up with their objective. Stopping short might be needed for placement of the aerial ladder.”</p><p class="psrc">Truck Manual v3.1, Section 6, pp.143–144</p></div></details><details class="dr bk-trk du-t1 du-t2 oo-com"><summary><b>Commercial: the aerial is the primary ladder.</b></summary><div class="drb"><p class="dq">“All commercial buildings should be laddered with the aerial ladder as the primary ladder when roof operations are being performed. While it may seem easy to ladder a one-story commercial with a ground ladder it will not be easy to get that crew off the roof in a timely manner should the need arise. In addition the angle of the aerial ladder will be much easier to ascend and descend with tools.”</p><p class="psrc">Truck Manual v3.1, Section 6, p.144</p></div></details><details class="dr bk-trk du-t1 du-t2"><summary><b>Steep pitch: aim for the bottom of a valley.</b></summary><div class="drb"><p class="dq">“When going to the roof of a steep residential or possibly a commercial aim placing the aerial ladder to the bottom of a valley in the area where roof operations are going to be performed. This allows a stable platform to work from and two different sections of roof to open up. Roof ladders can also be deployed from this position. By placing the ladder low in the valley this also places us in a stronger area of the roof and allows more roof to work.”</p><p class="psrc">Truck Manual v3.1, Section 6, p.144</p></div></details><details class="dr bk-trk du-t2"><summary><b>Take the opposite offside corner.</b></summary><div class="drb"><p class="dq">“Second arriving Trucks should be placing their ladders to the roof if the first arriving Truck is performing roof operations… Second due Trucks should attempt to place their ladder on the opposite ‘offside’ corner. Secondary ladders should be placed on their side of the building.”</p><p class="psrc">Truck Manual v3.1, Section 6, p.144</p></div></details><details class="dr bk-any du-e1 du-e2 du-e3 du-e4 du-e5 du-t1 du-t2 du-hr du-cp"><summary><b>Don't park on somebody else's ladders.</b></summary><div class="drb"><p class="dq">“When arriving on scene in any apparatus, attention should be given to the location and accessibility of ground ladders. For example, Ladder 33 will require a minimum of over 20' of clearance in the rear to remove the longest ladders from the apparatus. With the current ladder racks on our engines, positioning apparatus near the ladder rack side of the engine could hinder access… it is recommended that Engineers be proactive in lowering ladder racks where applicable for our Truck crews to access ground ladders faster.”</p><p class="psrc">Truck Manual v3.1, p.95</p></div></details></section>
+<p class="note"><strong>Schematic.</strong> Plan view, drawn in feet; the scale bar is 40 ft. Apparatus
+footprints are schematic and are not published specifications. Unit assignments are transcribed verbatim
+from the OFD Quick Reference Guide, May 2024 &mdash; whose three occupancy columns are
+<em>Residential &amp; Multi-Family 1&ndash;3 floors</em>, <em>Mid Rise Structures 4 Floors and Above</em>,
+and <em>Commercial</em>. Spotting doctrine from Engine Company Operations 2023 V-1 p.1-9 and Truck Manual
+v3.1 Section 6, pp.143&ndash;144 and p.95. A real fireground is decided by conditions and Command.</p>
+</div>
+</body>
+</html>

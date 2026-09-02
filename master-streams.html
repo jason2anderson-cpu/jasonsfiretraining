@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Master Stream Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+/* ============================================================
+   Field-instrument system · adopted spec, copied from
+   engine-flow.html. Learning page: jump bar on wide screens,
+   floating Sections menu on a phone. Designed at 390px first.
+   Production note: self-host WOFF2 for offline use.
+   ============================================================ */
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  --c-pos:#3D5A80;  --c-pos-t:#E9EEF5;
+  --c-wtr:#0F6F78;  --c-wtr-t:#DFEEEF;
+  --c-sup:#5B4E9E;  --c-sup-t:#ECE9F6;
+  --c-mst:#7C3F87;  --c-mst-t:#F4E9F5;
+  --c-fom:#2F7D4F;  --c-fom-t:#E4F2E9;
+  --c-dig:#8A6116;  --c-dig-t:#F6EEDC;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --c-pos:#9FBCDF; --c-pos-t:#18232F;
+    --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+    --c-sup:#B7ADE9; --c-sup-t:#231E38;
+    --c-mst:#D9A2DB; --c-mst-t:#301D33;
+    --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+    --c-dig:#DFBC77; --c-dig-t:#332A15;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --c-pos:#9FBCDF; --c-pos-t:#18232F;
+  --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+  --c-sup:#B7ADE9; --c-sup-t:#231E38;
+  --c-mst:#D9A2DB; --c-mst-t:#301D33;
+  --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+  --c-dig:#DFBC77; --c-dig-t:#332A15;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:18px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2);margin:0}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:14px 0 4px}
+.kicker{font-family:var(--head);font-weight:700;font-size:14px;color:var(--accent);
+  letter-spacing:.04em;margin:0 0 6px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(27px,5vw,40px);line-height:1.1;
+  margin:0 0 8px;text-wrap:balance}
+
+/* jump bar — learning pages keep it; wide screens only */
+.jump{position:sticky;top:0;z-index:10;background:var(--canvas);padding:10px 0;
+  display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--divider);margin-top:8px}
+.jump a{min-height:44px;display:inline-flex;align-items:center;gap:8px;padding:6px 14px;
+  border:1.5px solid var(--divider);border-radius:999px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:14.5px}
+.jump a::before{content:"";width:10px;height:10px;border-radius:50%;flex:0 0 auto;background:var(--divider)}
+.jump a:hover{border-color:var(--accent)}
+.jump a.sstop::before{background:var(--safety)}
+.jump a.swhat::before{background:var(--c-pos)}
+.jump a.spos::before{background:var(--c-sup)}
+.jump a.sdeck::before{background:var(--c-wtr)}
+.jump a.ssting::before{background:var(--c-mst)}
+.jump a.sram::before{background:var(--c-fom)}
+.jump a.snum::before{background:var(--c-dig)}
+
+/* floating Sections menu — phone only; <details> so it works with JS off */
+.secmenu{display:none}
+@media (max-width:640px){
+  .jump{display:none}
+  .secmenu{display:block;position:fixed;right:14px;bottom:14px;z-index:40}
+  .secmenu > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+    min-height:56px;min-width:56px;padding:0 22px;border:1.5px solid var(--divider);border-radius:999px;
+    background:var(--surface);color:var(--text);font-family:var(--head);font-weight:700;font-size:16px;
+    cursor:pointer;box-shadow:0 4px 14px rgba(10,30,28,.22)}
+  .secmenu > summary::-webkit-details-marker{display:none}
+  .secmenu[open] > summary{border-color:var(--accent);color:var(--accent)}
+  .secpanel{position:absolute;bottom:calc(100% + 10px);right:0;min-width:230px;max-width:78vw;
+    background:var(--surface);border:1.5px solid var(--divider);border-radius:14px;
+    box-shadow:0 8px 24px rgba(10,30,28,.25);padding:8px;display:grid;gap:2px}
+  .secpanel a{display:flex;align-items:center;min-height:56px;padding:6px 14px;border-radius:10px;
+    text-decoration:none;color:var(--text);font-weight:600;font-size:16px;border-left:5px solid transparent}
+  .secpanel a.sstop{border-left-color:var(--safety)}
+  .secpanel a.swhat{border-left-color:var(--c-pos)}
+  .secpanel a.spos{border-left-color:var(--c-sup)}
+  .secpanel a.sdeck{border-left-color:var(--c-wtr)}
+  .secpanel a.ssting{border-left-color:var(--c-mst)}
+  .secpanel a.sram{border-left-color:var(--c-fom)}
+  .secpanel a.snum{border-left-color:var(--c-dig)}
+}
+
+/* the one teaching surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:16px;overflow:hidden}
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:16px 22px 4px;scroll-margin-top:70px}
+
+/* section colour identities — tinted ground + coloured heading + left rule, never colour alone */
+.phase.cpos{background:var(--c-pos-t);border-left:6px solid var(--c-pos)}
+.phase.cpos > h2{color:var(--c-pos)}
+.phase.cwtr{background:var(--c-wtr-t);border-left:6px solid var(--c-wtr)}
+.phase.cwtr > h2{color:var(--c-wtr)}
+.phase.csup{background:var(--c-sup-t);border-left:6px solid var(--c-sup)}
+.phase.csup > h2{color:var(--c-sup)}
+.phase.cmst{background:var(--c-mst-t);border-left:6px solid var(--c-mst)}
+.phase.cmst > h2{color:var(--c-mst)}
+.phase.cfom{background:var(--c-fom-t);border-left:6px solid var(--c-fom)}
+.phase.cfom > h2{color:var(--c-fom)}
+.phase.cdig{background:var(--c-dig-t);border-left:6px solid var(--c-dig)}
+.phase.cdig > h2{color:var(--c-dig)}
+.phase.cardred{background:var(--safety-tint);border-left:6px solid var(--safety)}
+.phase.cardred > h2{color:var(--safety)}
+
+/* headline facts — the punchy layer */
+ul.facts{list-style:none;margin:0;padding:6px 22px 18px;display:grid;gap:14px}
+ul.facts > li{border-left:4px solid var(--divider);padding-left:14px}
+.phase.cpos ul.facts > li{border-left-color:var(--c-pos)}
+.phase.cwtr ul.facts > li{border-left-color:var(--c-wtr)}
+.phase.csup ul.facts > li{border-left-color:var(--c-sup)}
+.phase.cmst ul.facts > li{border-left-color:var(--c-mst)}
+.phase.cfom ul.facts > li{border-left-color:var(--c-fom)}
+.phase.cdig ul.facts > li{border-left-color:var(--c-dig)}
+.phase.cardred ul.facts > li{border-left-color:var(--safety)}
+.factline{font-family:var(--head);font-weight:800;font-size:18.5px;line-height:1.3;margin:0;
+  letter-spacing:.01em}
+.factsub{margin:5px 0 0;font-size:16px;color:var(--text2);max-width:62ch;line-height:1.55}
+.factsub strong{color:var(--text)}
+.srcline{font-size:14px;color:var(--text2)}
+.factsrc{display:block;margin-top:5px;font-size:14px;color:var(--text2)}
+
+/* sub-heading inside a section */
+.subhead{font-family:var(--head);font-weight:800;font-size:14px;letter-spacing:.06em;
+  text-transform:uppercase;margin:2px 22px 0;color:var(--text2)}
+
+/* labeled disclosures — the manual's fuller wording, closed by default */
+details.disc{margin-top:10px}
+details.disc > summary{list-style:none;display:inline-flex;align-items:center;min-height:56px;
+  padding:6px 14px;border:1.5px solid var(--divider);border-radius:10px;color:var(--accent);
+  font-weight:600;font-size:15px;cursor:pointer;background:transparent}
+details.disc > summary::-webkit-details-marker{display:none}
+details.disc > summary::after{content:"\25BE";margin-left:8px;font-size:12px;transition:transform .15s}
+details.disc[open] > summary::after{transform:rotate(180deg)}
+details.disc > .dbody{background:var(--expanded);border-radius:12px;padding:14px 16px;margin-top:8px;
+  font-size:16px;line-height:1.6}
+details.disc > .dbody p{margin:0 0 10px;max-width:64ch}
+details.disc > .dbody p:last-child{margin:0}
+details.disc > .dbody ul{margin:0 0 10px;padding-left:20px;max-width:64ch}
+details.disc > .dbody li{margin:0 0 7px}
+blockquote{margin:0 0 10px;padding:0 0 0 13px;border-left:3px solid var(--accent);color:var(--text)}
+
+/* the safety gate — full-width interruption, never red alone */
+.gate{border-top:1px solid var(--divider);background:var(--safety-tint);padding:18px 22px;
+  display:flex;align-items:flex-start;gap:14px}
+.gatebody{flex:1;min-width:0}
+.gate .gtag{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:800;
+  font-size:15px;letter-spacing:.06em;color:var(--safety);margin:0 0 8px}
+.gate .gtag::before{content:"";width:0;height:0;border-left:11px solid transparent;
+  border-right:11px solid transparent;border-bottom:19px solid currentColor}
+.gate h3{font-family:var(--head);font-weight:800;font-size:21px;line-height:1.25;margin:0 0 9px;
+  border-left:5px solid var(--safety);padding-left:13px}
+.gate p{margin:0 0 8px;max-width:62ch;font-size:16px}
+.gate .srcline{display:block;margin-top:6px}
+/* the reminder's acknowledgement tick */
+.ack{display:flex;align-items:center;gap:12px;min-height:56px;margin-top:10px;padding:8px 14px;
+  background:var(--surface);border:1.5px solid var(--safety);border-radius:12px;cursor:pointer;
+  font-family:var(--head);font-weight:700;font-size:16px;max-width:62ch}
+.ack input{width:30px;height:30px;flex:0 0 auto;accent-color:var(--safety);cursor:pointer;margin:0}
+.gate.done h3{color:var(--text2);border-left-color:var(--text2)}
+.gate.done .ack{border-color:var(--text2);color:var(--text2)}
+
+/* rig note — applies to one rig only */
+.rignote{margin:6px 22px 18px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);padding:14px 18px}
+.rignote h3{font-family:var(--head);font-weight:700;font-size:17px;margin:0 0 8px}
+.rignote p{margin:0 0 8px;font-size:16px;max-width:62ch}
+.rignote p:last-child{margin:0}
+.rigtag{display:inline-flex;align-items:center;gap:6px;margin:0 0 10px;
+  font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.02em;
+  color:var(--c-dig);background:var(--c-dig-t);border:1px solid var(--c-dig);border-radius:8px;padding:5px 10px}
+
+/* the open item — dashed, deliberately unlike a settled section */
+.pending{margin:6px 22px 18px;padding:18px 20px;background:var(--expanded);border-radius:14px;
+  border:2px dashed var(--text2)}
+.pending .ptag{display:inline-flex;align-items:center;gap:8px;font-family:var(--head);font-weight:700;
+  font-size:14px;letter-spacing:.04em;color:var(--text);background:var(--surface);
+  border:2px dashed var(--text2);border-radius:8px;padding:6px 12px;margin:0 0 12px}
+.pending h3{font-family:var(--head);font-weight:800;font-size:19px;line-height:1.25;color:var(--text);
+  margin:0 0 10px}
+.pending p{margin:0 0 10px;max-width:64ch;font-size:16px}
+.pending p:last-child{margin:0}
+
+/* wide content never pushes the page sideways */
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 6px;
+  border:1px solid var(--divider);border-radius:12px;background:var(--surface);padding:4px 14px}
+.tblwrap table{border-collapse:collapse;min-width:340px;font-size:15.5px;width:100%}
+.tblwrap th,.tblwrap td{text-align:left;padding:9px 14px 9px 0;border-bottom:1px solid var(--divider);
+  white-space:nowrap}
+.tblwrap tr:last-child td{border-bottom:0}
+.tblwrap th{font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.04em;color:var(--text2)}
+.tblwrap td.num{font-family:var(--head);font-weight:800;font-variant-numeric:tabular-nums;font-size:17px}
+.tblwrap td.wide{white-space:normal;min-width:22ch}
+.scrollhint{font-size:13.5px;color:var(--text2);margin:0 0 12px}
+/* short tables fit the phone instead of scrolling — the number must never hide */
+.tblwrap.fit table{min-width:0}
+.tblwrap.fit th,.tblwrap.fit td{white-space:normal;padding-right:10px}
+.tblwrap.fit td.num,.tblwrap.fit th.num{white-space:nowrap;text-align:right;padding-right:0}
+.tblblock{padding:4px 22px 18px}
+.tblcap{font-family:var(--head);font-weight:800;font-size:14px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--c-dig);margin:0 0 8px}
+.formula{font-family:var(--head);font-weight:800;font-size:19px;margin:0 0 6px;
+  overflow-wrap:anywhere}
+
+/* field notes */
+.notesblock{margin-top:20px;background:var(--surface);border:1px solid var(--divider);
+  border-left:6px solid var(--accent);border-radius:14px;padding:16px 20px;scroll-margin-top:70px}
+.notesblock h2{font-family:var(--head);font-weight:800;font-size:14px;letter-spacing:.06em;
+  color:var(--accent);margin:0 0 12px;text-transform:uppercase}
+.notesblock .nitem + .nitem{margin-top:14px;padding-top:14px;border-top:1px solid var(--divider)}
+.notesblock .nhead{font-family:var(--head);font-weight:700;font-size:16.5px;margin:0 0 5px}
+.notesblock p{margin:0 0 6px;font-size:15.5px;max-width:66ch}
+.notesblock p:last-child{margin:0}
+
+.docfoot{margin-top:22px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+@media (max-width:640px){
+  .wrap{padding-bottom:104px} /* clear the floating Sections button */
+}
+@media (max-width:560px){
+  body{font-size:16.5px}
+  .phase > h2,.subhead{padding-left:15px;padding-right:15px;margin-left:0;margin-right:0}
+  .subhead{padding-top:2px}
+  ul.facts{padding-left:15px;padding-right:15px}
+  .gate{padding:15px}
+  .rignote,.pending{margin-left:15px;margin-right:15px;padding:14px 15px}
+  .tblblock{padding-left:15px;padding-right:15px}
+  .notesblock{padding-left:15px;padding-right:15px}
+  .factline{font-size:17.5px}
+  .gate h3{font-size:19px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.jump,.nightbtn,.secmenu{display:none}
+  .sheet,.notesblock,.tblwrap{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  .notesblock{border-left:6px solid #000}
+  .notesblock h2{color:#000}
+  .phase{break-inside:avoid-page;background:#fff!important;border-left:6px solid #000}
+  .phase > h2{color:#000!important}
+  ul.facts > li{border-left-color:#000!important;break-inside:avoid}
+  .tblcap,.rigtag{color:#000}
+  .rigtag{background:#fff;border:1px solid #000}
+  .rignote{background:#fff;border:1.5px solid #000}
+  .pending{background:#fff;border:2px dashed #000}
+  .pending .ptag{background:#fff;border:2px dashed #000;color:#000}
+  .gate{background:#fff;border-top:3px double #000;border-bottom:3px double #000}
+  .gate h3{border-left:5px solid #000}
+  .gate .gtag{color:#000}
+  .ack{border:1.5px solid #000;background:#fff}
+  details.disc{display:none}
+  .scrollhint{display:none}
+}
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="ehome" href="engine-home.html">Engine Operations</a><span>&rsaquo;</span>Master Stream Operations</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <p class="kicker">Engine Company Operations 2023 V-1 &middot; Chapter 7</p>
+    <h1>Master Stream Operations</h1>
+  </header>
+
+  <nav class="jump" aria-label="Jump to section">
+    <a class="sstop" href="#stop">Stop</a>
+    <a class="swhat" href="#what">What counts</a>
+    <a class="spos" href="#positioning">Positioning</a>
+    <a class="sdeck" href="#deckgun">Deck gun</a>
+    <a class="ssting" href="#stinger">Stinger</a>
+    <a class="sram" href="#ram">R.A.M.</a>
+    <a class="snum" href="#numbers">The numbers</a>
+  </nav>
+
+  <div class="sheet">
+
+    <!-- ============ THE GATE ============ -->
+    <section class="phase cardred" aria-labelledby="stop">
+      <h2 id="stop">BEFORE ANY MASTER STREAM FLOWS</h2>
+
+      <div class="gate" id="gate">
+        <div class="gatebody">
+          <p class="gtag">STOP</p>
+          <h3>Every department member is backed out of the building before you flow any master stream
+          or elevated ladder pipe.</h3>
+          <p>Not an announcement &mdash; a confirmation. The manual makes it one of the things the
+          coordinated effort on scene exists to guarantee.</p>
+          <p><strong>Get the placement right the first time.</strong> Once the line is in operation the
+          device must be <strong>shut down to be repositioned</strong>. There is no nudging it while it
+          is flowing.</p>
+          <p><strong>The corners are the safe positions.</strong> Setting up in front of the building
+          &mdash; off the ground or off the top of the engine &mdash; is &ldquo;a dangerous and
+          ineffective tactic.&rdquo; The crew is then in the collapse zone and may not have enough time
+          to react to a sudden collapse of an exterior wall.</p>
+          <p><strong>Collapse zone = 1.5 &times; the height of the tallest exterior wall.</strong> A store
+          front with a 20-foot wall gets a 30-foot zone to account for falling or bouncing debris &mdash;
+          the further the better.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, ch.7 Master Stream Operations,
+          pp.7-1&ndash;7-2</span>
+
+          <label class="ack" for="ackAll">
+            <input type="checkbox" id="ackAll">
+            <span>All department members confirmed out</span>
+          </label>
+
+          <details class="disc"><summary>The manual&rsquo;s wording</summary><div class="dbody">
+            <blockquote>&ldquo;Master stream operations require a coordinated effort from the companies
+            operating on scene, one of which is ensuring that all department members have been backed out
+            of the building prior to flowing any master stream or elevated ladder pipe.&rdquo;</blockquote>
+            <blockquote>&ldquo;The master stream device must be properly positioned to provide an
+            effective stream on a fire once the line is in operation, it must be shut down to be
+            repositioned. The safest exterior positions to operate a master stream are at the corners of
+            the building. Setting up a master stream in front of the building, whether it is being
+            operated from the top of the engine or from the ground, is a dangerous and ineffective tactic.
+            Firefighters operating the stream are now in the collapse zone and may not have enough time to
+            react to a sudden collapse of an exterior wall.&rdquo;</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-1</p>
+            <blockquote>&ldquo;Should the need arise to operate a master stream from the front of a
+            building, it should be set back far enough so that it will not be struck by any falling walls
+            or debris. It is a widely accepted figure in the fire service that the collapse zone should be
+            one and one-half times the height of the tallest exterior wall. A store front that has a
+            20-foot wall should have a collapse safety zone of 30 feet to account for falling or bouncing
+            debris, the further the better.&rdquo;</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-2 &mdash; published as
+            corrected prose; the printed sentence is missing a word and reads &ldquo;so that is will
+            not be struck.&rdquo;</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WHAT COUNTS ============ -->
+    <section class="phase cpos" aria-labelledby="what">
+      <h2 id="what">WHAT COUNTS AS A MASTER STREAM</h2>
+      <ul class="facts">
+        <li>
+          <p class="factline">Over 350 gpm, and it needs mechanical assistance to handle.</p>
+          <p class="factsub">That is the definition line. Below it you are on hand lines; above it you are
+          running an appliance, not a nozzle in someone&rsquo;s hands.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-1</span></p>
+        </li>
+        <li>
+          <p class="factline">Also called large-caliber streams &mdash; LCS.</p>
+          <p class="factsub">Long-reaching, high-volume. Same thing, different radio word.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-1</span></p>
+        </li>
+        <li>
+          <p class="factline">Three forms: portable, elevated, apparatus-mounted.</p>
+          <p class="factsub"><strong>Portable</strong> (sometimes called ground-based) &middot;
+          <strong>elevated</strong>, including ladder pipes and nozzles attached to elevating platforms
+          &middot; or <strong>mounted atop the engine apparatus</strong> itself.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-1</span></p>
+        </li>
+        <li>
+          <p class="factline">You go to master streams for two reasons: the fire beat the hand lines,
+          or the spot is no longer safe for members.</p>
+          <p class="factsub">Usually defensive. The majority of structure fires an engine company sees are
+          handled with hand lines; the master stream is for delivering large quantities of water from a
+          great distance.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-1</span></p>
+        </li>
+        <li>
+          <p class="factline">Putting one in service usually means the interior offensive operation has
+          been abandoned.</p>
+          <p class="factsub">A defensive posture is being employed. Treat the decision as a fireground
+          posture change, not just a bigger nozzle.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-1</span></p>
+          <details class="disc"><summary>Definition &amp; deployment &mdash; the manual&rsquo;s wording</summary><div class="dbody">
+            <blockquote>&ldquo;The majority of structure fires that an Engine Company will encounter can
+            easily be handled with the use of hand-lines. On some occasions there will be a fire that
+            cannot be controlled by handlines and will require the engine company to deliver large
+            quantities of water from a great distance.&rdquo;</blockquote>
+            <blockquote>&ldquo;Master streams are deployed in situations, usually defensive, where the
+            fire is beyond the ability to control with the use of hand lines or there is a need for fire
+            streams in a location that is no longer safe for department members. By most definitions, any
+            stream greater than 350 gpm and that requires mechanical assistance for handling is defined as
+            a &lsquo;master&rsquo; stream. Also called &lsquo;large-caliber streams&rsquo; or LCS, these
+            long-reaching, high-volume streams may be portable (sometimes called &lsquo;ground-based&rsquo;),
+            elevated (including ladder pipes and nozzles attached to elevating platforms), or mounted atop
+            the engine apparatus itself.&rdquo;</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-1 &mdash; corrected prose;
+            the printed text hyphenates &ldquo;mechan-ical&rdquo; across a line break.</p>
+          </div></details>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ============ POSITIONING ============ -->
+    <section class="phase csup" aria-labelledby="positioning">
+      <h2 id="positioning">POSITIONING &amp; THE TWO SAFETY PROBLEMS</h2>
+      <ul class="facts">
+        <li>
+          <p class="factline">Corners first. Always.</p>
+          <p class="factsub">The safest exterior positions to operate a master stream are at the corners of
+          the building. Everything else on this page is downstream of that one decision.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-1</span></p>
+        </li>
+        <li>
+          <p class="factline">The front of the building is dangerous <em>and</em> ineffective.</p>
+          <p class="factsub">Both, and in that order. Ground-based or off the top of the engine makes no
+          difference &mdash; the operators are standing in the collapse zone with no reaction time.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-1</span></p>
+        </li>
+        <li>
+          <p class="factline">If the front cannot be avoided, set back 1.5 &times; the tallest wall.</p>
+          <p class="factsub">20-foot wall &rarr; <strong>30 feet</strong>. That figure accounts for debris
+          that <em>bounces</em>, not just debris that falls &mdash; and the manual&rsquo;s own comment is
+          &ldquo;the further the better.&rdquo;
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-2</span></p>
+        </li>
+        <li>
+          <p class="factline">Shut down to reposition &mdash; so the first placement is the placement.</p>
+          <p class="factsub">Walk it before you charge it. Sight the stream on the objective, check the
+          throw, check what is over your head, then call for water.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-1</span></p>
+        </li>
+        <li>
+          <p class="factline">Safety problem one: the flow tears debris off the building.</p>
+          <p class="factsub">Higher flows are <strong>more likely to knock debris loose</strong> and send
+          it through the air into people and apparatus. Park and stand accordingly.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-1</span></p>
+        </li>
+        <li>
+          <p class="factline">Safety problem two: in portable mode the device will tip over.</p>
+          <p class="factsub">A portable master stream has a <strong>limited side-to-side range</strong>.
+          Turning the nozzle too far left or right can make the base unstable and tip it over. Reposition
+          the base instead of over-swinging the nozzle &mdash; which means shutting it down.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-1</span></p>
+          <details class="disc"><summary>Safety &amp; positioning &mdash; the manual&rsquo;s wording</summary><div class="dbody">
+            <blockquote>&ldquo;Master stream devices present several safety considerations that members
+            must address during these types of operations. First there is an increased likelihood that the
+            higher flows will knock debris loose from the building causing it to fly through the air and
+            strike people or apparatus. Second, when operating in the portable mode the master stream has a
+            limited side to side range that it can operate in. Turning the nozzle too far left or right may
+            cause the base to become unstable and tip over.&rdquo;</blockquote>
+            <blockquote>&ldquo;When master streams are placed into service, it generally means that the
+            interior offensive operations have been abandoned and a defensive posture is being
+            employed.&rdquo;</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-1</p>
+          </div></details>
+        </li>
+        <li>
+          <p class="factline">On the truck side, the spot is chosen before the water is.</p>
+          <p class="factsub">The Truck Manual builds aerial master streams into apparatus placement:
+          spotting <em>uninvolved to involved</em> sets the truck up to protect uninvolved portions of the
+          building &ldquo;if anticipating using aerial master streams,&rdquo; and taking an
+          <strong>outside spot</strong> &mdash; rather than an inside one &mdash; &ldquo;sets us up for
+          aerial master stream operations should the need arise,&rdquo; because it lets the engine get in
+          close underneath and keeps the waterway out of the way.
+          <span class="factsrc">OFD Truck Manual v3.1, p.143 &mdash; apparatus placement</span></p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ============ DECK GUN ============ -->
+    <section class="phase cwtr" aria-labelledby="deckgun">
+      <h2 id="deckgun">DECK GUN &mdash; GEOMETRY DECIDES WHERE THE WATER LANDS</h2>
+      <ul class="facts">
+        <li>
+          <p class="factline">It sits nine to ten feet up, and that costs you at low angles.</p>
+          <p class="factsub">A deck gun nozzle that high suffers a <strong>dramatic loss of
+          effectiveness</strong> at low-angle operations. This is the single biggest limitation of the
+          appliance.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-2</span></p>
+        </li>
+        <li>
+          <p class="factline">On a narrow street, most of the water is wasted 25 to 30 feet inside.</p>
+          <p class="factsub">Positioning limits imposed by narrow streets, plus the excessive height of the
+          gun above the ground, means the stream hits the <strong>floor</strong> only 25 to 30 feet inside
+          the structure. It never reaches the seat.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-2</span></p>
+        </li>
+        <li>
+          <p class="factline">The Limiter Pin exists to stop you rotating the nozzle too low.</p>
+          <p class="factsub">Know where it is before you need it.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-2 &mdash; Photo 7-3</span></p>
+        </li>
+        <li>
+          <p class="factline">Best use: a quick, high-pressure hit through the window &mdash; then get the
+          hand line in.</p>
+          <p class="factsub">&ldquo;The most effective operation in the use of the pre-connected deck gun
+          is to direct a quick application of high-pressure water through the window to knock down the
+          heavy fire while other member[s] get a handline into position by whatever means available.&rdquo;
+          Faster fire control means increased life safety for civilians and firefighters.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-3</span></p>
+        </li>
+        <li>
+          <p class="factline">Upper floors are where the deck gun angle actually works for you.</p>
+          <p class="factsub">The steeper stream angle reduces the chance of <strong>pushing</strong> fire
+          through the compartment and out into the hallway. Most of the water strikes the ceiling of the
+          fire compartment and coarse droplets rain down on the burning contents.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-3</span></p>
+        </li>
+        <li>
+          <p class="factline">Smaller tip, shorter application &mdash; a 1&frac12;&quot; tip for reach and
+          water conservation.</p>
+          <p class="factsub">Employing a smaller tip than normally used with a deck gun, and limiting the
+          application of water, further reduces the danger of forcing fire out of the compartment of
+          origin. The 1&frac12;&quot; tip is used to generate the high-velocity pressure necessary for
+          reach and to conserve water.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-3</span></p>
+          <details class="disc"><summary>Deck gun &mdash; the manual&rsquo;s wording</summary><div class="dbody">
+            <blockquote>&ldquo;One drawback with deck gun nozzles that sit as much as nine to 10 feet above
+            the ground is a dramatic loss of effectiveness at low-angle operations. Taking into account the
+            positioning limitations imposed by narrow streets combined with the excessive height of the
+            deck gun above the ground, most of the water will be wasted as the stream hits the floor only
+            25 to 30 feet inside the structure.&rdquo;</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-2 &mdash; corrected prose;
+            printed as &ldquo;imposed by a narrow streets.&rdquo;</p>
+            <blockquote>&ldquo;The most effective operation in the use of the pre-connected deck gun is to
+            direct a quick application of high-pressure water through the window to knock down the heavy
+            fire while other members get a handline into position by whatever means available. Faster fire
+            control means increased life safety for civilians and firefighters. The stream angle at
+            upper-floor operations reduces the chances of &lsquo;pushing&rsquo; the fire throughout the
+            compartment and out into the hallway. Most of the water strikes the ceiling of the fire
+            compartment and coarse droplets rain down on the burning contents. Employing a smaller tip than
+            normally used with a deck gun and limiting the application of water further reduces the danger
+            of forcing the fire from the compartment of origin. A 1&frac12;-inch tip is used to generate
+            the high-velocity pressure necessary for reach and to conserve water.&rdquo;</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-3</p>
+          </div></details>
+        </li>
+        <li>
+          <p class="factline">Appliance loss for a deck gun or ground monitor: 25 psi.</p>
+          <p class="factsub">Goes in as the <strong>A</strong> term of PDP = F + E + A + N.
+          <span class="factsrc">OFD Hydraulic Manual &mdash; Appliance Loss, large appliances</span></p>
+        </li>
+      </ul>
+      <div class="tblblock">
+        <p class="scrollhint">Drilled as <strong>Evolution 1.4 &mdash; deck gun while flowing additional
+        hand lines</strong>: flow the deck gun for a quick knockdown on the simulated fire using different
+        smooth bore tip sizes, then transition to hydrant supply and flow a 2&frac12;&quot; hand line at
+        proper pressures. &mdash; ADO-Pumper task book, September 2024 Version, evolution 1.4. Evolution
+        list on the <a data-nav="ehome" href="engine-home.html">Engine
+        Operations</a> home.</p>
+      </div>
+    </section>
+
+    <!-- ============ STINGER ============ -->
+    <section class="phase cmst" aria-labelledby="stinger">
+      <h2 id="stinger">THE STINGER, THE NOZZLE ASSEMBLY, THE BASE</h2>
+      <ul class="facts">
+        <li>
+          <p class="factline">A monitor is two components: the nozzle and the base.</p>
+          <p class="factsub">The nozzle is typically a combination fog nozzle, or a stacked set of smooth
+          bore tips varying in size and gpm delivery. The base is a portable stand used to attach the
+          stinger for remote operations &mdash; folding legs for stability, a single LDH inlet.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-4</span></p>
+        </li>
+        <li>
+          <p class="factline">The Stinger is one appliance that does both jobs &mdash; deck gun or portable
+          monitor.</p>
+          <p class="factsub">A dual-purpose <strong>break-apart</strong> monitor. Mounted to a plumbed
+          outlet on top of the engine with the nozzle assembly attached.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-4</span></p>
+        </li>
+        <li>
+          <p class="factline">Plumbed means fast: no supply line to run before it flows.</p>
+          <p class="factsub">That is the whole argument for using it in the deck-gun configuration. Based on
+          the tip being used, the manual states the Stinger can deliver up to <strong>1,250 gpm</strong>.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-4</span></p>
+        </li>
+        <li>
+          <p class="factline">The cost of that speed: the engine has to be parked close.</p>
+          <p class="factsub">A disadvantage of using the Stinger in the deck-gun configuration is that it
+          may require the engine apparatus to be parked in close proximity to ensure proper reach
+          &mdash; <strong>placing the engine in a potentially dangerous position</strong>. Read that against
+          the collapse zone above before you commit the rig.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-4</span></p>
+        </li>
+        <li>
+          <p class="factline">The nozzle assembly carries the hand wheel and an in-line pressure gauge.</p>
+          <p class="factsub">It is the upper portion of the deck gun. Either a combination nozzle or a
+          stacked tip set attaches to the assembly pipe; the hand wheel adjusts the angle of the tip. The
+          same assembly affixes to <strong>either the engine or the portable base</strong> &mdash; that
+          gauge goes with it.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-4</span></p>
+        </li>
+        <li>
+          <p class="factline">Going remote is three moves: set up the base, pull the stinger, stretch the
+          LDH.</p>
+          <p class="factsub">The base is a lightweight portable stand with a <strong>5&quot; LDH
+          inlet</strong>, normally stored in the rear compartment, and it can be set up at any desired
+          location. The point of doing it: it <strong>removes the dangers of the fire from the apparatus
+          and from any firefighters operating in the area</strong>.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-5</span></p>
+          <details class="disc"><summary>Components, Stinger, nozzle assembly, base &mdash; the manual&rsquo;s wording</summary><div class="dbody">
+            <blockquote>&ldquo;The two components that make up [a] monitor are the nozzle and the base. The
+            nozzle is typically a combination fog nozzle, or a stacked set of smooth bore tips varying in
+            size and GPM delivery may be attached. The base is a portable stand used to attach the stinger
+            for remote operations. The base has folding legs for stability and a single LDH
+            inlet.&rdquo;</blockquote>
+            <blockquote>&ldquo;The Stinger is a dual purpose break-apart Monitor that can be used as a deck
+            gun or portable monitor. The Stinger is mounted to a plumbed outlet on the top of the engine
+            with nozzle assembly attached. The fact that the Stinger is plumbed allows it to be placed into
+            operation rapidly without having to run a supply line to it. Based on the tip being used the
+            Stinger can deliver up to 1,250 gallons per minute of water. A disadvantage of using the
+            Stinger in the deck-gun configuration is that it may require the engine apparatus to be parked
+            in close proximity to ensure the proper reach, thus placing the engine in a potential dangerous
+            position.&rdquo;</blockquote>
+            <blockquote>&ldquo;The nozzle assembly is the upper portion of the deck gun. Either a
+            combination nozzle or stacked tip set can be attached to the nozzle assembly pipe. This
+            assembly also includes a hand wheel for adjusting the angle of the tip and in-line pressure
+            gauge. This assembly can be affixed to either the engine or to the portable base.&rdquo;</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-4 &mdash; corrected prose;
+            printed as &ldquo;A disadvantaged of using the Stinger.&rdquo;</p>
+            <blockquote>&ldquo;In the event that the stinger needs to be set up for a remote operation, the
+            monitor can be removed and attached to a base. The base uses a 5&rdquo; LDH inlet to supply the
+            monitor. The Base is a light weight portable stand used during a remote monitor operation. The
+            base, normally stored in the rear compartment, can be remotely set up at any desired location
+            and remove the dangers of the fire from the apparatus and any firefighters operating in the
+            area. To use the base, simply set it up, remove the stinger from the engine and stretch the LDH
+            supply line.&rdquo;</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-5 &mdash; corrected prose;
+            a missing sentence break and a singular/plural defect repaired.</p>
+          </div></details>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ============ R.A.M. ============ -->
+    <section class="phase cfom" aria-labelledby="ram">
+      <h2 id="ram">RAPID ATTACK MONITOR &mdash; R.A.M.</h2>
+      <ul class="facts">
+        <li>
+          <p class="factline">The R.A.M. and the Stinger&rsquo;s portable base are <em>different
+          appliances</em>.</p>
+          <p class="factsub">Different devices, different appliance losses &mdash; <strong>25 psi</strong>
+          for a deck gun or ground monitor, <strong>10 psi</strong> for the R.A.M. Do not let the phrase
+          &ldquo;portable monitor&rdquo; make them one thing in your head at the panel.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, pp.7-4&ndash;7-6 &middot;
+          OFD Hydraulic Manual &mdash; Appliance Loss</span></p>
+        </li>
+        <li>
+          <p class="factline">One firefighter deploys it, and it can be carried while charged.</p>
+          <p class="factsub">Light, compact, large water delivery, easily deployed by one firefighter. The
+          R.A.M. <strong>can be carried while attached to a charged line</strong> &mdash; that is what makes
+          the advance possible.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-6</span></p>
+        </li>
+        <li>
+          <p class="factline">It uses the reaction force to hold itself down.</p>
+          <p class="factsub">A patent-pending hydraulic stability system harnesses reaction force to
+          stabilize the monitor. Four fold-out forged aluminum legs with carbide-tipped ground spikes
+          extend to the largest footprint in its class; the <strong>rear ground spikes are angled</strong>
+          so the carbide tips grip the ground surface.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-6</span></p>
+        </li>
+        <li>
+          <p class="factline">Stored pre-connected, U-shaped valve handle, safety strap with a pouch.</p>
+          <p class="factsub">The waterway design lowers friction loss and produces consistent stream
+          quality in all ranges of motion.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-6</span></p>
+        </li>
+        <li>
+          <p class="factline">Supplied by 2&frac12;&quot; or 3&quot;. Appliance loss 10 psi.</p>
+          <p class="factsub">Smooth bore 1&frac12;&quot;, 1&frac38;&quot;, 1&frac14;&quot; or combination
+          fog nozzles can be used to deliver fire streams. The 10 psi is the number that goes into the
+          <strong>A</strong> term.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-6 &middot; OFD Hydraulic
+          Manual &mdash; Appliance Loss</span></p>
+        </li>
+      </ul>
+
+      <div class="tblblock">
+        <p class="tblcap">R.A.M. tip rows both Orem documents support</p>
+        <div class="tblwrap fit">
+          <table>
+            <thead><tr><th>Tip</th><th>Nozzle pressure</th><th class="num">Flow</th></tr></thead>
+            <tbody>
+              <tr><td>1&frac14;&quot; smooth bore</td><td>80 psi</td><td class="num">400 gpm</td></tr>
+              <tr><td>1&frac38;&quot; smooth bore</td><td>80 psi</td><td class="num">500 gpm</td></tr>
+              <tr><td>Appliance loss</td><td>&mdash;</td><td class="num">10 psi</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="scrollhint">Source: OFD Hydraulic Manual,
+        Elkhart R.A.M. nozzle table &middot; appliance loss confirmed at Engine Company Operations
+        2023 V-1, ch.7, p.7-6.</p>
+      </div>
+
+      <div class="pending">
+        <p class="ptag">UNRESOLVED &mdash; verify at the rig, then committee</p>
+        <h3>500 gpm or 600 gpm? Two Orem documents, one appliance, two ceilings.</h3>
+        <p><strong>Engine Company Operations</strong> states a maximum delivery capability of
+        <strong>500 gpm at 75 psi</strong> nozzle pressure, and lists 1&frac12;&quot; among the approved
+        tips. <span class="srcline">ch.7, p.7-6</span></p>
+        <p>The <strong>OFD Hydraulic Manual&rsquo;s</strong> own R.A.M. table lists <strong>1&frac12;&quot;
+        at 80 psi = 600 gpm</strong>. <span class="srcline">Elkhart R.A.M. nozzle table</span></p>
+        <p>Both are Orem sources, so neither outranks the other. Until it is settled, <strong>no single
+        R.A.M. ceiling is published here</strong> &mdash; use the two rows in the table above, which both
+        documents agree on, and flag the 1&frac12;&quot; row when you see it.</p>
+      </div>
+
+      <p class="subhead">Offensive application</p>
+      <ul class="facts">
+        <li>
+          <p class="factline">The R.A.M. is not only a defensive appliance.</p>
+          <p class="factsub">Its use is well suited to <strong>interior offensive operations</strong>:
+          a large amount of water with long reach, to achieve knockdown in a large building or a long
+          hallway.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-7</span></p>
+        </li>
+        <li>
+          <p class="factline">Two people advance it: one runs the monitor, one moves the hose.</p>
+          <p class="factsub">One firefighter controls the monitor by <strong>shutting it down fully or
+          halfway to move it forward</strong>; the other helps move the hoseline supplying it. Once in
+          position, the monitor is fully opened again. That is the muscle-memory pattern &mdash; shut,
+          step, set, open.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-7</span></p>
+        </li>
+        <li>
+          <p class="factline">It transitions from exterior to interior with minimal personnel.</p>
+          <p class="factsub">An exterior fire attack can be advanced inside the structure to accomplish an
+          interior attack without adding a crew.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-7</span></p>
+        </li>
+        <li>
+          <p class="factline">Once the bulk of the fire is out, extend a smaller line off it.</p>
+          <p class="factsub">The R.A.M. then works like an <strong>extended lay from a 2&frac12;&quot;
+          shutoff</strong> &mdash; a large supply line is already in place and can easily supply a
+          2&frac12;&quot; or 1&frac34;&quot; handline at lower gpm.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-8</span></p>
+        </li>
+        <li>
+          <p class="factline">Where that pays off: garden apartments, strip malls, warehouses &mdash;
+          anything with a long setback.</p>
+          <p class="factsub">Long setbacks are exactly where a hand line stretch dies and a monitor with
+          reach does not.
+          <span class="factsrc">Engine Company Operations 2023 V-1, ch.7, p.7-8</span></p>
+          <details class="disc"><summary>R.A.M. &mdash; the manual&rsquo;s wording</summary><div class="dbody">
+            <blockquote>&ldquo;R.A.M. is easily deployed and operated by a single firefighter. Its
+            patent-pending hydraulic stability system harnesses reaction force to stabilize the monitor.
+            Four fold-out forged aluminum legs with carbide-tipped ground spikes extend to the largest
+            footprint in its class for exceptional stability. The rear ground spikes are angled to help the
+            carbide tips grip the ground surface. The R.A.M. can be carried while attached to a charged
+            line. Exclusive patent-pending design lowers friction loss and produces consistent stream
+            quality in all ranges of motion. The R.A.M. can be stored pre-connected and features an
+            ergonomic U-shaped valve handle. Attached safety strap includes storage pouch.&rdquo;</blockquote>
+            <blockquote>&ldquo;The Rapid Attack Monitor or R.A.M is a light weight, compact portable monitor
+            that provides a rapid large water delivery capacity that is easily deployed by one firefighter.
+            &hellip; It can be supplied with either 2&frac12;&rdquo; or 3&rdquo; hoselines. Due to the
+            design of the waterway the R.A.M has minimal appliance loss of 10 psi. Smooth bore
+            1&frac12;&rdquo;, 1 3/8&rdquo;, 1&frac14;&rdquo; or combination fog nozzles can be used to
+            deliver fire streams.&rdquo;</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-6 &mdash; corrected prose;
+            printed as &ldquo;It&rsquo;s patent-pendinghydraulic stability system.&rdquo; The
+            maximum-delivery sentence from this page is held in the unresolved box above.</p>
+            <blockquote>&ldquo;Besides the defensive application for the R.A.M its use is well suited for
+            interior offensive operations. This application provides the delivery of a large amount of
+            water with long reach capabilities, allowing us to achieve knockdown in a large building or a
+            long hallway. The R.A.M can easily be transitioned from an exterior fire attack to advancing
+            inside the structure to accomplish an interior attack with minimal personnel. This advancement
+            can be accomplished with a two-person attack team with one firefighter controlling the monitor
+            by shutting it down fully or halfway to move it forward. The other firefighter can help move
+            the hoseline supplying it. Once in position, the monitor can be fully opened again.&rdquo;</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-7</p>
+            <blockquote>&ldquo;Another advantage to the R.A.M is the ability to advance a smaller hoseline
+            from it once the &lsquo;bulk&rsquo; of the fire has been extinguished. The R.A.M becomes similar
+            to an extended lay from a 2&frac12;&rdquo; shutoff. The advantage here is a large supply line
+            already in place that can easily supply a 2&frac12;&rdquo; or 1&frac34;&rdquo; handline with
+            lower gpms. A good application for this feature is with garden apartments, strip malls,
+            warehouses and other occupancies with long setbacks.&rdquo;</blockquote>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-8 &mdash; corrected prose;
+            printed as &ldquo;a extended lay.&rdquo;</p>
+          </div></details>
+        </li>
+      </ul>
+
+      <div class="tblblock">
+        <p class="scrollhint">Drilled as <strong>Evolution 1.3</strong>: with the apparatus attached to a
+        water supply, firefighters deploy 3&quot; supply to the R.A.M. and call for water; flow water to the
+        monitor using fog tip and smooth bore stacked tips. &mdash; ADO-Pumper task book, September 2024
+        Version, evolution 1.3. Evolution list on the
+        <a data-nav="ehome" href="engine-home.html">Engine
+        Operations</a> home.</p>
+      </div>
+    </section>
+
+    <!-- ============ NUMBERS ============ -->
+    <section class="phase cdig" aria-labelledby="numbers">
+      <h2 id="numbers">THE NUMBERS YOU PUMP TO</h2>
+
+      <div class="tblblock">
+        <p class="tblcap">Appliance loss &mdash; the A term</p>
+        <div class="tblwrap fit">
+          <table>
+            <thead><tr><th>Appliance</th><th class="num">Loss</th></tr></thead>
+            <tbody>
+              <tr><td>Deck gun &middot; ground monitor</td><td class="num">25 psi</td></tr>
+              <tr><td>Rapid Attack Monitor (R.A.M.)</td><td class="num">10 psi</td></tr>
+              <tr><td>Standpipe</td><td class="num">25 psi</td></tr>
+              <tr><td>Wye &middot; gated wye &middot; siamese &middot; reducer &middot; increaser &mdash;
+                  combined flow over 350 gpm</td><td class="num">10 psi</td></tr>
+              <tr><td>The same, under 350 gpm</td><td class="num">0 psi</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="scrollhint">Source: OFD Hydraulic Manual &mdash; Appliance Loss, small and large appliances. Standpipe loss is 25 psi regardless of flow.</p>
+      </div>
+
+      <div class="rignote">
+        <p class="rigtag">Aerial &mdash; name the rig, not just the appliance</p>
+        <h3>Two rigs, two completely different calculations.</h3>
+        <p><strong>Ladder 32 &mdash; pre-plumbed waterway: 25 psi &plusmn; elevation.</strong> One number,
+        plus or minus the elevation of the tip.</p>
+        <p><strong>The tiller &mdash; playpipe: build it up.</strong> Q&sup2; (condensed Q) for the 3&quot;
+        &middot; plus the elevation of the ladder &middot; plus a <strong>15 psi</strong> appliance loss
+        &middot; plus nozzle pressure.</p>
+        <p>The Hydraulic Manual lists these under near-identical designations, which reads as one rig with
+        two appliances. It is two rigs. Ask which one you are supplying before you calculate.</p>
+        <p class="srcline">OFD Hydraulic Manual &mdash; Appliance Loss, aerial master stream. Rig naming
+        per Jason&rsquo;s 2026-08-30 ruling: the pre-plumbed waterway is on the rig now designated
+        Ladder 32; the playpipe is the tiller&rsquo;s.</p>
+      </div>
+
+      <div class="tblblock">
+        <p class="tblcap">Master stream smooth bore tips</p>
+        <div class="tblwrap fit">
+          <table>
+            <thead><tr><th>Tip</th><th>Nozzle pressure</th><th class="num">Flow</th></tr></thead>
+            <tbody>
+              <tr><td>1&frac38;&quot;</td><td>80 psi</td><td class="num">500 gpm</td></tr>
+              <tr><td>1&frac12;&quot;</td><td>80 psi</td><td class="num">600 gpm</td></tr>
+              <tr><td>1&frac34;&quot;</td><td>80 psi</td><td class="num">800 gpm</td></tr>
+              <tr><td>2&quot;</td><td>80 psi</td><td class="num">1,000 gpm</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="scrollhint">Source: OFD Hydraulic Manual &mdash; Know the Flow, solid stream /
+        smooth bore tips, master streams column.
+        Long form: GPM = 29.7 &times; d&sup2; &times; &radic;NP.</p>
+      </div>
+
+      <div class="tblblock">
+        <p class="tblcap">Nozzle reaction &mdash; what the device has to hold</p>
+        <p class="formula">NR = 1.57 &times; d&sup2; &times; NP</p>
+        <p class="scrollhint">1.57 is the constant &middot; d is nozzle diameter in inches &middot; NP is
+        nozzle pressure in psi. Worked at 80 psi, the master stream nozzle pressure.</p>
+        <div class="tblwrap">
+          <table>
+            <thead><tr><th>Tip</th><th>Worked</th><th>Reaction</th><th>Field method (&#8531; flow)</th></tr></thead>
+            <tbody>
+              <tr><td>1&frac14;&quot;</td><td>1.57 &times; 1.5625 &times; 80</td><td class="num">196 lb</td><td>133 lb @ 400 gpm</td></tr>
+              <tr><td>1&frac38;&quot;</td><td>1.57 &times; 1.891 &times; 80</td><td class="num">237 lb</td><td>167 lb @ 500 gpm</td></tr>
+              <tr><td>1&frac12;&quot;</td><td>1.57 &times; 2.25 &times; 80</td><td class="num">283 lb</td><td>200 lb @ 600 gpm</td></tr>
+              <tr><td>1&frac34;&quot;</td><td>1.57 &times; 3.0625 &times; 80</td><td class="num">385 lb</td><td>267 lb @ 800 gpm</td></tr>
+              <tr><td>2&quot;</td><td>1.57 &times; 4 &times; 80</td><td class="num">502 lb</td><td>333 lb @ 1,000 gpm</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="scrollhint">Table scrolls sideways on a narrow screen. Both methods are the Hydraulic
+        Manual&rsquo;s: the formula, and the field method of &#8531; the flow. The field method is an
+        estimate and reads low at 80 psi &mdash; it is a check, not the number. Source: OFD Hydraulic
+        Manual &mdash; Nozzle Reaction, smoothbore nozzle.</p>
+        <details class="disc"><summary>Why this number is a positioning decision, not trivia</summary><div class="dbody">
+          <p>Reaction is what the base has to absorb. It is the reason the portable device has a limited
+          side-to-side range and will tip if the nozzle is swung too far left or right, and it is the force
+          the R.A.M.&rsquo;s stability system is designed to harness rather than fight.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-1 (tip-over) and p.7-6
+          (stability system) &middot; OFD Hydraulic Manual &mdash; Nozzle Reaction</p>
+          <p>Fog straight stream uses a different formula: NR = .0505 &times; GPM &times; &radic;NP, field
+          method &frac12; the flow.</p>
+          <p class="srcline">OFD Hydraulic Manual &mdash; Nozzle Reaction, fog</p>
+        </div></details>
+      </div>
+
+      <div class="tblblock">
+        <p class="tblcap">Supplying the ladder company</p>
+        <p class="scrollhint"><strong>Evolution 1.9 &mdash; pump to a ladder company for an elevated
+        stream.</strong> Communicate with the ladder company for apparatus placement, establish a water
+        supply, and <strong>keep the distance between engine and truck to a minimum</strong> to hold
+        friction loss down. Make contact with the truck company, connect with LDH, <strong>charge the LDH
+        slowly</strong>, verify correct pressures, and monitor residual. &mdash; ADO-Pumper task book,
+        September 2024 Version, evolution 1.9.
+        <a data-nav="evo19" href="evo-1-9.html">Open
+        Evolution 1.9</a> &middot; the full PDP chain lives on
+        <a data-nav="epump" href="engine-emergency.html">Pump
+        Operations</a>.</p>
+      </div>
+    </section>
+
+  </div><!-- /sheet -->
+
+  <div class="notesblock" id="notes">
+    <h2>Field notes</h2>
+    <div class="nitem">
+      <p class="nhead">&ldquo;Portable monitor&rdquo; is doing too much work as a phrase</p>
+      <p>The Stinger dropped onto its base is a portable monitor. The R.A.M. is a portable monitor. They are
+      not the same appliance and they do not carry the same appliance loss &mdash; 25 psi against 10 psi.
+      The task book&rsquo;s evolution 1.3 is titled &ldquo;place the portable monitor in service&rdquo; but
+      its stated objective is &ldquo;pump to portable RAM monitor.&rdquo; Say which device out loud on the
+      radio and at the panel.</p>
+    </div>
+    <div class="nitem">
+      <p class="nhead">The two figures that decide the position</p>
+      <p><strong>1.5 &times; the tallest exterior wall</strong> for the collapse zone, and <strong>shut down
+      to reposition</strong>. Together they mean the walk-around happens before the water does. Corners
+      first; the front only when there is no alternative, and then set well back.</p>
+    </div>
+    <div class="nitem">
+      <p class="nhead">Not covered by chapter 7</p>
+      <p>Chapter 7 does not give a pump discharge pressure for any master stream device, a tip complement
+      for any Orem rig, or a flow ceiling for the deck gun. It also gives no elevated-stream procedure
+      beyond the &ldquo;all members backed out&rdquo; requirement &mdash; the aerial numbers on this page
+      come from the OFD Hydraulic Manual, and aerial placement from the Truck Manual.</p>
+    </div>
+  </div>
+
+  <div class="docfoot">
+    <p><strong>Sources.</strong> Engine Company Operations 2023 V-1, chapter 7 &ldquo;Master Stream
+    Operations,&rdquo; pp.7-1 to 7-8, in full &middot; OFD Hydraulic Manual &mdash; Know the Flow, Appliance
+    Loss, Nozzle Reaction &middot; OFD Truck Manual v3.1, p.143 (apparatus placement) &middot; ADO-Pumper
+    task book, September 2024 Version, evolutions 1.3, 1.4 and 1.9. Typographical defects in chapter 7 are
+    published corrected; every correction is named where it occurs.</p>
+    <p>Version: prototype &middot; Last reviewed 2026-08-30 &middot; Compiled by Engineer Jason Anderson</p>
+  </div>
+
+</div>
+
+<details class="secmenu" id="secMenu">
+  <summary aria-label="Open sections menu">Sections</summary>
+  <nav class="secpanel" aria-label="Jump to section">
+    <a class="sstop" href="#stop">Stop &mdash; before you flow</a>
+    <a class="swhat" href="#what">What counts</a>
+    <a class="spos" href="#positioning">Positioning</a>
+    <a class="sdeck" href="#deckgun">Deck gun</a>
+    <a class="ssting" href="#stinger">Stinger &amp; base</a>
+    <a class="sram" href="#ram">R.A.M.</a>
+    <a class="snum" href="#numbers">The numbers</a>
+    <a class="swhat" href="#notes">Field notes</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  // night mode
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // the gate's acknowledgement tick
+  var ack=document.getElementById('ackAll'),gate=document.getElementById('gate');
+  if(ack&&gate){
+    ack.checked=sessionStorage.getItem('mstream-ack')==='1';
+    gate.classList.toggle('done',ack.checked);
+    ack.addEventListener('change',function(){
+      sessionStorage.setItem('mstream-ack',ack.checked?'1':'0');
+      gate.classList.toggle('done',ack.checked);
+    });
+  }
+
+  // floating Sections menu — close on link tap (works without JS too; this is a nicety)
+  var menu=document.getElementById('secMenu');
+  if(menu){
+    [].slice.call(menu.querySelectorAll('a')).forEach(function(a){
+      a.addEventListener('click',function(){menu.removeAttribute('open')});
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

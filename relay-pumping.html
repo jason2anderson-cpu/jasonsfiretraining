@@ -1,0 +1,1015 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Relay Pumping</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+/* ============================================================
+   Field-instrument system · adopted spec, learning-page variant.
+   From the manual: Engine Company Operations ch.5 Relay Pumping
+   + the Constant Pressure Relay card. Sticky jump bar on wide
+   screens, floating Sections menu on a phone. Designed at 390px.
+   Production note: self-host WOFF2 for offline use.
+   ============================================================ */
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  --c-pos:#3D5A80;  --c-pos-t:#E9EEF5;
+  --c-wtr:#0F6F78;  --c-wtr-t:#DFEEEF;
+  --c-sup:#5B4E9E;  --c-sup-t:#ECE9F6;
+  --c-mst:#7C3F87;  --c-mst-t:#F4E9F5;
+  --c-fom:#2F7D4F;  --c-fom-t:#E4F2E9;
+  --c-dig:#8A6116;  --c-dig-t:#F6EEDC;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --c-pos:#9FBCDF; --c-pos-t:#18232F;
+    --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+    --c-sup:#B7ADE9; --c-sup-t:#231E38;
+    --c-mst:#D9A2DB; --c-mst-t:#301D33;
+    --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+    --c-dig:#DFBC77; --c-dig-t:#332A15;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --c-pos:#9FBCDF; --c-pos-t:#18232F;
+  --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+  --c-sup:#B7ADE9; --c-sup-t:#231E38;
+  --c-mst:#D9A2DB; --c-mst-t:#301D33;
+  --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+  --c-dig:#DFBC77; --c-dig-t:#332A15;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:18px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2);margin:0}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:14px 0 2px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(28px,5.4vw,42px);line-height:1.08;
+  margin:0;text-wrap:balance}
+
+/* jump to section — sticky, wide screens only */
+.jump{position:sticky;top:0;z-index:10;background:var(--canvas);padding:12px 0 10px;
+  display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--divider);margin-top:12px}
+.jump a{min-height:44px;display:inline-flex;align-items:center;gap:8px;padding:6px 14px;
+  border:1.5px solid var(--divider);border-radius:999px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:14.5px}
+.jump a:hover{border-color:var(--accent)}
+.dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+
+/* floating Sections menu — narrow screens only; <details> so it works with JS off */
+.secmenu{display:none;position:fixed;right:14px;bottom:14px;z-index:40}
+.secmenu > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+  min-height:56px;min-width:56px;padding:0 22px;border:1.5px solid var(--divider);border-radius:999px;
+  background:var(--surface);color:var(--text);font-family:var(--head);font-weight:700;font-size:16px;
+  cursor:pointer;box-shadow:0 4px 14px rgba(10,30,28,.22)}
+.secmenu > summary::-webkit-details-marker{display:none}
+.secmenu[open] > summary{border-color:var(--accent);color:var(--accent)}
+.secpanel{position:absolute;bottom:calc(100% + 10px);right:0;min-width:236px;max-width:80vw;
+  background:var(--surface);border:1.5px solid var(--divider);border-radius:14px;
+  box-shadow:0 8px 24px rgba(10,30,28,.25);padding:8px;display:grid;gap:2px}
+.secpanel a{display:flex;align-items:center;min-height:56px;padding:6px 14px;border-radius:10px;
+  text-decoration:none;color:var(--text);font-weight:600;font-size:16px;border-left:5px solid transparent}
+.secpanel a.spos{border-left-color:var(--c-pos)}
+.secpanel a.swtr{border-left-color:var(--c-wtr)}
+.secpanel a.ssup{border-left-color:var(--c-sup)}
+.secpanel a.smst{border-left-color:var(--c-mst)}
+.secpanel a.sfom{border-left-color:var(--c-fom)}
+.secpanel a.sdig{border-left-color:var(--c-dig)}
+.secpanel a.ssec{border-left-color:var(--safety)}
+@media (max-width:700px){ .secmenu{display:block} .jump{display:none} }
+
+/* the one learning surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:16px;overflow:hidden}
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:16px 22px 4px;scroll-margin-top:78px;text-transform:uppercase}
+
+/* section colour identities — tinted ground + coloured heading + left rule, never colour alone */
+.phase.cpos{background:var(--c-pos-t);border-left:6px solid var(--c-pos);--sc:var(--c-pos)}
+.phase.cwtr{background:var(--c-wtr-t);border-left:6px solid var(--c-wtr);--sc:var(--c-wtr)}
+.phase.csup{background:var(--c-sup-t);border-left:6px solid var(--c-sup);--sc:var(--c-sup)}
+.phase.cmst{background:var(--c-mst-t);border-left:6px solid var(--c-mst);--sc:var(--c-mst)}
+.phase.cfom{background:var(--c-fom-t);border-left:6px solid var(--c-fom);--sc:var(--c-fom)}
+.phase.cdig{background:var(--c-dig-t);border-left:6px solid var(--c-dig);--sc:var(--c-dig)}
+.phase.cardred{background:var(--safety-tint);border-left:6px solid var(--safety);--sc:var(--safety)}
+.phase > h2{color:var(--sc,var(--text2))}
+
+/* headline facts — punchy line, quiet second line, manual wording in the drop-down */
+.facts{border-top:1px solid var(--divider);padding:6px 22px 18px}
+.phase > h2 + .facts{border-top:0;padding-top:2px}
+ul.docl{list-style:none;margin:0;padding:0;display:grid;gap:15px}
+ul.docl > li{border-left:4px solid var(--sc,var(--accent));padding-left:14px}
+.docline{font-family:var(--head);font-weight:800;font-size:19px;line-height:1.24;margin:0;
+  letter-spacing:.005em;text-wrap:pretty}
+.docsub{margin:5px 0 0;font-size:16px;color:var(--text2);max-width:62ch}
+
+/* numbered muscle-memory steps */
+.step{display:flex;align-items:flex-start;gap:14px;padding:13px 22px;min-height:62px;
+  border-top:1px solid var(--divider)}
+.phase > h2 + .step{border-top:0}
+.stepnum{font-family:var(--head);font-weight:700;font-size:30px;line-height:1.05;color:var(--sc,var(--text2));
+  min-width:44px;font-variant-numeric:tabular-nums;padding-top:1px}
+.stepbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:19.5px;line-height:1.32;margin:0;text-wrap:pretty}
+.plainnote{margin:7px 0 0;font-size:15.5px;color:var(--text2);max-width:62ch}
+
+/* the three numbers */
+.numgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--divider);
+  border-top:1px solid var(--divider)}
+.numcell{background:var(--c-dig-t);padding:15px 18px}
+.bignum{font-family:var(--head);font-weight:800;font-size:38px;line-height:1;color:var(--c-dig);
+  font-variant-numeric:tabular-nums;margin:0}
+.bignum small{font-size:16px;font-weight:700;margin-left:3px}
+.numlab{font-family:var(--head);font-weight:700;font-size:14px;letter-spacing:.04em;margin:7px 0 0;
+  text-transform:uppercase}
+.numsub{margin:5px 0 0;font-size:15px;color:var(--text2)}
+
+/* small attached Orem tag */
+.oretag{display:inline-flex;align-items:center;gap:6px;margin-top:8px;margin-right:8px;
+  font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.02em;
+  color:var(--accent);background:var(--accent-tint);border-radius:8px;padding:5px 10px}
+
+/* the fixed sub-sequence, kept whole */
+.rignote{margin:11px 0 0;border:1.5px dashed var(--divider);border-radius:12px;padding:13px 16px;
+  background:var(--surface)}
+.rignote p{margin:0;font-family:var(--head);font-weight:700;font-size:14px;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--text2)}
+.rignote ol{margin:9px 0 0;padding-left:24px}
+.rignote li{font-weight:600;font-size:17px;padding:3px 0}
+
+/* disclosures — labeled by content, closed by default */
+details.disc{margin-top:10px}
+details.disc > summary{list-style:none;display:inline-flex;align-items:center;min-height:56px;
+  padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;color:var(--accent);
+  font-weight:600;font-size:15.5px;cursor:pointer;background:var(--surface)}
+details.disc > summary::-webkit-details-marker{display:none}
+details.disc > summary::after{content:"\25BE";margin-left:9px;font-size:12px;transition:transform .15s}
+details.disc[open] > summary::after{transform:rotate(180deg)}
+details.disc > .dbody{background:var(--expanded);border-radius:12px;padding:14px 16px;margin-top:9px;
+  font-size:16px}
+details.disc > .dbody p{margin:0 0 10px;max-width:64ch}
+details.disc > .dbody p:last-child{margin:0}
+details.disc > .dbody ul{margin:0 0 10px;padding-left:20px;max-width:64ch}
+details.disc > .dbody li{margin:0 0 7px}
+.srcline{font-size:14px;color:var(--text2)}
+blockquote{margin:0 0 10px;padding:0 0 0 13px;border-left:3px solid var(--accent);color:var(--text)}
+
+/* the safety gate — full-width interruption */
+.gate{border-top:1px solid var(--divider);background:var(--safety-tint);padding:17px 22px}
+.gate .gtag{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:800;
+  font-size:15px;letter-spacing:.06em;color:var(--safety);margin:0 0 8px}
+.gate .gtag::before{content:"";width:0;height:0;border-left:11px solid transparent;
+  border-right:11px solid transparent;border-bottom:19px solid currentColor}
+.gate h3{font-family:var(--head);font-weight:800;font-size:20px;line-height:1.24;margin:0 0 8px;
+  border-left:5px solid var(--safety);padding-left:13px}
+.gate p{margin:0 0 8px;max-width:62ch;font-size:16px}
+.gate p:last-child{margin:0}
+
+/* wide content never pushes the page sideways */
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 6px;
+  border:1px solid var(--divider);border-radius:12px;background:var(--surface)}
+.tblwrap table{border-collapse:collapse;min-width:520px;font-size:15.5px;width:100%}
+.tblwrap th,.tblwrap td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--divider);
+  white-space:nowrap}
+.tblwrap tr:last-child th,.tblwrap tr:last-child td{border-bottom:0}
+.tblwrap th{font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.04em;color:var(--text2)}
+.tblwrap td.big{font-family:var(--head);font-weight:800;font-size:18px;font-variant-numeric:tabular-nums}
+.tblwrap td.big small{font-family:var(--body);font-weight:400;font-size:13px;color:var(--text2);margin-left:4px}
+.tblwrap table.tips{min-width:340px}
+.scrollhint{font-size:13.5px;color:var(--text2);margin:0 0 10px}
+.scrollhint::before{content:"\2194\FE0E";margin-right:7px}
+
+/* the open item — dashed, deliberately unlike a settled section */
+.pending{margin-top:22px;padding:20px 22px;background:var(--expanded);border-radius:16px;
+  border:2px dashed var(--text2);scroll-margin-top:78px}
+.pending h2{font-family:var(--head);font-weight:800;font-size:21px;line-height:1.25;color:var(--text);
+  margin:0 0 10px}
+.pending .ptag{display:inline-flex;align-items:center;font-family:var(--head);font-weight:700;
+  font-size:14px;letter-spacing:.04em;color:var(--text);background:var(--surface);
+  border:2px dashed var(--text2);border-radius:8px;padding:6px 12px;margin:0 0 12px}
+.pending p{margin:0 0 10px;max-width:66ch;font-size:16px}
+.pending p:last-child{margin:0}
+
+/* drills block */
+.notesblock{margin-top:20px;background:var(--surface);border:1px solid var(--divider);
+  border-left:6px solid var(--accent);border-radius:14px;padding:18px 22px;scroll-margin-top:78px}
+.notesblock h2{font-family:var(--head);font-weight:800;font-size:14px;letter-spacing:.06em;
+  color:var(--accent);margin:0 0 14px;text-transform:uppercase}
+.notesblock .nitem + .nitem{margin-top:15px;padding-top:15px;border-top:1px solid var(--divider)}
+.notesblock .nhead{font-family:var(--head);font-weight:800;font-size:17.5px;margin:0 0 6px}
+.notesblock p{margin:0 0 7px;font-size:16px;max-width:66ch}
+.notesblock p:last-child{margin:0}
+
+.docfoot{margin-top:24px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 7px;max-width:76ch}
+
+@media (max-width:700px){
+  .wrap{padding-bottom:126px} /* clear the floating Sections button */
+}
+@media (max-width:560px){
+  body{font-size:16.5px}
+  .wrap{padding-left:14px;padding-right:14px}
+  .top{padding-left:14px;padding-right:14px}
+  .phase > h2{padding:15px 15px 4px;scroll-margin-top:14px}
+  .facts{padding-left:15px;padding-right:15px}
+  .step{padding:12px 15px;gap:11px}
+  .stepnum{font-size:26px;min-width:36px}
+  .action{font-size:18.5px}
+  .docline{font-size:17.5px}
+  .gate{padding-left:15px;padding-right:15px}
+  .numgrid{grid-template-columns:1fr}
+  .bignum{font-size:34px}
+  .pending{padding:16px 15px}
+  .notesblock{padding-left:15px;padding-right:15px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.nightbtn,.jump,.secmenu{display:none}
+  .sheet,.notesblock,.pending{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  .pending{border:2px dashed #000;background:#fff}
+  .notesblock{border-left:6px solid #000}
+  .notesblock h2{color:#000}
+  .phase{break-inside:avoid-page;background:#fff!important;border-left:6px solid #000}
+  .phase > h2{color:#000!important}
+  .step,.numcell{break-inside:avoid;min-height:0;padding:8px 12px}
+  ul.docl > li{border-left:4px solid #000;break-inside:avoid}
+  .numgrid{grid-template-columns:repeat(3,1fr);background:#000}
+  .numcell{background:#fff}
+  .bignum,.stepnum{color:#000}
+  details.disc{display:none}
+  .oretag{background:#fff;border:1px solid #000;color:#000}
+  .rignote{border:1px dashed #000}
+  .gate{background:#fff;border-top:3px double #000;border-bottom:3px double #000}
+  .gate h3{border-left:5px solid #000}
+  .gate .gtag{color:#000}
+  .tblwrap{overflow:visible;border:1.5px solid #000;border-radius:0}
+  .tblwrap table{min-width:0}
+  .scrollhint{display:none}
+  .stepnum{font-size:16pt;min-width:28pt}
+  .action{font-size:12pt}
+}
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="ehome" href="engine-home.html">Engine Operations</a><span>&rsaquo;</span>Relay Pumping</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <h1>Relay Pumping</h1>
+  </header>
+
+  <nav class="jump" aria-label="Jump to section">
+    <a href="#when"><span class="dot" style="background:var(--c-wtr)"></span>When you relay</a>
+    <a href="#roles"><span class="dot" style="background:var(--c-pos)"></span>Three pumpers</a>
+    <a href="#steps"><span class="dot" style="background:var(--c-sup)"></span>The eight steps</a>
+    <a href="#numbers"><span class="dot" style="background:var(--c-dig)"></span>175 / 20 / 750</a>
+    <a href="#volume"><span class="dot" style="background:var(--c-mst)"></span>Max volume</a>
+    <a href="#distance"><span class="dot" style="background:var(--c-fom)"></span>How far it reaches</a>
+    <a href="#arriving"><span class="dot" style="background:var(--c-wtr)"></span>Who relays to who</a>
+    <a href="#hold"><span class="dot" style="background:var(--safety)"></span>Hold it &amp; shut it down</a>
+  </nav>
+
+  <div class="sheet">
+
+    <!-- ===================== WHEN YOU RELAY ===================== -->
+    <section class="phase cwtr" aria-labelledby="when">
+      <h2 id="when">When you relay</h2>
+      <div class="facts">
+        <ul class="docl">
+          <li>
+            <p class="docline">The water is too far from the fire for one pump to reach it.</p>
+            <p class="docsub">That is the whole trigger. Not a bigger fire &mdash; a longer distance.</p>
+            <details class="disc"><summary>What the manual says</summary>
+              <div class="dbody">
+                <blockquote><p>&ldquo;During some incidents, the water source may be found remote from the
+                fire scene. In these instances, relay pumping may have to be employed.&rdquo;</p></blockquote>
+                <p class="srcline">Engine Company Operations, Water Supply, p.5-14.</p>
+              </div>
+            </details>
+          </li>
+          <li>
+            <p class="docline">Two or more pumpers in series. Discharge of one feeds the intake of the next.</p>
+            <p class="docsub">Each pump takes what the pump behind it hands over and puts the pressure back on
+            top. The line never sees one pump doing all the work.</p>
+            <details class="disc"><summary>What the manual says</summary>
+              <div class="dbody">
+                <blockquote><p>&ldquo;Using two or more pumpers to move water over a long distance by operating
+                them in series; water discharged from one pumper flows through hoses to the inlet of the next
+                pumper, and so on.&rdquo;</p></blockquote>
+                <p>The manual then describes the chain end to end: a pumper at the water source pumps under
+                pressure through one or more supply lines to a pumper further down the line; that pumper boosts
+                the pressure to supply the next, and so on until water reaches the attack pumper.</p>
+                <p class="srcline">Engine Company Operations, Water Supply, p.5-14.</p>
+              </div>
+            </details>
+          </li>
+          <li>
+            <p class="docline">A relay is rehearsed, not improvised.</p>
+            <p class="docsub">The manual puts pre-planning, training and coordination in the definition itself.
+            The night you need one is not the night to work out the spacing.</p>
+            <details class="disc"><summary>What the manual says</summary>
+              <div class="dbody">
+                <blockquote><p>&ldquo;In order to be effective, relay operations require pre-planning, training,
+                and coordinating of all participants.&rdquo;</p></blockquote>
+                <p class="srcline">Engine Company Operations, Water Supply, p.5-14.</p>
+              </div>
+            </details>
+          </li>
+          <li>
+            <p class="docline">Orem runs one method: the Constant Pressure Relay.</p>
+            <p class="docsub">Everybody in the middle holds the same pressure. You are not solving a fresh
+            hydraulics problem at every rig.</p>
+            <details class="disc"><summary>What the manual says</summary>
+              <div class="dbody">
+                <blockquote><p>&ldquo;Orem Fire Department uses the Constant Pressure Relay method for
+                establishing hydraulic pressures and distances during relay operations. For more specific
+                information see the current APPARATUS DRIVER / OPERATOR HYDRAULIC CALCULATION STANDARDS in
+                Target Solutions.&rdquo;</p></blockquote>
+                <p class="srcline">Engine Company Operations, Water Supply, p.5-15.</p>
+              </div>
+            </details>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== THE THREE PUMPERS ===================== -->
+    <section class="phase cpos" aria-labelledby="roles">
+      <h2 id="roles">The three pumpers</h2>
+      <div class="facts">
+        <ul class="docl">
+          <li>
+            <p class="docline">Source pumper &mdash; biggest pump goes on the water.</p>
+            <p class="docsub">Takes water from the hydrant or the static source and pumps it under pressure to
+            the next apparatus. It sits on the &ldquo;key&rdquo; hydrant. The manual also calls this the
+            <em>water supply pumper</em>.</p>
+            <details class="disc"><summary>What the manual says</summary>
+              <div class="dbody">
+                <blockquote><p>&ldquo;Water supply pumper &mdash; Pumper that takes water from a hydrant or
+                static source and pumps it under pressure to the next apparatus in the relay pumping operation.
+                Water supply pumpers should be the apparatus with the largest pumping capacity. Some
+                jurisdictions refer to water supply pumpers as source pumpers.&rdquo;</p></blockquote>
+                <p class="srcline">Engine Company Operations, Water Supply, p.5-14. The &ldquo;key hydrant&rdquo;
+                placement is from the Constant Pressure Relay card, p.5-15.</p>
+              </div>
+            </details>
+          </li>
+          <li>
+            <p class="docline">Relay pumper &mdash; catches pressure, raises it, hands it on.</p>
+            <p class="docsub">It can be a smaller pump than the source, because it is not starting from zero.
+            It inherits the energy the pumpers behind it already put into the line.</p>
+            <details class="disc"><summary>What the manual says</summary>
+              <div class="dbody">
+                <blockquote><p>&ldquo;Relay pumper &mdash; Pumper or pumpers connected within the relay that
+                receive water from the source pumper or another relay pumper, raises the pressure, and then
+                supplies water to the next apparatus. This pumper may be of smaller capacity due to its ability
+                to use the acquired energy of previous pumpers in the relay.&rdquo;</p></blockquote>
+                <p class="srcline">Engine Company Operations, Water Supply, p.5-14.</p>
+              </div>
+            </details>
+          </li>
+          <li>
+            <p class="docline">Attack pumper &mdash; the only rig doing fireground math.</p>
+            <p class="docsub">It receives from the relay and supplies the attack lines and appliances. Everyone
+            behind it holds a fixed number; this one sets pump discharge pressure for the lines it is feeding.</p>
+            <details class="disc"><summary>What the manual says</summary>
+              <div class="dbody">
+                <blockquote><p>&ldquo;Fire attack pumper &mdash; Pumping apparatus located at the fire scene
+                that receives water from the relay and is responsible for supplying the attack lines and
+                appliances required for fire suppression.&rdquo;</p></blockquote>
+                <p>The Constant Pressure Relay card places it at a forward &ldquo;key&rdquo; attack position,
+                and gives it the one variable job: <em>&ldquo;Attack Pumper &mdash; adjust PDP as needed making
+                sure to dump excess pressure.&rdquo;</em></p>
+                <p class="srcline">Engine Company Operations, Water Supply, p.5-14 (roles) and p.5-15
+                (positions and pressure); Apparatus Driver/Operator Hydraulic Calculation Standards,
+                <em>Constant Pressure Relay</em>.</p>
+              </div>
+            </details>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== THE EIGHT STEPS ===================== -->
+    <section class="phase csup" aria-labelledby="steps">
+      <h2 id="steps">Constant pressure relay &mdash; the eight steps</h2>
+
+      <div class="step">
+        <div class="stepnum">1</div>
+        <div class="stepbody">
+          <p class="action">Put the attack pumper in first.</p>
+          <p class="plainnote">The relay is built backwards from the fire. Where the attack pumper parks decides
+          where every other rig lands.</p>
+          <details class="disc"><summary>Step 1, as printed</summary>
+            <div class="dbody">
+              <blockquote><p>&ldquo;Step 1, Position Attack Pumper&rdquo;</p></blockquote>
+              <p class="srcline">Apparatus Driver/Operator Hydraulic Calculation Standards,
+              <em>Implementing a constant pressure relay operation</em>; the same card is printed in Engine
+              Company Operations at p.5-15.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="stepnum">2</div>
+        <div class="stepbody">
+          <p class="action">Put the source pumper on the key hydrant.</p>
+          <p class="plainnote">Now you have both ends. Everything else fills the gap between them.</p>
+          <details class="disc"><summary>Step 2, as printed</summary>
+            <div class="dbody">
+              <blockquote><p>&ldquo;Step 2, Position Source Pumper at &lsquo;Key&rsquo; hydrant&rdquo;</p></blockquote>
+              <p class="srcline">Apparatus Driver/Operator Hydraulic Calculation Standards; Engine Company
+              Operations p.5-15.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="stepnum">3</div>
+        <div class="stepbody">
+          <p class="action">Lay the hose. Drop a relay pumper every 750 feet.</p>
+          <p class="plainnote">750 is the spacing you count out, and it is the same 750 the max-volume table is
+          built on. Change the spacing and the flow numbers below stop applying.</p>
+          <span class="oretag">750 ft &mdash; even intervals</span>
+          <details class="disc"><summary>Step 3, as printed</summary>
+            <div class="dbody">
+              <blockquote><p>&ldquo;Step 3, Lay out hose and place Relay Pumpers at 750 foot
+              intervals&rdquo;</p></blockquote>
+              <p>And from the same card, under key positions: <em>&ldquo;Relay Pumper/Pumpers &mdash; Spaced
+              evenly throughout the relay at intervals of 750 feet.&rdquo;</em></p>
+              <p class="srcline">Apparatus Driver/Operator Hydraulic Calculation Standards; Engine Company
+              Operations p.5-15.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="stepnum">4</div>
+        <div class="stepbody">
+          <p class="action">Every pumper except the source opens a discharge. Air has to leave before water
+          arrives.</p>
+          <p class="plainnote">The muscle memory: if you are not on the hydrant, you have an open discharge
+          before the source ever throttles up.</p>
+          <details class="disc"><summary>Step 4, as printed</summary>
+            <div class="dbody">
+              <blockquote><p>&ldquo;Step 4, All pumpers except source pumper open a discharge to exhaust air
+              from the lines&rdquo;</p></blockquote>
+              <p class="srcline">Apparatus Driver/Operator Hydraulic Calculation Standards; Engine Company
+              Operations p.5-15.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="stepnum">5</div>
+        <div class="stepbody">
+          <p class="action">Source pumper throttles up to 175 psi.</p>
+          <p class="plainnote">That is the number the whole method is named for. It does not change with the
+          fire, the hose, or the tip.</p>
+          <details class="disc"><summary>Step 5, as printed</summary>
+            <div class="dbody">
+              <blockquote><p>&ldquo;Step 5, Source pumper throttles up to 175 psi&rdquo;</p></blockquote>
+              <p class="srcline">Apparatus Driver/Operator Hydraulic Calculation Standards; Engine Company
+              Operations p.5-15.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="stepnum">6</div>
+        <div class="stepbody">
+          <p class="action">Wait for a steady stream out of your open discharge. Close it. Throttle to 175.</p>
+          <p class="plainnote">Steady stream, not a spit. That is the whole cue &mdash; it tells you the air is
+          out and the water behind you has arrived. Then the next pumper down does exactly the same thing, and
+          the next, all the way to the attack pumper.</p>
+          <div class="rignote">
+            <p>The move, repeated at every relay pumper</p>
+            <ol>
+              <li>Watch the open discharge.</li>
+              <li>Steady stream of water flowing through it.</li>
+              <li>Close the unused discharge.</li>
+              <li>Throttle up to 175 psi.</li>
+            </ol>
+          </div>
+          <details class="disc"><summary>Step 6, as printed</summary>
+            <div class="dbody">
+              <blockquote><p>&ldquo;Step 6, 1st Relay pumper closes unused discharge once a steady stream of
+              water flows through it, then throttles up to 175 psi. &ndash; All successive Relay pumpers follow
+              the same procedure&rdquo;</p></blockquote>
+              <p class="srcline">Apparatus Driver/Operator Hydraulic Calculation Standards; Engine Company
+              Operations p.5-15.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="stepnum">7</div>
+        <div class="stepbody">
+          <p class="action">Every driver/operator sets their intake relief valve.</p>
+          <p class="plainnote">Every one. Not just the rig at the end of the line.</p>
+          <details class="disc"><summary>Step 7, as printed</summary>
+            <div class="dbody">
+              <blockquote><p>&ldquo;Step 7, All Driver/Operators set their intake relief valves&rdquo;</p></blockquote>
+              <p class="srcline">Apparatus Driver/Operator Hydraulic Calculation Standards; Engine Company
+              Operations p.5-15.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="stepnum">8</div>
+        <div class="stepbody">
+          <p class="action">Attack pumper adjusts PDP to supply the attack lines.</p>
+          <p class="plainnote">The relay behind it is now a fixed 175 psi supply. The attack engineer works the
+          normal problem from the nozzle back.</p>
+          <details class="disc"><summary>Step 8, as printed</summary>
+            <div class="dbody">
+              <blockquote><p>&ldquo;Step 8, Attack pumper adjusts PDP to supply attack lines. &ndash; Maintain
+              water flow during temporary shutdowns by using one or more discharges as waste or dump
+              lines&rdquo;</p></blockquote>
+              <p class="srcline">Apparatus Driver/Operator Hydraulic Calculation Standards; Engine Company
+              Operations p.5-15.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== THE THREE NUMBERS ===================== -->
+    <section class="phase cdig" aria-labelledby="numbers">
+      <h2 id="numbers">The three numbers you carry</h2>
+      <div class="numgrid">
+        <div class="numcell">
+          <p class="bignum">175<small>psi</small></p>
+          <p class="numlab">Source &amp; relay PDP</p>
+          <p class="numsub">Held by the source pumper and by every relay pumper in the chain. The attack pumper
+          is the exception &mdash; it sets its own.</p>
+        </div>
+        <div class="numcell">
+          <p class="bignum">20<small>psi</small></p>
+          <p class="numlab">Residual intake, minimum</p>
+          <p class="numsub">The 175 figure is built to leave 20 psi residual at the next pumper in the relay.
+          That is the floor you protect.</p>
+        </div>
+        <div class="numcell">
+          <p class="bignum">750<small>ft</small></p>
+          <p class="numlab">Interval between pumpers</p>
+          <p class="numsub">Evenly spaced the length of the relay. The flow ceilings below are all quoted at
+          this distance.</p>
+        </div>
+      </div>
+      <div class="facts">
+        <ul class="docl">
+          <li>
+            <p class="docline">175 is a ceiling on distance, not a licence to stretch.</p>
+            <p class="docsub">The pressure is fixed, so the only thing keeping water at the next intake is the
+            spacing. Stretch a leg past 750 feet and the residual at the far end is what pays for it.</p>
+            <details class="disc"><summary>What the card says, verbatim</summary>
+              <div class="dbody">
+                <p>Under <em>Maximum volume relay pump pressure</em>:</p>
+                <blockquote>
+                  <p>&ldquo;Source and Relay pumpers &mdash; Maintain 175 psi PDP&rdquo;</p>
+                  <p>&ldquo;Attack Pumper &mdash; adjust PDP as needed making sure to dump excess pressure&rdquo;</p>
+                  <p>&ldquo;* PDP accounts for 20 psi residual pressure for the next pumper in the relay&rdquo;</p>
+                </blockquote>
+                <p class="srcline">Apparatus Driver/Operator Hydraulic Calculation Standards,
+                <em>Constant Pressure Relay (Limited Max Volume)</em>; printed in Engine Company Operations at
+                p.5-15.</p>
+              </div>
+            </details>
+          </li>
+          <li>
+            <p class="docline">20 psi is the same floor you already hold on Evolutions 1.7 and 1.8.</p>
+            <p class="docsub">A two-engine pumped hydrant is a relay with one leg. The residual you are told to
+            protect there is the residual you protect at every intake in a long relay.</p>
+            <details class="disc"><summary>Where 20 psi comes from in the task book</summary>
+              <div class="dbody">
+                <p>Evolution 1.7 (supply pumper) setup: <em>&ldquo;Residual on the attack pumper should remain
+                above 20psi.&rdquo;</em> Out-of-cab step 6: <em>&ldquo;Adjust pump pressure, if needed, to
+                maintain 20 psi minimum residual pressure at the attack pumper.&rdquo;</em></p>
+                <p>Evolution 1.8 (attack pumper) out-of-cab step 4: <em>&ldquo;Maintain Communications with
+                supply pumper to ensure 20psi residual pressure.&rdquo;</em> Step 7:
+                <em>&ldquo;Request additional pressure, if needed, to maintain 20 psi minimum residual
+                pressure.&rdquo;</em></p>
+                <p class="srcline">ADO&mdash;Pumper Task Book, Evolutions 1.7 and 1.8.</p>
+              </div>
+            </details>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== MAX VOLUME ===================== -->
+    <section class="phase cmst" aria-labelledby="volume">
+      <h2 id="volume">Maximum volume at 750 feet</h2>
+      <div class="facts">
+        <p class="scrollhint">Swipe the table sideways.</p>
+        <div class="tblwrap">
+          <table>
+            <tr>
+              <th>Hose layout</th>
+              <th>One 2&frac12;</th><th>One 3</th><th>One 4</th><th>One 5</th>
+              <th>Two 2&frac12;&rsquo;s</th><th>One 2&frac12; &amp; one 3</th><th>Two 3&rsquo;s</th>
+            </tr>
+            <tr>
+              <th>Max flow</th>
+              <td class="big">321<small>gpm</small></td><td class="big">508<small>gpm</small></td>
+              <td class="big">1017<small>gpm</small></td><td class="big">1607<small>gpm</small></td>
+              <td class="big">643<small>gpm</small></td><td class="big">830<small>gpm</small></td>
+              <td class="big">1017<small>gpm</small></td>
+            </tr>
+          </table>
+        </div>
+        <ul class="docl">
+          <li>
+            <p class="docline">One 5&rdquo; carries roughly three times what one 3&rdquo; carries.</p>
+            <p class="docsub">1,607 gpm against 508 gpm over the same 750 feet. That single comparison is the
+            argument for laying LDH on a long supply, and it is the number to have in your head before someone
+            asks whether 3&rdquo; will do.</p>
+          </li>
+          <li>
+            <p class="docline">Read the layout against the tip you are feeding, not against the fire.</p>
+            <p class="docsub">The relay does not care how big the fire is. It caps at whatever the hose will
+            pass. Pick the tip first, then check the layout can feed it.</p>
+            <details class="disc"><summary>Working it against the smooth bore flows</summary>
+              <div class="dbody">
+                <p class="scrollhint">Swipe the table sideways.</p>
+                <div class="tblwrap">
+                  <table class="tips">
+                    <tr><th>Hand-line tip</th><th>gpm @ 50 psi</th><th>Master stream tip</th><th>gpm @ 80 psi</th></tr>
+                    <tr><td>7/8&rdquo;</td><td>160</td><td>1 3/8&rdquo;</td><td>500</td></tr>
+                    <tr><td>15/16&rdquo;</td><td>185</td><td>1 1/2&rdquo;</td><td>600</td></tr>
+                    <tr><td>1&rdquo;</td><td>200</td><td>1 3/4&rdquo;</td><td>800</td></tr>
+                    <tr><td>1 1/8&rdquo;</td><td>265</td><td>2&rdquo;</td><td>1,000</td></tr>
+                    <tr><td>1 3/16&rdquo;</td><td>300</td><td></td><td></td></tr>
+                    <tr><td>1 1/4&rdquo;</td><td>325</td><td></td><td></td></tr>
+                  </table>
+                </div>
+                <ul>
+                  <li><strong>One 5&rdquo; &mdash; 1,607 gpm.</strong> A 2&rdquo; master stream tip is 1,000 gpm.
+                  The layout is not the limit.</li>
+                  <li><strong>One 3&rdquo; &mdash; 508 gpm.</strong> A 1 3/8&rdquo; tip is 500 gpm. You are at the
+                  ceiling with one master stream and nothing else. A 1 1/2&rdquo; tip at 600 gpm is already past
+                  what that layout will pass.</li>
+                  <li><strong>One 2&frac12;&rdquo; &mdash; 321 gpm.</strong> Hand-line territory. A single
+                  1 1/4&rdquo; tip at 325 gpm has already used it up.</li>
+                  <li><strong>Two 3&rsquo;s &mdash; 1,017 gpm</strong>, the same as one 4&rdquo;. If 5&rdquo; is
+                  not there, two 3&rdquo; lines get you into master-stream range.</li>
+                </ul>
+                <p class="srcline">Flow ceilings: Apparatus Driver/Operator Hydraulic Calculation Standards,
+                <em>Maximum volume at 750 feet by hose layout</em> (printed in Engine Company Operations at
+                p.5-15). Tip flows: same standard, <em>Solid stream / smooth bore tips</em>. The comparison
+                between the two tables is arithmetic on printed figures, not a printed rule.</p>
+              </div>
+            </details>
+          </li>
+          <li>
+            <p class="docline">These ceilings belong to 750-foot spacing.</p>
+            <p class="docsub">The card is titled <em>Limited Max Volume</em> for a reason &mdash; it is the flow
+            you can hold at the fixed pressure and the fixed interval. Move the pumpers and you are outside the
+            table.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== HOW FAR ===================== -->
+    <section class="phase cfom" aria-labelledby="distance">
+      <h2 id="distance">How far it reaches &mdash; count the pumpers</h2>
+      <div class="facts">
+        <ul class="docl">
+          <li>
+            <p class="docline">One pumper buys you 750 feet. Distance is a pumper count.</p>
+            <p class="docsub">Because the pressure never changes, reach is not something you calculate &mdash;
+            it is something you count. Every rig you can put in the line adds another 750 feet.</p>
+          </li>
+          <li>
+            <p class="docline">A mile is 5,280 feet &mdash; seven 750-foot legs and change.</p>
+            <p class="docsub">5,280 &divide; 750 = 7.04. So a mile of relay is seven legs: the source on the
+            hydrant, six relay pumpers spaced out behind it, and the attack pumper on the end. Ask for the
+            engines before you commit to the lay, not after.</p>
+            <details class="disc"><summary>Where the two figures come from</summary>
+              <div class="dbody">
+                <p>The Constant Pressure Relay card prints both numbers it takes to do this: the 750-foot
+                interval under <em>Key positions in a relay operation</em>, and <em>&ldquo;1 mile = 5280
+                Feet&rdquo;</em> as the last line on the card.</p>
+                <p>The division is mine, not the manual&rsquo;s &mdash; the card gives you the two figures and
+                leaves you to count. There is no printed maximum total relay length.</p>
+                <p class="srcline">Apparatus Driver/Operator Hydraulic Calculation Standards,
+                <em>Constant Pressure Relay (Limited Max Volume)</em>; printed in Engine Company Operations at
+                p.5-15.</p>
+              </div>
+            </details>
+          </li>
+          <li>
+            <p class="docline">Distance and volume trade against each other.</p>
+            <p class="docsub">The pressure is fixed at 175 psi, so a longer relay is not paid for with more
+            pressure &mdash; it is paid for with more rigs. And the flow you get at the end is still whatever
+            the hose layout in the table will pass.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== WHO RELAYS TO WHO ===================== -->
+    <section class="phase cwtr" aria-labelledby="arriving">
+      <h2 id="arriving">Where a relay shows up in the arriving-company order</h2>
+      <div class="facts">
+        <ul class="docl">
+          <li>
+            <p class="docline">Pumping the hydrant is a two-rig relay by another name.</p>
+            <p class="docsub">On the high-flow hydrant list it sits second of four &mdash; better than stacking
+            lines off one hydrant, not as good as pulling from separate hydrants.</p>
+            <details class="disc"><summary>The ranked list from the manual</summary>
+              <div class="dbody">
+                <p>Least preferred to best preferred:</p>
+                <ul>
+                  <li>Multiple supply lines from a single hydrant.</li>
+                  <li><strong>Pumping the hydrant with the 2nd or 3rd due engine supplying the attack
+                  pumper.</strong></li>
+                  <li>Multiple supply lines from different hydrants sharing the same water main.</li>
+                  <li>Multiple supply lines from different hydrants not sharing the same water main.</li>
+                </ul>
+                <p>Note on the page: the lead sentence says &ldquo;three basic tactics&rdquo; and then prints
+                four bullets. The four-item ranked list is what is printed.</p>
+                <p class="srcline">Engine Company Operations, Water Supply, p.5-13.</p>
+              </div>
+            </details>
+          </li>
+          <li>
+            <p class="docline">At a standpipe building, the 3rd due relays into the 2nd due.</p>
+            <p class="docsub">2nd due takes the FDC with two 3&rdquo; lines off the nearest hydrant. 3rd due
+            comes off the <em>next</em> nearest hydrant and relay pumps into it. That is where the redundancy
+            comes from &mdash; two engines in series on one Siamese, not two engines both hooked to it.</p>
+            <details class="disc"><summary>What the manual says</summary>
+              <div class="dbody">
+                <blockquote><p>&ldquo;The second Engine Company arriving on the first alarm should take a
+                position at the appropriate FDC standpipe connection and supply two 3&rdquo; lines into the FDC
+                Siamese and connect to the nearest hydrant. The third arriving Engine Company should relay pump
+                to the second engine company from the next nearest hydrant. This procedure should be continued
+                by the next arriving engine companies if additional FDC connections to the building are
+                available.&rdquo;</p></blockquote>
+                <p>The reason given on the same page: an independent, redundant supply so that advancing crews
+                keep water if a pumper suffers a mechanical failure or the FDC feeds only a single stairwell
+                riser. On a dry system those pumpers are the only water there is.</p>
+                <p class="srcline">Engine Company Operations, Standpipe Operations, p.6-16. More on that job:
+                <a data-nav="standpipe" href="standpipe-ops.html">Standpipe Operations</a>.</p>
+              </div>
+            </details>
+          </li>
+          <li>
+            <p class="docline">The bigger the building, the more FDCs &mdash; and the more relays.</p>
+            <p class="docsub">Large buildings often carry multiple FDC connections on different street fronts.
+            Each one gets the same pairing repeated by the next engines in.</p>
+            <details class="disc"><summary>What the manual says</summary>
+              <div class="dbody">
+                <blockquote><p>&ldquo;The larger the building, the more likely multiple FDC connections will be
+                present, often on different street fronts.&rdquo;</p></blockquote>
+                <p class="srcline">Engine Company Operations, Standpipe Operations, p.6-16.</p>
+              </div>
+            </details>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== HOLD IT / SHUT IT DOWN ===================== -->
+    <section class="phase cardred" aria-labelledby="hold">
+      <h2 id="hold">Holding it, and shutting it down</h2>
+      <div class="facts">
+        <ul class="docl">
+          <li>
+            <p class="docline">Keep water moving during a temporary shutdown &mdash; dump it, don&rsquo;t stop it.</p>
+            <p class="docsub">Step 8 tells you how: open one or more discharges as waste or dump lines. The
+            relay stays alive while the lines are off.</p>
+            <details class="disc"><summary>What the card says</summary>
+              <div class="dbody">
+                <blockquote><p>&ldquo;Maintain water flow during temporary shutdowns by using one or more
+                discharges as waste or dump lines&rdquo;</p></blockquote>
+                <p>And on the attack pumper&rsquo;s standing job: <em>&ldquo;adjust PDP as needed making sure to
+                dump excess pressure.&rdquo;</em></p>
+                <p class="srcline">Apparatus Driver/Operator Hydraulic Calculation Standards,
+                <em>Constant Pressure Relay</em>; Engine Company Operations p.5-15.</p>
+              </div>
+            </details>
+          </li>
+          <li>
+            <p class="docline">Communication between engineers is constant, not occasional.</p>
+            <p class="docsub">The task book puts it in the setup, before a single step: talk to each other or
+            you end up with too little pressure or too much. Say it out loud every time a line goes into or out
+            of service.</p>
+            <details class="disc"><summary>What the task book says</summary>
+              <div class="dbody">
+                <blockquote><p>&ldquo;Communications must be constant between the engineers to avoid
+                insufficient pressure or excessive pressure.&rdquo;</p></blockquote>
+                <p>And on the supply side, out-of-cab step 5: <em>&ldquo;Maintain communication between
+                engineers when additional lines are being placed into service.&rdquo;</em></p>
+                <p class="srcline">ADO&mdash;Pumper Task Book, Evolutions 1.7 and 1.8, setup 2; Evolution 1.7
+                out-of-cab 5.</p>
+              </div>
+            </details>
+          </li>
+        </ul>
+      </div>
+      <div class="gate">
+        <p class="gtag">SHUTDOWN ORDER</p>
+        <h3>Attack pumper lines down first. Supply pumper last.</h3>
+        <p>The order is fixed and it runs from the fire back toward the water &mdash; the opposite direction
+        from the way you built the relay. It is written the same way in both evolutions.</p>
+        <p><em>&ldquo;To end operations shut down all lines at attack pumper first then supply pumper
+        last.&rdquo;</em> &mdash; Evolution 1.8, out-of-cab 9. Evolution 1.7, out-of-cab 7:
+        <em>&ldquo;Shut down lines at attack pumper first when ending operations then the supply
+        pumper.&rdquo;</em></p>
+      </div>
+    </section>
+
+  </div><!-- /sheet -->
+
+  <!-- ===================== DRILLS ===================== -->
+  <div class="notesblock" id="drills">
+    <h2>Where you drill this</h2>
+    <div class="nitem">
+      <p class="nhead">Evolution 1.7 &mdash; Pumping a hydrant as the supply pumper</p>
+      <p>Two pumpers, at least 100 feet apart, the far one flowing at least one hand line. You are on the
+      hydrant. Fill the supply line to the attack pumper, set to RPM mode, set pressure at an idle and let the
+      attack engineer call for more. Note pump pressure and intake pressure. Adjust to hold 20 psi minimum
+      residual at the attack pumper.</p>
+      <p>This is the source-pumper half of a relay with the middle taken out.</p>
+    </div>
+    <div class="nitem">
+      <p class="nhead">Evolution 1.8 &mdash; Attack pumper on a pumped hydrant</p>
+      <p>Same two rigs, minimum 100 feet of supply hose, and you are on the fire end flowing at least two attack
+      lines. Begin flowing from one line, establish the connections from the supply pumper, call for water, then
+      hold communications to keep 20 psi residual. Shut a hand line down and watch what the residual does &mdash;
+      that reading is the whole reason the relay is built around a residual floor.</p>
+      <p>Both evolutions are on the <a data-nav="ehome" href="engine-home.html">Engine
+      Operations</a> home. The generic pumping sequence they both open with is on
+      <a data-nav="eflow" href="engine-flow.html">Engine Evolution</a>.</p>
+    </div>
+    <div class="nitem">
+      <p class="nhead">Related reading from the manual</p>
+      <p><a data-nav="water" href="water-supply.html">Water Supply</a> for the lays and the hydrant tactics this sits inside
+      &middot; <a data-nav="standpipe" href="standpipe-ops.html">Standpipe Operations</a> for the 2nd-and-3rd-due FDC pairing
+      &middot; <a data-nav="mstream" href="master-streams.html">Master Stream Operations</a> for what you are feeding at the end
+      of a big relay &middot; <a data-nav="qrg" href="qrg.html">Quick Reference Guide</a> for the arriving-company
+      order.</p>
+    </div>
+  </div>
+
+  <!-- ===================== THE OPEN ITEM ===================== -->
+  <div class="pending" id="open">
+    <p class="ptag">NOT IN THE MANUAL</p>
+    <h2>There is no printed maximum relay length.</h2>
+    <p>The card is titled <em>Constant Pressure Relay (Limited Max Volume)</em> &mdash; it bounds
+    <strong>flow</strong>, not <strong>distance</strong>. It gives the 750-foot interval, the 175 psi, the 20 psi
+    residual and the flow ceilings, and it gives you &ldquo;1 mile = 5280 Feet&rdquo; to count with. It does not
+    state a maximum total length, a maximum number of pumpers in the chain, or what to do when you run out of
+    rigs before you run out of distance.</p>
+    <p>Engine Company Operations sends the specifics to the same place: <em>&ldquo;For more specific information
+    see the current APPARATUS DRIVER / OPERATOR HYDRAULIC CALCULATION STANDARDS in Target Solutions&rdquo;</em>
+    (p.5-15). If you need a hard limit for a pre-plan, that is the document and a training officer &mdash; not a
+    number to work out on the fireground.</p>
+  </div>
+
+  <div class="docfoot">
+    <p><strong>Sources.</strong> OFD Engine Company Operations 2023 V-1 &mdash; Water Supply, pp.5-13&ndash;5-15;
+    Standpipe Operations, p.6-16. Apparatus Driver/Operator Hydraulic Calculation Standards &mdash;
+    <em>Constant Pressure Relay (Limited Max Volume)</em> and <em>Know the Flow</em> smooth bore tip table.
+    ADO&mdash;Pumper Task Book, Evolutions 1.7 and 1.8.</p>
+    <p>Engine Company Operations and the task book paginate per chapter. Page numbers above are chapter pages,
+    the way they are printed in the footer of the manual.</p>
+  </div>
+
+</div><!-- /wrap -->
+
+<details class="secmenu" id="secMenu">
+  <summary aria-label="Open sections menu">Sections</summary>
+  <nav class="secpanel" aria-label="Jump to section">
+    <a class="swtr" href="#when">When you relay</a>
+    <a class="spos" href="#roles">Three pumpers</a>
+    <a class="ssup" href="#steps">The eight steps</a>
+    <a class="sdig" href="#numbers">175 / 20 / 750</a>
+    <a class="smst" href="#volume">Max volume</a>
+    <a class="sfom" href="#distance">How far it reaches</a>
+    <a class="swtr" href="#arriving">Who relays to who</a>
+    <a class="ssec" href="#hold">Hold it &amp; shut it down</a>
+    <a class="spos" href="#drills">Where you drill this</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  // night mode
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // floating Sections menu — close on link tap (the <details> works without JS too)
+  var menu=document.getElementById('secMenu');
+  if(menu){
+    [].slice.call(menu.querySelectorAll('a')).forEach(function(a){
+      a.addEventListener('click',function(){menu.removeAttribute('open')});
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

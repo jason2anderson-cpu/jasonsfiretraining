@@ -1,0 +1,847 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Evolution 1.1 — Single line on tank water</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+/* ============================================================
+   Official evolution page — Evolution 1.1.
+   Field-instrument system, same tokens as engine-flow.html
+   (rev 2026-08-30: section colour identities, floating mobile
+   Sections menu). Production note: self-host WOFF2 for offline.
+   ============================================================ */
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  /* section palette — muted, one identity per phase */
+  --c-pos:#3D5A80;  --c-pos-t:#E9EEF5;
+  --c-wtr:#0F6F78;  --c-wtr-t:#DFEEEF;
+  --c-sup:#5B4E9E;  --c-sup-t:#ECE9F6;
+  --c-mst:#7C3F87;  --c-mst-t:#F4E9F5;
+  --c-fom:#2F7D4F;  --c-fom-t:#E4F2E9;
+  --c-dig:#8A6116;  --c-dig-t:#F6EEDC;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --c-pos:#9FBCDF; --c-pos-t:#18232F;
+    --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+    --c-sup:#B7ADE9; --c-sup-t:#231E38;
+    --c-mst:#D9A2DB; --c-mst-t:#301D33;
+    --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+    --c-dig:#DFBC77; --c-dig-t:#332A15;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --c-pos:#9FBCDF; --c-pos-t:#18232F;
+  --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+  --c-sup:#B7ADE9; --c-sup-t:#231E38;
+  --c-mst:#D9A2DB; --c-mst-t:#301D33;
+  --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+  --c-dig:#DFBC77; --c-dig-t:#332A15;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2)}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:18px 0 6px}
+.kicker{font-family:var(--head);font-weight:700;font-size:14px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1.1;
+  margin:0 0 10px;text-wrap:balance}
+.objective{font-size:18px;color:var(--text2);margin:0;max-width:66ch}
+.objective strong{color:var(--text)}
+
+/* mode bar */
+.modebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0 6px}
+.mode{display:flex;border:1.5px solid var(--divider);border-radius:12px;overflow:hidden;background:var(--surface)}
+.mode button{min-height:56px;min-width:120px;padding:0 20px;border:0;background:transparent;
+  font-weight:700;font-size:16px;color:var(--text2)}
+.mode button[aria-pressed="true"]{background:var(--accent-tint);color:var(--text)}
+#resetBtn{min-height:56px;padding:0 18px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);font-weight:600;font-size:15px;color:var(--text2);display:none}
+body.checkoff #resetBtn{display:inline-block}
+.progress{font-size:15px;color:var(--text2);display:none;font-variant-numeric:tabular-nums}
+body.checkoff .progress{display:inline}
+
+/* jump to phase — sticky on wide screens */
+.jump{position:sticky;top:0;z-index:10;background:var(--canvas);padding:10px 0;
+  display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--divider)}
+.jump a{min-height:44px;display:inline-flex;align-items:center;padding:6px 14px;
+  border:1.5px solid var(--divider);border-radius:999px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:14.5px}
+.jump a:hover{border-color:var(--accent)}
+
+/* floating Sections menu — mobile only; <details> so it works with JS off */
+.secmenu{display:none}
+@media (max-width:640px){
+  .jump{display:none}
+  .secmenu{display:block;position:fixed;right:16px;bottom:16px;z-index:40}
+  .secmenu > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+    min-height:56px;min-width:56px;padding:0 22px;border:1.5px solid var(--divider);border-radius:999px;
+    background:var(--surface);color:var(--text);font-family:var(--head);font-weight:700;font-size:16px;
+    cursor:pointer;box-shadow:0 4px 14px rgba(10,30,28,.22)}
+  .secmenu > summary::-webkit-details-marker{display:none}
+  .secmenu[open] > summary{border-color:var(--accent);color:var(--accent)}
+  .secpanel{position:absolute;bottom:calc(100% + 10px);right:0;min-width:230px;
+    background:var(--surface);border:1.5px solid var(--divider);border-radius:14px;
+    box-shadow:0 8px 24px rgba(10,30,28,.25);padding:8px;display:grid;gap:2px}
+  .secpanel a{display:flex;align-items:center;min-height:48px;padding:6px 14px;border-radius:10px;
+    text-decoration:none;color:var(--text);font-weight:600;font-size:16px;border-left:5px solid transparent}
+  .secpanel a.spos{border-left-color:var(--c-pos)}
+  .secpanel a.ssec{border-left-color:var(--safety)}
+  .secpanel a.swtr{border-left-color:var(--c-wtr)}
+  .secpanel a.sdig{border-left-color:var(--c-dig)}
+  .secpanel a.ssup{border-left-color:var(--c-sup)}
+}
+
+/* the one procedure surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:18px;overflow:hidden}
+
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:18px 24px 4px;scroll-margin-top:70px}
+
+/* section colour identities — tinted ground + matching header accent,
+   never colour alone: every tint is paired with its coloured heading + left rule */
+.phase.cpos{background:var(--c-pos-t);border-left:6px solid var(--c-pos)}
+.phase.cpos > h2{color:var(--c-pos)}
+.phase.cwtr{background:var(--c-wtr-t);border-left:6px solid var(--c-wtr)}
+.phase.cwtr > h2{color:var(--c-wtr)}
+.phase.cdig{background:var(--c-dig-t);border-left:6px solid var(--c-dig)}
+.phase.cdig > h2{color:var(--c-dig)}
+.phase.csup{background:var(--c-sup-t);border-left:6px solid var(--c-sup)}
+.phase.csup > h2{color:var(--c-sup)}
+
+/* Secure the rig / in-cab keeps red */
+.phase.cardred{background:var(--safety-tint);border-left:6px solid var(--safety)}
+.phase.cardred > h2{color:var(--safety)}
+.phase.cardred .step{border-top-color:color-mix(in srgb,var(--safety) 18%,transparent)}
+@supports not (color:color-mix(in srgb,red 10%,blue)){.phase.cardred .step{border-top-color:var(--divider)}}
+
+.step{display:flex;align-items:flex-start;gap:16px;padding:16px 24px;min-height:76px;
+  border-top:1px solid var(--divider)}
+.phase > h2 + .step{border-top:0}
+.stepnum{font-family:var(--head);font-weight:700;font-size:36px;line-height:1;color:var(--text2);
+  min-width:56px;font-variant-numeric:tabular-nums;padding-top:2px}
+.stepnum.sub{font-size:22px;padding-top:10px}
+.stepbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:21px;line-height:1.35;margin:0}
+.subaction{font-weight:600;font-size:18px;line-height:1.35;margin:8px 0 0;font-style:italic}
+.stepsrc{font-size:14px;color:var(--text2);margin:6px 0 0;max-width:62ch}
+
+/* small attached Orem/rig tag on a line */
+.oretag{display:inline-flex;align-items:center;gap:6px;margin-top:8px;margin-right:8px;
+  font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.02em;
+  color:var(--accent);background:var(--accent-tint);border-radius:8px;padding:5px 10px}
+
+/* small plain note attached to a step */
+.plainnote{margin:8px 0 0;font-size:15px;color:var(--text2);max-width:62ch}
+
+/* rig note — the Engine 34 sub-sequence, boxed inside the section */
+.rignote{margin:6px 24px 16px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);padding:14px 18px}
+.rignote .rigtag{display:inline-flex;align-items:center;font-family:var(--head);font-weight:700;
+  font-size:13.5px;letter-spacing:.02em;color:var(--accent);background:var(--accent-tint);
+  border-radius:8px;padding:5px 10px;margin:0 0 10px}
+.rignote h3{font-family:var(--head);font-weight:700;font-size:17px;margin:0 0 8px}
+.rignote ol{margin:0;padding-left:26px}
+.rignote li{font-weight:600;font-size:18px;padding:3px 0}
+
+/* check-off */
+.tick{display:none;flex:0 0 auto;padding-top:2px}
+body.checkoff .tick{display:block}
+.tick input{width:32px;height:32px;margin:12px;accent-color:var(--accent);cursor:pointer}
+body.checkoff .step.done .action,body.checkoff .step.done .subaction{color:var(--text2)}
+body.checkoff .step.done .stepnum{color:var(--accent)}
+
+/* disclosures — one per step or block, labeled by content */
+details.disc{margin-top:8px}
+details.disc > summary{list-style:none;display:inline-flex;align-items:center;min-height:44px;
+  padding:6px 14px;border:1.5px solid var(--divider);border-radius:10px;color:var(--accent);
+  font-weight:600;font-size:15px;cursor:pointer;background:transparent}
+details.disc > summary::-webkit-details-marker{display:none}
+details.disc > summary::after{content:"▾";margin-left:8px;font-size:12px;transition:transform .15s}
+details.disc[open] > summary::after{transform:rotate(180deg)}
+details.disc > .dbody{background:var(--expanded);border-radius:12px;padding:14px 18px;margin-top:8px;
+  font-size:16px}
+details.disc > .dbody p{margin:0 0 10px;max-width:64ch}
+details.disc > .dbody p:last-child{margin:0}
+details.disc > .dbody ul{margin:0 0 10px;padding-left:22px;max-width:64ch}
+details.disc > .dbody li{margin:0 0 6px}
+.srcline{font-size:14px;color:var(--text2)}
+blockquote{margin:0 0 10px;padding:0 0 0 14px;border-left:3px solid var(--accent);color:var(--text)}
+
+/* tank-water panel rows (non-step content) */
+.tankrow{border-top:1px solid var(--divider);padding:16px 24px}
+.tankrow h3{font-family:var(--head);font-weight:700;font-size:19px;margin:0 0 6px}
+.tankrow p{margin:0 0 8px;max-width:64ch}
+.phase.cdig .tankrow h3{color:var(--c-dig)}
+
+/* boxes below the sheet — red emergency link + 1st digit method */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+.boxpanel{background:var(--surface);border:1px solid var(--divider);border-radius:16px;overflow:hidden}
+.boxpanel.red{border:2px solid var(--safety);background:var(--safety-tint)}
+.boxlabel{font-family:var(--head);font-weight:800;font-size:15px;letter-spacing:.06em;margin:0;
+  padding:18px 22px 8px;scroll-margin-top:70px}
+.boxpanel.red .boxlabel{color:var(--safety)}
+.boxpanel.digit{border-left:6px solid var(--c-dig);background:var(--c-dig-t)}
+.boxpanel.digit .boxlabel{color:var(--c-dig)}
+.sidebody{padding:6px 22px 20px}
+.sidebody .action{font-size:19px}
+.sidebody p{margin:0 0 8px;max-width:60ch}
+
+/* prev/next evolution nav */
+.evonav{display:flex;justify-content:space-between;gap:12px;margin-top:26px;flex-wrap:wrap}
+.evonav a{min-height:48px;display:inline-flex;align-items:center;padding:8px 18px;
+  border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:15.5px}
+.evonav a:hover{border-color:var(--accent)}
+
+.docfoot{margin-top:26px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+/* manual-section group headings share the section colour */
+.phase.csup .tankrow h3{color:var(--c-sup)}
+.tankrow h3 + details.disc{margin-top:2px}
+.tankrow .srcline{margin:6px 0 0}
+
+@media (max-width:640px){
+  .cols{grid-template-columns:1fr}
+  .wrap{padding-bottom:110px} /* clear the floating Sections button */
+}
+@media (max-width:560px){
+  .step{padding:14px 16px;gap:12px}
+  .stepnum{font-size:30px;min-width:44px}
+  .action{font-size:19px}
+  .phase > h2,.tankrow{padding-left:16px;padding-right:16px}
+  .rignote{margin-left:16px;margin-right:16px}
+  .boxlabel,.sidebody{padding-left:16px;padding-right:16px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.modebar,.jump,.nightbtn,.secmenu,.evonav{display:none}
+  .sheet,.boxpanel{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  .boxpanel.red{border:2.5px solid #000;background:#fff}
+  .boxpanel.digit{background:#fff;border-left:6px solid #000}
+  .step{break-inside:avoid;min-height:0;padding:8px 12px}
+  .phase{break-inside:avoid-page;background:#fff!important;border-left:none}
+  .phase.cpos,.phase.cwtr,.phase.cdig,.phase.csup,.phase.cardred{border-left:6px solid #000}
+  .phase > h2{color:#000!important;break-after:avoid}
+  .tankrow,.rignote{break-inside:avoid}
+  .boxpanel.red .boxlabel,.boxpanel.digit .boxlabel{color:#000}
+  .tick{display:block}
+  .tick input{width:14pt;height:14pt;margin:2pt 8pt}
+  details.disc{display:none}
+  .oretag,.rignote .rigtag{background:#fff;border:1px solid #000;color:#000}
+  .rignote{border:1px solid #000;border-radius:0}
+  .stepnum{color:#000;font-size:16pt;min-width:30pt}
+  .action{font-size:12pt}
+  .cols{display:block}
+  .boxpanel + .boxpanel{margin-top:12pt}
+}
+/* FAB clearance — the floating Sections button must never cover the last content */
+@media (max-width:640px){ .wrap{ padding-bottom:132px } }
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="ehome" href="engine-home.html">Engine Operations</a><span>›</span>Evolution 1.1</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <p class="kicker">Official evolution · ADO-Pumper Task Book · September 2024</p>
+    <h1>1.1 — Single line on tank water, without changeover</h1>
+    <p class="objective"><strong>Objective:</strong> Supply initial attack line on tank water.</p>
+  </header>
+
+  <div class="modebar">
+    <div class="mode" role="group" aria-label="Sheet mode">
+      <button type="button" id="refBtn" aria-pressed="true">Reference</button>
+      <button type="button" id="checkBtn" aria-pressed="false">Check-off</button>
+    </div>
+    <button type="button" id="resetBtn">Reset all</button>
+    <span class="progress" id="progress"></span>
+  </div>
+
+  <div class="sheet">
+
+    
+
+    <section class="phase cardred" aria-labelledby="incab">
+      <h2 id="incab">In-cab — Secure the rig &amp; engage the pump</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: right foot on brake"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">RIGHT FOOT ON BRAKE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set parking brake"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">SET PARKING BRAKE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift transmission to neutral"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">SHIFT TRANSMISSION TO NEUTRAL</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift from road to pump"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">SHIFT FROM ROAD TO PUMP (ENGAGE THE PUMP SHIFT CONTROL LEVER)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: pump engaged light is on"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">PUMP ENGAGED LIGHT IS ON</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift transmission to drive"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">SHIFT TRANSMISSION TO DRIVE (D)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: OK TO PUMP light is on"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">OK TO PUMP LIGHT IS ON <u>AND</u></p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: speedometer registers about 15 mph"></span>
+        <span class="stepnum sub">7a</span>
+        <div class="stepbody"><p class="action">SPEEDOMETER REGISTERS ABOUT 15 MPH</p></div>
+      </div>
+
+      <div class="rignote">
+        <span class="rigtag">Rig note — Engine 34</span>
+        <h3>Engine 34 pump shift operations</h3>
+        <ol>
+          <li>Right foot on brake</li>
+          <li>Neutral</li>
+          <li>Park brake</li>
+          <li>Engage &quot;water pump&quot; switch</li>
+          <li>Green light indicator on</li>
+        </ol>
+      </div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: emergency and warning lights are on"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">EMERGENCY/WARNING LIGHTS ARE ON</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: change radio to correct channel"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">CHANGE RADIO TO CORRECT CHANNEL</p>
+          <details class="disc"><summary>What you are listening for</summary><div class="dbody">
+            <p>&quot;It is imperative that the Engineer listen closely to the radio at all times for traffic
+            concerning charging, shutting down or adjusting hose line pressures on hose lines.&quot; The Engineer
+            must also monitor the radio for instructions and information that may require action, and be ready
+            to assist members in distress if ordered by the IC.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, pp.1-8 and 1-11</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: remove right foot from brake"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">REMOVE RIGHT FOOT FROM BRAKE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: apparatus does not move"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">APPARATUS DOES NOT MOVE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: exit cab after looking both directions"></span>
+        <span class="stepnum">12</span>
+        <div class="stepbody"><p class="action">EXIT CAB AFTER LOOKING BOTH DIRECTIONS</p></div>
+      </div>
+    </section>
+
+    <section class="phase cwtr" aria-labelledby="outcab">
+      <h2 id="outcab">Out-of-cab — Get water moving</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: verify pump is engaged"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">VERIFY PUMP IS ENGAGED</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open tank to pump"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">OPEN TANK TO PUMP</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: crack re-circulating slash tank fill valve"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">CRACK RE-CIRCULATING/TANK FILL VALVE</p>
+          <p class="subaction">OPEN TANK FILL / RECIRCULATION</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set to PSI mode if equipped"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">SET TO PSI MODE (IF EQUIPPED)</p>
+          <p class="subaction">SET PSI CONTROL MODE BUTTON</p>
+          <span class="oretag">Rig note — Engine 34 only</span>
+          <p class="plainnote">PSI/RPM mode is a PUC feature. It is present on Engine 34 (Pierce PUC) and absent
+          from Orem's other pumps — and it is not the same control as the transfer valve.</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: prime pump if necessary"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">PRIME PUMP (IF NECESSARY)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set wheel chocks"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">SET WHEEL CHOCKS</p>
+          <p class="plainnote">This evolution's printed sheet carries the chock step at this position — no
+          correction needed here.</p>
+          <details class="disc"><summary>Where chocking sits in the pump skill</summary><div class="dbody">
+            <p>&quot;Step 1: Position the apparatus in a safe positon, and immobilize it by setting the parking
+            brake and chocking the wheels.&quot; The pump skill chocks with the parking brake, before the pump is
+            engaged; the printed evolution sheet carries it out of the cab at step 6.</p>
+            <p class="srcline">ADO Task #19, Basic Pump Skills — Changeover, Operating Procedure, Step 1</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: clear hose bed"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">CLEAR HOSE BED</p>
+          <p class="subaction">Check lines are fully deployed</p>
+          <details class="disc"><summary>Why the bed has to be empty</summary><div class="dbody">
+            <p>On preconnected lines the Back-Up Firefighter's stretching instruction is one sentence:
+            <strong>&quot;Ensure that all hose is cleared from the bed.&quot;</strong></p>
+            <p>Hose left in the bed becomes kinks, and the manual repeats the consequence across the Back-Up
+            Firefighter's assignments: chasing kinks, exterior management of the hose and supporting hose around
+            corners and through doorways are the three ways hose movement is supported, and
+            <strong>&quot;failure of the Back-Up Firefighter to complete these tasks will lead to the delay in the
+            initial attack line progressing to the seat of the fire.&quot;</strong></p>
+            <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-24 (stretching);
+            the delay statement repeats at pp.1-17, 1-21 and 1-22</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: break attack line if necessary"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">BREAK ATTACK LINE (IF NECESSARY)</p>
+          <details class="disc"><summary>Who coordinates the break</summary><div class="dbody">
+            <p>On a 2½&quot; extended lay: after the length of the stretch has been estimated, the Back-Up
+            Firefighter controls the number of lengths that are pulled off the hose bed, then
+            <strong>coordinates the break and connection of the hose to a discharge with the Engineer</strong>.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-24</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open correct discharge"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">OPEN CORRECT DISCHARGE</p>
+          <p class="subaction">CHARGE LINES</p>
+          <details class="disc"><summary>The signal to charge</summary><div class="dbody">
+            <p>&quot;When the line is flaked and the Nozzle Firefighter is ready, they will signal the Engineer to
+            charge the hoseline. This signal may be verbal, by radio, or by hand signal.&quot;</p>
+            <p>The Nozzle Firefighter then bleeds the line of trapped air and confirms the pressure and pattern
+            are correct, with the nozzle fully opened and the stream directed away from the opening. The manual's
+            boxed note: <strong>&quot;The Nozzle Firefighter should never enter the fire area without water.&quot;</strong></p>
+            <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, pp.1-15–1-16</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set discharge to the right pressure"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">SET DISCHARGE TO THE RIGHT PRESSURE</p>
+          <p class="subaction">CALCULATE PDP → SET PDP</p>
+          <details class="disc"><summary>What the pressure depends on</summary><div class="dbody">
+            <p>&quot;In order to establish and maintain proper pumping pressures, all Engineers must know how many
+            hoselines, the size and length of the hoseline, the type of nozzles being used, and their flow.&quot;
+            Knowledge of the amount and size of hose carried and stretched at operations is what assists the
+            Engineer in determining the proper pressures required.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, pp.1-8 and 1-11</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: mark or note discharge gauge and line length or location"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">MARK OR NOTE DISCHARGE GAUGE &amp; LINE LENGTH/LOCATION</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set manual discharge relief valve"></span>
+        <span class="stepnum">12</span>
+        <div class="stepbody"><p class="action"><strong>SET MANUAL DISCHARGE RELIEF VALVE</strong></p>
+          <span class="oretag">Manual valve: Engine 31 · Engine 3820 · Ladder 32</span>
+          <details class="disc"><summary>The pump skill sets it earlier</summary><div class="dbody">
+            <p>The printed evolution sheet places this last, at step 12. The ADO pump skill puts the same action
+            sixth, before the circulator/tank-fill valve is opened: <strong>&quot;Step 6: Set the relief valve or
+            pressure governor.&quot;</strong> The two documents differ on placement; this page follows the printed
+            sheet and flags the difference.</p>
+            <p class="srcline">Printed order: ADO-Pumper Task Book, Evolution 1.1, Out-Of-Cab step 12 ·
+            ADO Task #19, Basic Pump Skills — Changeover, Operating Procedure, Step 6</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase cdig" aria-labelledby="tankwater">
+      <h2 id="tankwater">You are on tank water — no changeover is coming</h2>
+      <div class="tankrow">
+        <h3>The tank is a reserve, and it is finite</h3>
+        <blockquote>&quot;A full tank provides a limited reserve water supply in the event that the external water
+        supply is lost unexpectedly.&quot;</blockquote>
+        <p class="srcline">ADO Task #19, Basic Pump Skills — Changeover (Transition to an External Water Supply)</p>
+      </div>
+      <div class="tankrow">
+        <h3>Why the attack starts on the tank anyway</h3>
+        <p>Whether the first engine lays its own supply or another engine lays it, the attacking engine will have
+        hydrant water relatively quickly — &quot;this doesn't eliminate the need to use the on-board booster tank to
+        supply the initial fire attack, but rather limits the amount of water that will have to be used while
+        waiting for the hydrant water to arrive.&quot;</p>
+        <p>The first arriving engine company may also elect to <strong>pass up a water supply</strong>, initiate
+        the fire attack off the booster tank, and assign the supply line to the second due engine. Whatever the
+        first-in Company Officer selects, they MUST announce their water supply intentions over the radio so the
+        second due engine can adjust.</p>
+        <p class="srcline">Engine Company Operations 2023 V-1, Water Supply, p.5-1</p>
+      </div>
+      <div class="tankrow">
+        <h3>The assignment this evolution matches</h3>
+        <p>1st due, nothing showing and alarms: &quot;Engineer/ADO should fully prepare his engine by completing all
+        steps required to put the pump in service and supply water to hose&quot; · &quot;No hydrant connection made until
+        otherwise warranted by fire involvement&quot; · &quot;Engineer will stay by the pump and monitor radio traffic for
+        further assignments.&quot; That is this sheet: pump in service, line charged, no changeover.</p>
+        <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-9</p>
+      </div>
+      <div class="tankrow">
+        <h3>When supply arrives, that's the next evolution</h3>
+        <p>This evolution ends without a changeover. Transitioning the pump from tank water to an external
+        supply while lines are flowing is <a data-nav="evo12" href="evo-1-2.html">Evolution 1.2 — Changeover &amp; supply
+        various hose loads</a>.</p>
+      </div>
+    </section>
+
+    <section class="phase csup" aria-labelledby="manual">
+      <h2 id="manual">Learn the manual — the operator, the line, and the stretch</h2>
+
+      <div class="tankrow">
+        <h3>The Engineer</h3>
+        <details class="disc"><summary>What the manual makes the Engineer responsible for</summary><div class="dbody">
+          <p>&quot;The primary responsibility of the Engineer is the safe delivery of the personnel, apparatus and
+          equipment to a reported fire or emergency <strong>and the delivery of water to the operating
+          firefighting force</strong>.&quot; The listed responsibilities include maintaining the apparatus in a
+          constant state of readiness, effectively operating any apparatus assigned, and &quot;must know how many hose
+          lines, size, length, nozzles, and the flow rates of their apparatus (per OFD hydraulic standard).&quot;</p>
+          <p>&quot;The Engineer must be thoroughly familiar with the engine apparatus, all the tools and equipment
+          carried on board and <strong>the layout of the hose beds</strong>&quot; — and &quot;must control how many and
+          what type streams and hose lines are supplied and should confer with and advise the officer when
+          necessary.&quot;</p>
+          <p>In suppression the Engineer's tasks are listed as water supply, pump operations, and
+          <strong>observing the conditions of all the hoselines stretched</strong>.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, pp.1-8–1-9</p>
+        </div></details>
+      </div>
+
+      <div class="tankrow">
+        <h3>The line you are charging</h3>
+        <details class="disc"><summary>Occupancy dictates the line</summary><div class="dbody">
+          <p>&quot;Using a 1 ¾&quot; on a one to two room involved residential structure, an extended line (alley lay) on
+          a garden style apartment, or a 2 ½&quot; hoseline on a commercial building would be common examples of the
+          occupancy dictating the line used.&quot;</p>
+          <p>Interior operations inside residential structures are &quot;usually best accomplished with a minimum 150
+          gpm flow provided by 1 ¾&quot; hoselines&quot; — enough flow for multiple rooms of fire while keeping the speed
+          and flexibility needed inside.</p>
+          <p>On commercial buildings the manual recommends 2½&quot; because of the potential for large volumes of
+          fire, and recommends <strong>a minimum of 100' of working line be stretched and flaked for use
+          interior</strong> — the Nozzle Firefighter has to account for that additional 50' when estimating.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, pp.1-12 and 1-14 ·
+          Stretching and Operating the Hoseline, p.4-2</p>
+        </div></details>
+        <details class="disc"><summary>ADULTS — when the answer is 2½&quot;</summary><div class="dbody">
+          <p>For the &quot;in between&quot; fire — bigger than a 1¾&quot; can handle, not clearly a 2½&quot; job — the manual gives
+          an acronym for when a 2½&quot; hoseline is recommended:</p>
+          <ul>
+            <li><strong>A</strong> — Advanced fire conditions on arrival.</li>
+            <li><strong>D</strong> — Defensive operations.</li>
+            <li><strong>U</strong> — Unable to determine seat or location of fire.</li>
+            <li><strong>L</strong> — Large, un-compartmentalized area (supermarket, bowling alley, warehouse).</li>
+            <li><strong>T</strong> — &quot;Tons of water&quot;. Any time you need to deliver a large volume of water
+            250 gpm or more.</li>
+            <li><strong>S</strong> — Standpipe operations.</li>
+          </ul>
+          <p>A middle option exists: a 1¾&quot; line connected to 2½&quot; hose and a shutoff. If conditions deteriorate
+          the crew can back up, disconnect the 1¾&quot;, replace the 2½&quot; nozzle and advance the 2½&quot; already
+          stretched.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, Stretching and Operating the Hoseline, p.4-2</p>
+        </div></details>
+      </div>
+
+      <div class="tankrow">
+        <h3>The stretch</h3>
+        <details class="disc"><summary>Who stretches what</summary><div class="dbody">
+          <p>The Nozzle Firefighter is responsible for stretching the first hoseline to the point of entry, and
+          in most situations for <strong>the first 100' of hose and the nozzle (lead length)</strong>. Where the
+          Back-Up Firefighter is performing other duties not associated with stretching — water supply, forced
+          entry — the Nozzle Firefighter is responsible for stretching and flaking the <strong>entire</strong>
+          hoseline.</p>
+          <p>In Investigation Mode the Nozzle Firefighter stands fast at the engine, size-ups the building,
+          estimates the possible length of the stretch and determines the size of line that may be needed while
+          the Officer and Back-Up Firefighter investigate.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, pp.1-12–1-13</p>
+        </div></details>
+        <details class="disc"><summary>Estimating the stretch — the manual's rules of thumb</summary><div class="dbody">
+          <p>&quot;Estimating the stretch can make or break the success of the initial attack line.&quot; The general
+          guidelines given:</p>
+          <ul>
+            <li>The average width of a residential property plot is 50'.</li>
+            <li>Front door to rear door of a typical residence is usually covered with 50'.</li>
+            <li>An additional 50' per story may be necessary to reach a fire on the upper floors of a large
+            residential dwelling.</li>
+            <li>For commercial buildings, add the length and width of the building and use that number as the
+            feet of 2½&quot; needed.</li>
+            <li>Break a long stretch down into 50' sections in your mind.</li>
+          </ul>
+          <p>For large multiple dwellings the estimate must also carry the actual distance from the engine to
+          the entrance door, the distance from that door to the base of the stairway, plus one length per floor
+          and one for the fire floor — some buildings need two or more for the fire floor.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, Stretching and Operating the Hoseline,
+          pp.4-3–4-4</p>
+        </div></details>
+      </div>
+
+      <div class="tankrow">
+        <h3>Flaking, charging, feeding</h3>
+        <details class="disc"><summary>Flaking before you charge</summary><div class="dbody">
+          <p>After the attack line is stretched, the Back-Up Firefighter makes sure the hose is
+          <strong>properly flaked and kink free up to the lead length</strong> while the Nozzle Firefighter waits
+          for water. Although the Nozzle Firefighter owns the lead length, the Back-Up Firefighter &quot;should
+          visualize and ensure that the <strong>entire</strong> line is kink free.&quot;</p>
+          <ul>
+            <li><strong>One/Two Residential Dwelling and Garden Style Apartments:</strong> the hose is generally
+            stretched, flaked and <strong>charged outside the structure before advancing inside</strong>. When
+            possible it is good practice that the hose be flaked <strong>perpendicular to the point of
+            entry</strong> — this lets the Back-Up Firefighter move hose inside more efficiently during the
+            advancement.</li>
+            <li><strong>Multi-family dwelling with public hallways:</strong> the line can be flaked in the hallway
+            on the fire floor before charging if conditions allow — apartment door intact, no fire in the hall,
+            light smoke. &quot;A good rule of thumb is <strong>if you are masking up, you should be calling for
+            water</strong>.&quot;</li>
+          </ul>
+          <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-25</p>
+        </div></details>
+        <details class="disc"><summary>Feeding the charged line</summary><div class="dbody">
+          <p>Once the line is charged the Back-Up Firefighter's position is <strong>the door</strong>, feeding the
+          line into the fire area — &quot;slowly feeds line to the advancing nozzle team from their position at the
+          doorway.&quot; Standing in the doorway itself blocks access, egress and ventilation.</p>
+          <p>&quot;The Back-Up Firefighter must <strong>not push the hoseline</strong> to the nozzle team, but instead
+          <strong>feed hose at the speed of the nozzle team</strong> so that the hoseline advances&quot; — with the
+          slack managed between the doorway and the nozzle.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-26</p>
+        </div></details>
+      </div>
+
+      <div class="tankrow">
+        <h3>The same setup, in the pump skill's own order</h3>
+        <details class="disc"><summary>ADO Task #19 — Operating Procedure, Steps 1–7</summary><div class="dbody">
+          <p>ADO Task #19 is written for the changeover, but its first seven steps are this evolution — putting
+          the pump in service on tank water before any external supply exists:</p>
+          <ul>
+            <li><strong>Step 1</strong> — Position the apparatus in a safe positon, and immobilize it by setting
+            the parking brake and chocking the wheels.</li>
+            <li><strong>Step 2</strong> — Engage the pump, and select the proper gear in the road transmission.
+            Lock the gear into place.</li>
+            <li><strong>Step 3</strong> — Open the tank-to-pump valve (if necessary).</li>
+            <li><strong>Step 4</strong> — Set the transfer valve to the series (to PSI or RMP) positon depending
+            on application.</li>
+            <li><strong>Step 5</strong> — Increase the throttle setting to obtain the desired pressure, priming
+            (if necessary).</li>
+            <li><strong>Step 6</strong> — Set the relief valve or pressure governor.</li>
+            <li><strong>Step 7</strong> — Open the circulator valve or partially open the tank fill valve.</li>
+          </ul>
+          <p>Two placement differences against the printed evolution sheet, both open items rather than
+          corrections: the pump skill opens the circulator/tank-fill valve <em>after</em> priming (Step 7) where
+          the sheet cracks it at out-of-cab step 3, and it sets the relief valve at Step 6 where the sheet sets
+          it at step 12.</p>
+          <p class="srcline">ADO Task #19, Basic Pump Skills — Changeover (Transition to an External Water
+          Supply), Operating Procedure</p>
+        </div></details>
+      </div>
+
+    </section>
+
+  </div><!-- /sheet -->
+
+  <div class="cols">
+
+    <section class="boxpanel red" aria-label="If the line loses water">
+      <h2 class="boxlabel">IF THE LINE LOSES WATER</h2>
+      <div class="sidebody">
+        <p class="action">This evolution runs on tank water — there is no external supply to troubleshoot. Work
+        the pump.</p>
+        <p><a data-nav="epump" href="engine-emergency.html">Emergency pump
+        operations — the full sequence</a></p>
+      </div>
+    </section>
+
+    <section class="boxpanel digit" aria-labelledby="firstdigit">
+      <h2 class="boxlabel" id="firstdigit">1ST DIGIT METHOD</h2>
+      <div class="sidebody">
+        <p class="action">USE 1ST DIGIT METHOD TO DETERMINE ADDITIONAL LIKE VOLUMES REMAINING.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <nav class="evonav" aria-label="Evolution navigation">
+    <a data-nav="evo10" href="evo-1-0.html">‹ 1.0 Position on hydrant &amp; establish own water supply</a>
+    <a data-nav="evo12" href="evo-1-2.html">1.2 Changeover &amp; supply various hose loads ›</a>
+  </nav>
+
+  <div class="docfoot">
+    <p><strong>Source.</strong> ADO-Pumper Task Book, Evolution 1.1 &quot;Single line on tank water – without
+    changeover&quot; (September 2024 version) — setup, in-cab and out-of-cab steps verbatim, in printed order, with
+    their printed numbering; the underlined &quot;and&quot; in in-cab step 7 and the bolded relief-valve step are as
+    printed. The Engine 34 pump shift sub-sequence and the manual-discharge-relief-valve rig list are the
+    printed sheet's own rig notes.</p>
+    <p><strong>Merged steps</strong> shown in italics under a printed step — open tank fill / recirculation ·
+    set PSI control mode button · check lines are fully deployed · charge lines · calculate PDP → set PDP — are
+    from the engine evolution card, 2026-08-28 transcription.</p>
+    <p><strong>Manual material.</strong> Engine Company Operations 2023 V-1: Firefighter Assignments (pp.1-8,
+    1-9, 1-11, 1-12, 1-13, 1-14, 1-15, 1-16, 1-17, 1-21, 1-22, 1-24, 1-25, 1-26), Stretching and Operating the
+    Hoseline (pp.4-2, 4-3, 4-4), Water Supply (p.5-1) · ADO Task #19, Basic Pump Skills — Changeover.
+    Rig-specific controls: PSI/RPM mode is a PUC feature present on Engine 34 and absent from Orem's other
+    pumps; the manual discharge relief valve rides on Engine 31, Engine 3820 and Ladder 32 per the printed
+    sheet.</p>
+    <p>See also: <a data-nav="eflow" href="engine-flow.html">My
+    Engine Evolution</a> — the full muscle-memory sheet these merged steps come from.</p>
+    <p>Version: prototype · Last reviewed 2026-08-30 · Compiled by Engineer Jason Anderson</p>
+  </div>
+
+</div>
+
+<details class="secmenu" id="secMenu">
+  <summary aria-label="Open sections menu">Sections</summary>
+  <nav class="secpanel" aria-label="Jump to section">
+    <a class="ssec" href="#incab">In-cab</a>
+    <a class="swtr" href="#outcab">Out-of-cab</a>
+    <a class="sdig" href="#tankwater">Tank water</a>
+    <a class="ssup" href="#manual">The manual</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  // night mode
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // modes
+  var refBtn=document.getElementById('refBtn'),checkBtn=document.getElementById('checkBtn');
+  var resetBtn=document.getElementById('resetBtn'),prog=document.getElementById('progress');
+  var boxes=[].slice.call(document.querySelectorAll('.tick input'));
+  function setMode(m){
+    document.body.classList.toggle('checkoff',m==='check');
+    refBtn.setAttribute('aria-pressed',m==='ref');
+    checkBtn.setAttribute('aria-pressed',m==='check');
+    sessionStorage.setItem('evo11-mode',m);
+    update();
+  }
+  refBtn.addEventListener('click',function(){setMode('ref')});
+  checkBtn.addEventListener('click',function(){setMode('check')});
+  function update(){
+    var done=0;
+    boxes.forEach(function(b){
+      b.closest('.step').classList.toggle('done',b.checked);
+      if(b.checked)done++;
+    });
+    prog.textContent=done+' / '+boxes.length+' done';
+  }
+  boxes.forEach(function(b,i){
+    b.checked=sessionStorage.getItem('evo11-s'+i)==='1';
+    b.addEventListener('change',function(){
+      sessionStorage.setItem('evo11-s'+i,b.checked?'1':'0');update();
+    });
+  });
+  resetBtn.addEventListener('click',function(){
+    boxes.forEach(function(b,i){b.checked=false;sessionStorage.removeItem('evo11-s'+i)});update();
+  });
+  setMode(sessionStorage.getItem('evo11-mode')||'ref');
+
+  // floating Sections menu — close on link tap (works without JS too; this is a nicety)
+  var menu=document.getElementById('secMenu');
+  if(menu){
+    [].slice.call(menu.querySelectorAll('a')).forEach(function(a){
+      a.addEventListener('click',function(){menu.removeAttribute('open')});
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

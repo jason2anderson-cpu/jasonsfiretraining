@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Engineer &mdash; Roles &amp; First-Due</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+/* ============================================================
+   Field-instrument system - same spec as Engine Evolution.
+   Rev 2026-08-30: section colour identities (tint + coloured
+   heading + left rule, never colour alone), floating mobile
+   Sections menu, QRG table given its own scroll container and
+   an out-of-scroller heading, citations re-derived from the
+   manuals' own per-chapter page footers.
+   Production note: self-host WOFF2 for offline use.
+   ============================================================ */
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  /* section palette - one identity per section */
+  --c-pos:#3D5A80;  --c-pos-t:#E9EEF5;
+  --c-wtr:#0F6F78;  --c-wtr-t:#DFEEEF;
+  --c-sup:#5B4E9E;  --c-sup-t:#ECE9F6;
+  --c-mst:#7C3F87;  --c-mst-t:#F4E9F5;
+  --c-fom:#2F7D4F;  --c-fom-t:#E4F2E9;
+  --c-dig:#8A6116;  --c-dig-t:#F6EEDC;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --c-pos:#9FBCDF; --c-pos-t:#18232F;
+    --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+    --c-sup:#B7ADE9; --c-sup-t:#231E38;
+    --c-mst:#D9A2DB; --c-mst-t:#301D33;
+    --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+    --c-dig:#DFBC77; --c-dig-t:#332A15;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --c-pos:#9FBCDF; --c-pos-t:#18232F;
+  --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+  --c-sup:#B7ADE9; --c-sup-t:#231E38;
+  --c-mst:#D9A2DB; --c-mst-t:#301D33;
+  --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+  --c-dig:#DFBC77; --c-dig-t:#332A15;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+.vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+.top{max-width:860px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2)}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:18px 0 6px}
+.kicker{font-family:var(--head);font-weight:700;font-size:14px;color:var(--accent);
+  letter-spacing:.04em;margin:0 0 6px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1.1;
+  margin:0 0 8px;text-wrap:balance}
+.standfirst{margin:10px 0 0;color:var(--text2);font-size:16.5px;max-width:66ch}
+
+/* jump to section - wide screens */
+.jump{position:sticky;top:0;z-index:10;background:var(--canvas);padding:10px 0;margin-top:16px;
+  display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--divider)}
+.jump a{min-height:44px;display:inline-flex;align-items:center;padding:6px 14px;
+  border:1.5px solid var(--divider);border-radius:999px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:14.5px}
+.jump a:hover{border-color:var(--accent)}
+
+/* floating Sections menu - narrow screens; <details> so it works with JS off */
+.secmenu{display:none}
+@media (max-width:640px){
+  .jump{display:none}
+  .secmenu{display:block;position:fixed;right:16px;bottom:16px;z-index:40}
+  .secmenu > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+    min-height:56px;min-width:56px;padding:0 22px;border:1.5px solid var(--divider);border-radius:999px;
+    background:var(--surface);color:var(--text);font-family:var(--head);font-weight:700;font-size:16px;
+    cursor:pointer;box-shadow:0 4px 14px rgba(10,30,28,.22)}
+  .secmenu > summary::-webkit-details-marker{display:none}
+  .secmenu[open] > summary{border-color:var(--accent);color:var(--accent)}
+  .secpanel{position:absolute;bottom:calc(100% + 10px);right:0;min-width:232px;max-width:78vw;
+    background:var(--surface);border:1.5px solid var(--divider);border-radius:14px;
+    box-shadow:0 8px 24px rgba(10,30,28,.25);padding:8px;display:grid;gap:2px}
+  .secpanel a{display:flex;align-items:center;min-height:48px;padding:6px 14px;border-radius:10px;
+    text-decoration:none;color:var(--text);font-weight:600;font-size:16px;border-left:5px solid transparent}
+  .secpanel a.spos{border-left-color:var(--c-pos)}
+  .secpanel a.sspt{border-left-color:var(--c-wtr)}
+  .secpanel a.sndu{border-left-color:var(--c-fom)}
+  .secpanel a.ssup{border-left-color:var(--c-sup)}
+  .secpanel a.sdut{border-left-color:var(--c-mst)}
+  .secpanel a.sqrg{border-left-color:var(--c-dig)}
+  .secpanel a.spend{border-left-color:var(--text2)}
+}
+
+/* the one reference surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:18px;overflow:hidden}
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:18px 24px 4px;scroll-margin-top:70px}
+.phase > .lede{margin:0;padding:0 24px 6px;font-size:16px;color:var(--text2);max-width:70ch}
+
+/* section colour identities - tint + coloured heading + left rule.
+   Colour is never the only carrier: each tint is paired with its own
+   heading colour and a 6px rule, and every section keeps its text label. */
+.phase.cpos{background:var(--c-pos-t);border-left:6px solid var(--c-pos)}
+.phase.cpos > h2{color:var(--c-pos)}
+.phase.cspt{background:var(--c-wtr-t);border-left:6px solid var(--c-wtr)}
+.phase.cspt > h2{color:var(--c-wtr)}
+.phase.cndu{background:var(--c-fom-t);border-left:6px solid var(--c-fom)}
+.phase.cndu > h2{color:var(--c-fom)}
+.phase.csup{background:var(--c-sup-t);border-left:6px solid var(--c-sup)}
+.phase.csup > h2{color:var(--c-sup)}
+.phase.cdut{background:var(--c-mst-t);border-left:6px solid var(--c-mst)}
+.phase.cdut > h2{color:var(--c-mst)}
+.phase.cqrg{background:var(--c-dig-t);border-left:6px solid var(--c-dig)}
+.phase.cqrg > h2{color:var(--c-dig)}
+
+.row{display:flex;align-items:flex-start;gap:16px;padding:18px 24px;min-height:72px;
+  border-top:1px solid var(--divider)}
+.phase > h2 + .row,.phase > .lede + .row{border-top:0}
+.ord{font-family:var(--head);font-weight:700;font-size:34px;line-height:1;color:var(--text2);
+  min-width:64px;font-variant-numeric:tabular-nums;padding-top:2px}
+.ord.small{font-size:26px;padding-top:6px}
+.rowbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:20px;line-height:1.35;margin:0}
+.sub{font-size:16px;color:var(--text2);margin:6px 0 0;max-width:64ch}
+.srcline{font-size:14px;color:var(--text2)}
+.rowbody > .srcline{display:block;margin-top:6px}
+
+details.disc{margin-top:8px}
+details.disc > summary{list-style:none;display:inline-flex;align-items:center;min-height:44px;
+  padding:6px 14px;border:1.5px solid var(--divider);border-radius:10px;color:var(--accent);
+  font-weight:600;font-size:15px;cursor:pointer;background:var(--surface)}
+details.disc > summary::-webkit-details-marker{display:none}
+details.disc > summary::after{content:"\25BE";margin-left:8px;font-size:12px;transition:transform .15s}
+details.disc[open] > summary::after{transform:rotate(180deg)}
+details.disc > .dbody{background:var(--expanded);border-radius:12px;padding:14px 18px;margin-top:8px;
+  font-size:16px}
+details.disc > .dbody p{margin:0 0 10px;max-width:64ch}
+details.disc > .dbody p:last-child{margin:0}
+blockquote{margin:0 0 10px;padding:0 0 0 14px;border-left:3px solid var(--accent);color:var(--text);
+  overflow-wrap:break-word}
+
+/* QRG table - heading and note live OUTSIDE the scroller so they stay put */
+.tablehead{margin:0;padding:16px 24px 2px;font-family:var(--head);font-weight:700;font-size:16px}
+.scrollhint{margin:0;padding:0 24px 10px;font-size:14px;color:var(--text2)}
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+  border-top:1px solid var(--divider);border-bottom:1px solid var(--divider)}
+table.qrg{border-collapse:collapse;width:100%;min-width:760px;font-size:15.5px;background:var(--surface)}
+table.qrg th,table.qrg td{border-top:1px solid var(--divider);padding:14px 16px;text-align:left;
+  vertical-align:top;line-height:1.45}
+table.qrg thead th{font-family:var(--head);font-weight:700;font-size:14px;letter-spacing:.03em;
+  color:var(--text2);border-top:0}
+table.qrg tbody th{font-family:var(--head);font-weight:700;font-size:22px;white-space:nowrap;
+  color:var(--text2);font-variant-numeric:tabular-nums}
+table.qrg td.me{background:var(--accent-tint);box-shadow:inset 4px 0 0 var(--accent)}
+.tablenote{padding:12px 24px 18px;font-size:14px;color:var(--text2);margin:0;max-width:76ch}
+
+/* the open item - dashed, deliberately unlike a settled section */
+.pending{margin-top:22px;padding:20px 24px;background:var(--expanded);border-radius:16px;
+  border:2px dashed var(--text2);scroll-margin-top:70px}
+.pending h2{font-family:var(--head);font-weight:800;font-size:21px;line-height:1.25;color:var(--text);
+  margin:0 0 10px}
+.pending .ptag{display:inline-flex;align-items:center;gap:8px;font-family:var(--head);font-weight:700;
+  font-size:14px;letter-spacing:.04em;color:var(--text);background:var(--surface);
+  border:2px dashed var(--text2);border-radius:8px;padding:6px 12px;margin:0 0 12px}
+.pending p{margin:0 0 10px;max-width:66ch;font-size:16px}
+.pending p:last-child{margin:0}
+.pending blockquote{margin:0 0 10px}
+.decider{margin:14px 0 0;padding:14px 16px;background:var(--surface);border:1.5px solid var(--divider);
+  border-radius:12px;font-size:16px;max-width:66ch}
+
+.docfoot{margin-top:26px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+@media (max-width:640px){
+  .wrap{padding-bottom:120px} /* clear the floating Sections button */
+}
+@media (max-width:560px){
+  .row{padding:14px 16px;gap:12px}
+  .ord{font-size:28px;min-width:52px}
+  .action{font-size:19px}
+  .phase > h2,.phase > .lede{padding-left:16px;padding-right:16px}
+  .tablehead,.scrollhint,.tablenote{padding-left:16px;padding-right:16px}
+  .pending{padding:16px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.nightbtn,.jump,.secmenu,.scrollhint{display:none}
+  .sheet,.pending{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  .pending{border:2px dashed #000;background:#fff}
+  .phase{break-inside:avoid-page;background:#fff!important;border-left:6px solid #000}
+  .phase > h2{color:#000!important}
+  .row{break-inside:avoid;min-height:0;padding:8px 12px}
+  .ord{color:#000;font-size:16pt;min-width:34pt}
+  .action{font-size:12pt}
+  details.disc{display:none}
+  .scroll-x{overflow:visible;border-color:#000}
+  table.qrg{min-width:0;font-size:9pt;background:#fff}
+  table.qrg td.me{background:#fff;box-shadow:none;outline:1.5pt solid #000;outline-offset:-1.5pt}
+  .decider{border:1.5px solid #000;background:#fff}
+}
+/* FAB clearance — the floating Sections button must never cover the last content */
+@media (max-width:640px){ .wrap{ padding-bottom:132px } }
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="ehome" href="engine-home.html">Engine Operations</a><span>&rsaquo;</span>Engineer &mdash; Roles &amp; First-Due</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <p class="kicker">Engine Company Operations 2023 V-1 &middot; OFD Quick Reference Guide, May 2024</p>
+    <h1>Engineer &mdash; Roles &amp; First-Due</h1>
+    <p class="standfirst">What the seat owns, where the rig goes by arrival order, and where the Engineer's
+    job stops and a firefighter's begins. Page numbers are the manuals' own per-chapter footers.</p>
+  </header>
+
+  <nav class="jump" aria-label="Jump to section">
+    <a href="#position">The position</a>
+    <a href="#spotting">Spotting</a>
+    <a href="#nothing">1st due &mdash; nothing showing</a>
+    <a href="#suppression">Suppression</a>
+    <a href="#dutysplit">Duty split</a>
+    <a href="#qrg">First-alarm functions</a>
+    <a href="#openitem">Open item</a>
+  </nav>
+
+  <div class="sheet">
+
+    <section class="phase cpos" aria-labelledby="position">
+      <h2 id="position">THE POSITION</h2>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">The primary responsibility of the Engineer is the safe delivery of the personnel,
+          apparatus and equipment to a reported fire or emergency &mdash; and the delivery of water to the operating
+          firefighting force.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-8 &mdash;
+          Engineer / ADO, RESPONSIBILITIES</span>
+        </div>
+      </div>
+      <div class="row"><span class="ord small">1</span>
+        <div class="rowbody"><p class="action">Maintain the apparatus of his/her station in a constant state of readiness</p>
+          <p class="sub">This includes all backup and other fire apparatus, excluding ambulances.</p></div>
+      </div>
+      <div class="row"><span class="ord small">2</span>
+        <div class="rowbody"><p class="action">Effectively operate all apparatus to which they are assigned at any given time or place</p></div>
+      </div>
+      <div class="row"><span class="ord small">3</span>
+        <div class="rowbody"><p class="action">Know how many hose lines, size, length, nozzles, and the flow rates of their apparatus</p>
+          <p class="sub">Per the OFD hydraulic standard. The chapter carries no pressures or flows of its own &mdash;
+          it defers to that separate document.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-8</span></div>
+      </div>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">The Engineer must control how many and what type streams and hose lines are supplied &mdash;
+          and should confer with and advise the officer when necessary.</p>
+          <p class="sub">Stated as authority, not as order-taking. The position may be filled by an Engineer or a
+          qualified Apparatus Driver Operator (ADO) that possesses all OFD required certifications and is current
+          with OFD proficiency. The Engineer must be thoroughly familiar with the engine apparatus, all the tools
+          and equipment carried on board and the layout of the hose beds &mdash; knowledge of the amount and size of
+          hose stretched is what lets the Engineer determine the proper pressures.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-8</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">Monitor the radio for instructions and information that may require action, and be
+          ready to assist members in distress if ordered by the IC.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-8</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">Tools: radio &middot; personal turnouts to include work gloves and helmet during pumping
+          operations &middot; personal TIC</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-8 &mdash; TOOLS</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase cspt" aria-labelledby="spotting">
+      <h2 id="spotting">SPOTTING &mdash; BY ARRIVING ORDER</h2>
+      <p class="lede">The Engineer's biggest single decision on arrival, and it changes with arrival order.</p>
+      <div class="row"><span class="ord">1st</span>
+        <div class="rowbody">
+          <p class="action">Give the Company Officer a sufficient view of the fire building. Leave the front of
+          the building open for the Truck's aerial. Position as close as possible to the fire building.</p>
+          <p class="sub">Positioning close reduces the time, effort and number of lengths needed to connect to a
+          water source &mdash; a coordinated effort between the Engineer, the Engine Company Officer, and the first
+          arriving Truck Company. Other spotting considerations: water supply needs, FDC connections, line
+          placement, fire location and intensity.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-9 &mdash; B. On Arrival</span>
+        </div>
+      </div>
+      <div class="row"><span class="ord">2nd</span>
+        <div class="rowbody">
+          <p class="action">Do not block apparatus movement on the fireground. Be able to lay a supply line from
+          the first-in engine to the hydrant.</p>
+          <p class="sub">The Engineer of the second arriving engine is assigned to supply the first engine &mdash;
+          without placing their apparatus at the front of the fire scene: lay a supply line away from the first
+          engine, spot at the hydrant, connect, and supply the first arriving engine.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-9 and
+          pp.1-10&ndash;1-11</span>
+        </div>
+      </div>
+      <div class="row"><span class="ord">3rd+</span>
+        <div class="rowbody">
+          <p class="action">Position out of the way of the direct fire scene, or take the alley behind the
+          structure to provide additional lines more easily.</p>
+          <p class="sub">When stretching hose lines from the apparatus, position so it will not interfere with
+          Truck Company operations.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-9 and p.1-11</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase cndu" aria-labelledby="nothing">
+      <h2 id="nothing">1ST DUE &mdash; NOTHING SHOWING AND ALARMS</h2>
+      <p class="lede">The one place the manual puts water supply on the Engineer rather than the Back-Up
+      Firefighter &mdash; see the duty split below.</p>
+      <div class="row"><span class="ord small">1</span>
+        <div class="rowbody"><p class="action">Park in a location that allows for easy access by ladder trucks</p></div>
+      </div>
+      <div class="row"><span class="ord small">2</span>
+        <div class="rowbody"><p class="action">Fully prepare the engine by completing all steps required to put the pump in service and supply water to hose</p></div>
+      </div>
+      <div class="row"><span class="ord small">3</span>
+        <div class="rowbody"><p class="action">No hydrant connection made until otherwise warranted by fire involvement</p></div>
+      </div>
+      <div class="row"><span class="ord small">4</span>
+        <div class="rowbody"><p class="action">Stay by the pump and monitor radio traffic for further assignments</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-9 &mdash;
+          1st Due-nothing showing and Alarms</span></div>
+      </div>
+    </section>
+
+    <section class="phase csup" aria-labelledby="suppression">
+      <h2 id="suppression">SUPPRESSION</h2>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">Water supply &middot; Pump operations &middot; Observe the conditions of all the hoselines stretched</p>
+          <p class="sub">The Engineer must recognize the need for and initiate supply line operations when
+          required. When arriving other than first due, remain aware of water supply needs of units already on
+          the scene.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-9 &mdash;
+          C. Suppression</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">Tactics the Engineer must be capable of performing: forward lay &middot; reverse lay &middot; FDC supply</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-9</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">Forward lay: the connection shall be made using 5&Prime; LDH. If the 5&Prime; LDH connection
+          cannot be secured on the hydrant, a minimum of two 3&Prime; hoses shall be connected, one on each side of
+          the hydrant.</p>
+          <p class="sub">Pony lines are acceptable where connections are short, as long as "5&Prime; LDH first" rules
+          are applied. Position the apparatus for a forward lay whenever the need for water supply is
+          determined; a hydrant in the immediate vicinity may be used if it allows a rapid stretch and will not
+          interfere with ladder company positioning.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-11 and p.1-10</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">Listen closely to the radio at all times for traffic concerning charging, shutting
+          down or adjusting hose line pressures.</p>
+          <p class="sub">To establish and maintain proper pumping pressures, all Engineers must know how many
+          hoselines, the size and length of the hoseline, the type of nozzles being used, and their flow.
+          Monitor the residual pressure of the pump master intake gauge to determine the capability of supplying
+          additional volumes.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-11</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase cdut" aria-labelledby="dutysplit">
+      <h2 id="dutysplit">THE DUTY SPLIT &mdash; ENGINEER vs FIREFIGHTER</h2>
+      <p class="lede">Orem splits the engine by seat, not by task. These are the seams where the Engineer's job
+      meets someone else's &mdash; the places a drill goes wrong.</p>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">Five seats, and the seat is the radio designator.</p>
+          <p class="sub">Officer &middot; Driver (Engineer) &middot; Nozzle Firefighter &middot; Tailboard Firefighter &middot; Back-Up
+          Firefighter. Positions are assigned by rank and designated by where the member sits. Calling the
+          company gets the Officer ("Engine 32"); calling an individual is position plus company ("Nozzle 32",
+          "Back-Up 32"). The manual states plainly that arrival order and occupancy type modify the basic
+          assignments for every position.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-1</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">Water supply: the first arriving Officer makes the determination &mdash; the Engineer
+          executes, and must self-initiate when required.</p>
+          <details class="disc"><summary>Source note</summary><div class="dbody">
+            <blockquote>"The first arriving Engine Company Officer will make the determination for the need for
+            water supply or communicate that responsibility to the second arriving Engine Company. In either
+            case that information is transmitted from the first arriving to the second arriving Engine
+            Company."</blockquote>
+            <blockquote>"The Engineer must recognize the need for and initiate supply line operations when
+            required."</blockquote>
+            <p>Both sentences are the manual's; both stand. The QRG's 1st Engine row matches the first:
+            "Initiate water supply if determined by CO."</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-10 and p.1-9 &middot;
+            OFD Quick Reference Guide, May 2024, 1st Engine Company Functions</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">On a working fire, the hydrant connection is the Back-Up Firefighter's &mdash; regardless
+          of arrival order, forward lay or reverse lay.</p>
+          <details class="disc"><summary>Source note</summary><div class="dbody">
+            <blockquote>"Regardless of arrival order, the back-up firefighter is responsible for the hydrant
+            connection on a forward lay or reverse lay."</blockquote>
+            <p>Stated twice on the same page &mdash; once qualified further: regardless of arrival order,
+            <em>or whether a Tailboard firefighter is staffed</em>.</p>
+            <p>The Engineer must still be able to run the entire hydrant sequence alone &mdash;
+            <a href="evo-1-0.html">Evolution 1.0</a>
+            is titled "Position on hydrant &amp; establish own water supply" and its objective is the Engineer
+            securing their own supply with no lines flowing.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-23 &mdash;
+            Back-Up Firefighter, 2nd Due-working fire &middot; ADO-Pumper Task Book, September 2024, Evolution 1.0</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">In the investigation mode the Back-Up Firefighter has no water supply
+          responsibilities &mdash; those are deferred to the Engineer of the 1st due or to the 2nd due engine.</p>
+          <details class="disc"><summary>Source note</summary><div class="dbody">
+            <blockquote>"The Back-Up Firefighter has no water supply responsibilities during the investigation
+            mode. Those responsibilities are deferred to the Engineer of the 1st due or to the 2nd due
+            engine."</blockquote>
+            <p>Repeated for each occupancy type in the Back-Up Firefighter section.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, pp.1-19&ndash;1-20 &mdash;
+            Back-Up Firefighter, investigation mode</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">The lead length is the Nozzle Firefighter's &mdash; the first 100&prime; of hose and the nozzle.</p>
+          <details class="disc"><summary>Source note</summary><div class="dbody">
+            <blockquote>"In most situations the Nozzle Firefighter is responsible for the first 100' of hose and
+            the nozzle (lead length)."</blockquote>
+            <p>If the Back-Up Firefighter is performing other duties not associated with the stretch &mdash; water
+            supply, forced entry &mdash; the Nozzle Firefighter stretches and flakes the entire hoseline. Occupancy
+            size and type determine line selection and length.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-13 &mdash;
+            Nozzle Firefighter, 1st Due-working fire</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">The Nozzle Firefighter signals the Engineer to charge the hoseline &mdash; verbal, by
+          radio, or by hand signal.</p>
+          <details class="disc"><summary>Source note</summary><div class="dbody">
+            <blockquote>"When the line is flaked and the Nozzle Firefighter is ready, they will signal the
+            Engineer to charge the hoseline. This signal may be verbal, by radio, or by hand signal."</blockquote>
+            <p>Supporting rule of thumb from the Back-Up Firefighter section: "if you are masking up, you should
+            be calling for water."</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, Firefighter Assignments, p.1-15 &mdash;
+            Nozzle Firefighter, C. Suppression; and p.1-25</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowbody">
+          <p class="action">Engineer-to-engineer on a relay: communications constant &middot; 20 psi minimum residual at
+          the attack pumper &middot; shut down lines at the attack pumper first, then the supply pumper.</p>
+          <details class="disc"><summary>Source note</summary><div class="dbody">
+            <blockquote>"Communications must be constant between the engineers to avoid insufficient pressure or
+            excessive pressure."</blockquote>
+            <blockquote>"Residual on the attack pumper should remain above 20psi."</blockquote>
+            <blockquote>"Shut down lines at attack pumper first when ending operations then the supply
+            pumper."</blockquote>
+            <p class="srcline">ADO-Pumper Task Book, September 2024, Evolution 1.7 (Pumping a hydrant as the
+            supply pumper) and Evolution 1.8 (Participate in pumping a hydrant as the attack pumper)</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase cqrg" aria-labelledby="qrg">
+      <h2 id="qrg">FIRST-ALARM ENGINE FUNCTIONS &mdash; BY ARRIVING ORDER AND BUILDING TYPE</h2>
+      <p class="tablehead">OFD Quick Reference Guide for Initial Company Operations &middot; May 2024</p>
+      <p class="scrollhint">Wide table &mdash; scroll it sideways on a phone.</p>
+      <div class="scroll-x" tabindex="0" role="region" aria-label="First-alarm engine functions table, scrolls horizontally">
+        <table class="qrg">
+          <caption class="vh">Engine company functions by arriving order and building type, OFD Quick Reference
+          Guide for Initial Company Operations, May 2024</caption>
+          <thead>
+            <tr>
+              <th scope="col">Engine Company Functions</th>
+              <th scope="col">Residential &amp; Multi-Family Residential 1-3 floors.</th>
+              <th scope="col">Mid Rise Structures 4 Floors and Above.</th>
+              <th scope="col">Commercial</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1st</th>
+              <td>Size-up &amp; 360 if not completed. Stretch initial attack line to fire floor. Initiate water
+              supply if determined by CO.</td>
+              <td>Size-up &amp; 360 if not completed. Stretch initial attack line to fire floor, using entrance
+              closest to fire.</td>
+              <td>Size-up &amp; 360 if not completed. Stretch initial attack line to fire floor, using entrance
+              closest to fire. Initiate water supply if determined by CO.</td>
+            </tr>
+            <tr>
+              <th scope="row">2nd</th>
+              <td>Complete water supply, Pump hydrant for 1st engine if needed. Stretch 2nd attack line
+              (Outside, Floor above fire, Basement).</td>
+              <td>Establish water supply, Pump standpipe if 1st Engine determines standpipe operations. Assist
+              1st Engine with hoseline advancement.</td>
+              <td>Complete water supply. Pump hydrant for the 1st engine if needed. Stretch 2nd attack line
+              (Outside, Floor above fire, Horizontal Exposure).</td>
+            </tr>
+            <tr>
+              <th scope="row">3rd</th>
+              <td>Stretch back-up line to location of 1st Engine Company.</td>
+              <td>Pump hydrant for 2nd engine. Stretch 2nd attack line (Outside, Floor above fire, Horizontal
+              Exposure).</td>
+              <td class="me">Position on FDC. Pump FDC upon "working fire". Stretch back-up line to location of
+              1st Engine Company.</td>
+            </tr>
+            <tr>
+              <th scope="row">4th</th>
+              <td>Stage apparatus at second water supply. RIC Functions</td>
+              <td>Initiate 2nd water supply, upon "working fire" lay line to cover side opposite side. Stretch
+              attack line to 1) the floor above 2) horizontal exposures, 3) stand-by with line until directed.</td>
+              <td>Initiate 2nd water supply, upon "working fire" lay line to cover side Charlie. Stretch attack
+              line to 1) the floor above 2) horizontal exposures, 3) stand-by with line until directed.</td>
+            </tr>
+            <tr>
+              <th scope="row">5th</th>
+              <td>&mdash;</td>
+              <td>Complete water supply, pump hydrant for 4th engine if needed. Stretch additional attack line
+              (Outside, Floor above fire, Horizontal Exposure).</td>
+              <td>Complete water supply, pump hydrant for 4th engine if needed. Stretch additional attack line
+              (Outside, Floor above fire, Horizontal Exposure).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tablenote">Cell text as printed in the QRG, including its own punctuation. The residential 5th
+      Engine cell is blank in the original. The QRG prints "RIC"; this site uses RIT &mdash; OFD documents use both.
+      The tinted, rule-marked cell in the Commercial column is the 3rd Engine FDC assignment, which is the open
+      item below. The QRG's own caveat: "This document is a quick reference document and is not designed to
+      override or replace understanding of the full applicable Manuals."</p>
+    </section>
+
+  </div>
+
+  <section class="pending" id="openitem" aria-labelledby="openitem-h">
+    <p class="ptag">&#9208; OPEN ITEM &mdash; NOT SETTLED</p>
+    <h2 id="openitem-h">Who takes the FDC on a commercial building</h2>
+    <p>On a standpipe / mid-rise building the two documents agree &mdash; the 2nd due takes it. They part company
+    on commercial, and on the trigger. Both texts, verbatim:</p>
+    <blockquote>"The second Engine Company arriving on the first alarm should take a position at the
+    appropriate FDC standpipe connection and supply two 3&quot; lines into the FDC Siamese and connect to the
+    nearest hydrant. The third arriving Engine Company should relay pump to the second engine company from
+    the next nearest hydrant."
+    <br><span class="srcline">&mdash; Engine Company Operations 2023 V-1, Standpipe Operations, p.6-16,
+    Supplying Standpipe Systems</span></blockquote>
+    <blockquote>"Position on FDC. Pump FDC upon &quot;working fire&quot;. Stretch back-up line to location of
+    1st Engine Company."
+    <br><span class="srcline">&mdash; OFD Quick Reference Guide, May 2024, Commercial column, 3rd Engine Company Functions</span></blockquote>
+    <p>The QRG puts the commercial FDC on the <strong>3rd</strong> engine and conditions pumping on the
+    <strong>"working fire"</strong> declaration. Engine Ops Chapter 6 puts FDC supply on the <strong>2nd</strong>
+    due, with the Engineer making the connections and beginning pumping operations after securing a water
+    supply &mdash; no such condition (Standpipe Operations, p.6-12, Second Arriving Engine on First-Alarm). It is
+    also unstated whether the QRG's commercial line means a sprinkler FDC while Chapter 6 means a standpipe
+    FDC &mdash; two different connections would mean no conflict, and different pump pressures.</p>
+    <p class="decider"><strong>Who decides:</strong> nobody on this page. Both readings are Orem's own, so the
+    site's standing rule (Orem's manual governs) cannot settle an Orem-vs-Orem split. It goes to a
+    <strong>Battalion Chief and a Captain</strong> for a ruling &mdash; written up with the verbatim
+    sentences and page references as work-checklist item B13. Until they rule, do not treat either version as
+    settled doctrine, and say on the drill ground which one you are running.</p>
+  </section>
+
+  <div class="docfoot">
+    <p><strong>Sources.</strong> Orem Fire Department Engine Company Operations 2023 V-1, Chapter 1
+    (Firefighter Assignments) and Chapter 6 (Standpipe Operations) &middot; OFD Quick Reference Guide for Initial
+    Company Operations, May 2024 &middot; ADO-Pumper Task Book, September 2024, Evolutions 1.0, 1.7 and 1.8. Both
+    manuals paginate per chapter; every page number here is the manual's own printed footer.</p>
+    <p>Version: prototype &middot; Last reviewed 2026-08-30 &middot; Compiled by Engineer Jason Anderson</p>
+  </div>
+
+</div>
+
+<details class="secmenu" id="secMenu">
+  <summary aria-label="Open sections menu">Sections</summary>
+  <nav class="secpanel" aria-label="Jump to section">
+    <a class="spos" href="#position">The position</a>
+    <a class="sspt" href="#spotting">Spotting</a>
+    <a class="sndu" href="#nothing">1st due &mdash; nothing showing</a>
+    <a class="ssup" href="#suppression">Suppression</a>
+    <a class="sdut" href="#dutysplit">Duty split</a>
+    <a class="sqrg" href="#qrg">First-alarm functions</a>
+    <a class="spend" href="#openitem">Open item</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){nb.textContent=(document.documentElement.getAttribute('data-theme')==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var next=(document.documentElement.getAttribute('data-theme')==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // floating Sections menu &mdash; close on link tap (the <details> works without JS; this is a nicety)
+  var menu=document.getElementById('secMenu');
+  if(menu){
+    [].slice.call(menu.querySelectorAll('a')).forEach(function(a){
+      a.addEventListener('click',function(){menu.removeAttribute('open')});
+    });
+    document.addEventListener('click',function(e){
+      if(menu.hasAttribute('open')&&!menu.contains(e.target)){menu.removeAttribute('open')}
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

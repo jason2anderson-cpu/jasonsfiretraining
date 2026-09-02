@@ -1,0 +1,1027 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Aerial Evolution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  --pos-tint:#E9EFF8; --pos-head:#2E5FA3;
+  --prep-tint:#EAF3E7; --prep-head:#3F7A34;
+  --theory-tint:#F6EFDD; --theory-head:#7F6118;
+  --water-tint:#DFEEF0; --water-head:#0F6F78;
+  --tiller-tint:#EFEAF7; --tiller-head:#6A4FA3;
+  --slate-tint:#EDEFF3; --slate-head:#49586B;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --pos-tint:#152232; --pos-head:#8AB6EE;
+    --prep-tint:#152716; --prep-head:#93C98B;
+    --theory-tint:#2A2413; --theory-head:#D9B45B;
+    --water-tint:#123032; --water-head:#6BC6C8;
+    --tiller-tint:#211A33; --tiller-head:#B9A3E3;
+    --slate-tint:#1C2430; --slate-head:#A9B9CE;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --pos-tint:#152232; --pos-head:#8AB6EE;
+  --prep-tint:#152716; --prep-head:#93C98B;
+  --theory-tint:#2A2413; --theory-head:#D9B45B;
+  --water-tint:#123032; --water-head:#6BC6C8;
+  --tiller-tint:#211A33; --tiller-head:#B9A3E3;
+  --slate-tint:#1C2430; --slate-head:#A9B9CE;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  overflow-wrap:break-word}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2)}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:18px 0 8px}
+.kicker{font-family:var(--head);font-weight:700;font-size:14px;color:var(--accent);
+  letter-spacing:.04em;margin:0 0 6px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1.1;
+  margin:0 0 10px;text-wrap:balance}
+.provenance{font-size:15px;color:var(--text2);margin:0;max-width:64ch}
+
+/* mode bar */
+.modebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0 6px}
+.mode{display:flex;border:1.5px solid var(--divider);border-radius:12px;overflow:hidden;background:var(--surface)}
+.mode button{min-height:56px;min-width:120px;padding:0 20px;border:0;background:transparent;
+  font-weight:700;font-size:16px;color:var(--text2)}
+.mode button[aria-pressed="true"]{background:var(--accent-tint);color:var(--text)}
+#resetBtn{min-height:56px;padding:0 18px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);font-weight:600;font-size:15px;color:var(--text2);display:none}
+body.checkoff #resetBtn{display:inline-block}
+.progress{font-size:15px;color:var(--text2);display:none;font-variant-numeric:tabular-nums}
+body.checkoff .progress{display:inline}
+
+/* floating Sections menu — narrow screens only, works with JS off (details/summary) */
+.fab{display:none}
+@media (max-width:640px){
+  .fab{display:block;position:fixed;right:16px;bottom:16px;z-index:40}
+  .fab summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+    min-height:56px;min-width:56px;padding:0 20px;border-radius:999px;cursor:pointer;
+    background:var(--accent);color:var(--canvas);font-family:var(--head);font-weight:700;
+    font-size:16px;box-shadow:0 4px 14px rgba(10,30,28,.35)}
+  .fab summary::-webkit-details-marker{display:none}
+  .fab[open] summary{background:var(--text)}
+  .fab .fabmenu{position:absolute;right:0;bottom:64px;min-width:210px;background:var(--surface);
+    border:1.5px solid var(--divider);border-radius:14px;box-shadow:0 8px 24px rgba(10,30,28,.25);
+    padding:8px;display:flex;flex-direction:column}
+  .fab .fabmenu a{min-height:56px;display:flex;align-items:center;padding:8px 14px;border-radius:10px;
+    text-decoration:none;color:var(--text);font-weight:600;font-size:16px}
+  .fab .fabmenu a:hover{background:var(--expanded)}
+}
+
+h2.cardlabel{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:30px 0 10px;scroll-margin-top:70px}
+
+/* the card surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);overflow:hidden}
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:18px 24px 4px;scroll-margin-top:70px}
+
+/* section colour identities — tinted ground + coloured heading + left rule.
+   Colour is never the only signal: every tint is paired with its own heading colour
+   and a 6px left rule in the same hue. Every class used below is defined here. */
+.phase.sec-pos{background:var(--pos-tint);border-left:6px solid var(--pos-head)}
+.phase.sec-pos > h2{color:var(--pos-head)}
+.phase.sec-prep{background:var(--prep-tint);border-left:6px solid var(--prep-head)}
+.phase.sec-prep > h2{color:var(--prep-head)}
+.phase.sec-theory{background:var(--theory-tint);border-left:6px solid var(--theory-head)}
+.phase.sec-theory > h2{color:var(--theory-head)}
+.phase.sec-water{background:var(--water-tint);border-left:6px solid var(--water-head)}
+.phase.sec-water > h2{color:var(--water-head)}
+.phase.sec-red{background:var(--safety-tint);border-left:6px solid var(--safety)}
+.phase.sec-red > h2{color:var(--safety)}
+
+.step{display:flex;align-items:flex-start;gap:16px;padding:16px 24px;min-height:72px;
+  border-top:1px solid var(--divider)}
+.phase > h2 + .step{border-top:0}
+.step.groupbreak{border-top:3px solid var(--divider)}
+.stepnum{font-family:var(--head);font-weight:700;font-size:36px;line-height:1;color:var(--text2);
+  min-width:56px;font-variant-numeric:tabular-nums;padding-top:2px}
+.stepnum.blank{font-size:22px;padding-top:8px}
+.stepbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:21px;line-height:1.35;margin:0}
+.subact{font-size:16.5px;font-style:italic;color:var(--text2);margin:4px 0 0}
+.subact.cardbold{font-weight:700;font-style:normal;color:var(--text)}
+
+/* check-off */
+.tick{display:none;flex:0 0 auto;padding-top:2px}
+body.checkoff .tick{display:block}
+.tick input{width:32px;height:32px;margin:12px;accent-color:var(--accent);cursor:pointer}
+body.checkoff .step.done .action{color:var(--text2)}
+body.checkoff .step.done .stepnum{color:var(--accent)}
+
+/* attached Orem adjustment — visible, labeled, never replacing the card line */
+.adj{margin:10px 0 0;background:var(--accent-tint);border-left:4px solid var(--accent);
+  border-radius:10px;padding:12px 16px;max-width:66ch}
+.adj .atag{display:block;font-family:var(--head);font-weight:700;font-size:13px;
+  letter-spacing:.05em;color:var(--accent);margin:0 0 4px}
+.adj p{margin:0 0 6px;font-size:16px}
+.adj p:last-child{margin:0}
+.srcline{font-size:14px;color:var(--text2)}
+.cite{color:var(--text2);font-size:14px;white-space:nowrap}
+
+/* Section 6 spotting bullets — sit in the positioning section itself, not behind a drop-down */
+.doct{border-top:1px solid var(--divider);padding:16px 24px 20px}
+.doct .dtag{font-family:var(--head);font-weight:700;font-size:13px;letter-spacing:.05em;
+  color:var(--pos-head);margin:0 0 12px}
+.doct ul{margin:0;padding:0;list-style:none}
+.doct li{position:relative;margin:0 0 14px;padding-left:20px;font-size:17px;line-height:1.5;
+  max-width:64ch}
+.doct li::before{content:"";position:absolute;left:0;top:.6em;width:9px;height:9px;
+  border-radius:2px;background:var(--pos-head)}
+.doct li:last-child{margin:0}
+.doct li strong{font-weight:700}
+
+/* short tangible bullets hung off one step */
+.stepbul{margin:8px 0 0;padding-left:20px;max-width:62ch}
+.stepbul li{font-size:16px;line-height:1.45;margin:0 0 5px}
+.stepbul li:last-child{margin:0}
+.stepnote{margin:8px 0 0;font-size:16px;line-height:1.45;color:var(--text);max-width:62ch}
+
+/* manual drop-downs */
+.dd{margin:6px 24px 18px;border:1px solid var(--divider);border-radius:12px;
+  background:var(--surface);overflow:hidden}
+.dd > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;
+  min-height:56px;padding:12px 18px;font-family:var(--head);font-weight:700;font-size:16px}
+.dd > summary::-webkit-details-marker{display:none}
+.dd > summary::before{content:"";width:0;height:0;border-top:7px solid transparent;
+  border-bottom:7px solid transparent;border-left:10px solid currentColor;flex:0 0 auto;
+  transition:transform .15s}
+.dd[open] > summary::before{transform:rotate(90deg)}
+.dd .ddbody{padding:4px 20px 18px;border-top:1px solid var(--divider)}
+.dd .ddbody h4{font-family:var(--head);font-weight:700;font-size:15.5px;margin:18px 0 6px}
+.dd .ddbody p{margin:0 0 10px;max-width:68ch;font-size:16px}
+.dd .ddbody ul{margin:0 0 10px;padding-left:22px;max-width:66ch}
+.dd .ddbody li{margin:0 0 7px;font-size:16px}
+.dd .ddbody .srcline{display:block;margin:2px 0 14px}
+.dd.dd-pos > summary{color:var(--pos-head)}
+.dd.dd-water > summary{color:var(--water-head)}
+.dd.dd-red > summary{color:var(--safety)}
+.dd .jnote{background:var(--expanded);border-radius:10px;padding:12px 16px;max-width:66ch;margin:0 0 12px}
+.dd .jnote p{margin:0 0 6px}
+.dd .jnote p:last-child{margin:0}
+
+/* big collapsed water card */
+.bigdd{margin-top:30px;border:2px solid var(--water-head);border-radius:16px;
+  background:var(--surface);overflow:hidden}
+.bigdd > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:14px;
+  min-height:72px;padding:16px 24px;background:var(--water-tint);
+  font-family:var(--head);font-weight:800;font-size:clamp(17px,3vw,21px);color:var(--water-head)}
+.bigdd > summary::-webkit-details-marker{display:none}
+.bigdd > summary::before{content:"";width:0;height:0;border-top:9px solid transparent;
+  border-bottom:9px solid transparent;border-left:13px solid currentColor;flex:0 0 auto;
+  transition:transform .15s}
+.bigdd[open] > summary::before{transform:rotate(90deg)}
+.bigdd > summary .sumhint{font-family:var(--body);font-weight:400;font-size:15px;color:var(--text2)}
+
+/* tiller drop-down — large, distinct */
+.bigdd.tillerdd{border-color:var(--tiller-head)}
+.bigdd.tillerdd > summary{background:var(--tiller-tint);color:var(--tiller-head)}
+.tillerdd .ddbody{padding:8px 24px 20px}
+.tillerdd .ddbody h4{font-family:var(--head);font-weight:700;font-size:15.5px;margin:16px 0 6px}
+.tillerdd .ddbody p{margin:0 0 10px;max-width:68ch;font-size:16px}
+.tillerdd .ddbody ul{margin:0 0 10px;padding-left:22px;max-width:66ch}
+.tillerdd .ddbody li{margin:0 0 7px;font-size:16px}
+
+/* stabilizer theory — card prose, not steps */
+.theory{padding:6px 24px 20px}
+.theory ul{margin:0 0 12px;padding-left:22px;max-width:66ch}
+.theory li{margin:0 0 8px;font-size:17px}
+.theory li ul{margin:8px 0 0}
+.theory li li{font-size:16.5px;margin:0 0 6px}
+
+/* unverified card text — flagged, not settled */
+.unv{margin:0 0 4px;background:var(--surface);border-radius:12px;padding:16px 18px;max-width:70ch}
+.unv .utag{display:inline-flex;align-items:center;font-family:var(--head);font-weight:700;
+  font-size:13.5px;letter-spacing:.04em;color:var(--text);background:var(--expanded);
+  border:2px dashed var(--text2);border-radius:8px;padding:5px 11px;margin:0 0 10px}
+.unv p{margin:0 0 8px;font-size:16.5px}
+.unv p:last-child{margin:0}
+
+/* the safety gate — full width, reminder not a button */
+.gate{border-top:1px solid var(--divider);background:var(--safety-tint);padding:20px 24px;
+  display:flex;gap:0;align-items:flex-start}
+.gate .gatebody{flex:1;min-width:0}
+.gate .gtag{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:800;
+  font-size:15px;letter-spacing:.06em;color:var(--safety);margin:0 0 8px}
+.gate .gtag::before{content:"";width:0;height:0;border-left:11px solid transparent;
+  border-right:11px solid transparent;border-bottom:19px solid currentColor}
+.gate h3{font-family:var(--head);font-weight:800;font-size:21px;line-height:1.25;margin:0 0 8px;
+  border-left:5px solid var(--safety);padding-left:14px}
+.gate p{margin:0 0 8px;max-width:62ch;font-size:16px}
+.gate .srcline{display:block;margin-top:6px}
+.gate + .step{border-top:1px solid var(--divider)}
+
+/* quick-rule panel + emergency */
+.sidebox{margin-top:22px;background:var(--slate-tint);border:1px solid var(--divider);
+  border-radius:16px;padding:18px 24px}
+.sidebox .btag{font-family:var(--head);font-weight:700;font-size:13px;letter-spacing:.05em;
+  color:var(--slate-head);margin:0 0 6px}
+.sidebox p.action{font-size:19px}
+.emerg{margin-top:22px;background:var(--safety-tint);border:2px solid var(--safety);
+  border-radius:16px;overflow:hidden}
+.emerg > h2{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.05em;
+  color:var(--safety);margin:0;padding:18px 24px 4px;scroll-margin-top:70px}
+.emerg .step{min-height:60px;padding:12px 24px}
+.emerg > h2 + .step{border-top:0}
+
+.docfoot{margin-top:26px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+@media (max-width:640px){
+  .wrap{padding:8px 16px 120px}   /* clear the floating Sections button */
+  .top{padding:16px 16px 0}
+  .nightbtn{min-height:52px;padding:8px 18px}
+  .step{padding:14px 16px;gap:12px;min-height:76px}
+  .stepnum{font-size:30px;min-width:42px}
+  .action{font-size:19px;line-height:1.4}
+  .phase > h2,.theory,.gate,.emerg > h2,.emerg .step{padding-left:16px;padding-right:16px}
+  .doct{padding:16px 16px 18px}
+  .doct li{font-size:16.5px}
+  .unv{padding:14px}
+  .dd{margin:6px 10px 16px}
+  .dd > summary{align-items:flex-start;padding:14px 14px;line-height:1.35}
+  .dd > summary::before{margin-top:5px}
+  .dd .ddbody{padding:4px 14px 16px}
+  .bigdd > summary{padding:14px 16px;align-items:flex-start;flex-wrap:wrap;line-height:1.3}
+  .bigdd > summary::before{margin-top:6px}
+  .bigdd > summary .sumhint{flex-basis:100%;margin-left:27px}
+  .tillerdd .ddbody{padding:8px 16px 18px}
+  .adj{padding:12px 14px}
+  .sidebox{padding:16px 16px}
+  .mode button{min-width:0;flex:1}
+  .modebar{gap:8px}
+}
+@media (max-width:400px){
+  .stepnum{font-size:26px;min-width:34px}
+  .action{font-size:18px}
+  .step{gap:10px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.modebar,.nightbtn,.fab{display:none}
+  .sheet,.sidebox,.emerg,.bigdd,.dd{border:1.5px solid #000;border-radius:0;box-shadow:none;background:#fff}
+  .emerg{border-width:2.5px}
+  .phase.sec-pos,.phase.sec-prep,.phase.sec-theory,.phase.sec-water,.phase.sec-red{
+    background:#fff;border-left:4px solid #000}
+  .phase > h2,.emerg > h2,.dd > summary,.bigdd > summary{color:#000;background:#fff}
+  .step{break-inside:avoid;min-height:0;padding:8px 12px}
+  .phase{break-inside:avoid-page}
+  .tick{display:block}
+  .tick input{width:14pt;height:14pt;margin:2pt 8pt}
+  .adj{background:#fff;border:1px solid #000;border-left:4px solid #000}
+  .doct{border-top:1.5px solid #000}
+  .doct .dtag{color:#000}
+  .doct li::before{background:#000}
+  .adj .atag{color:#000}
+  .unv{background:#fff;border:1px dashed #000}
+  .gate{background:#fff;border-top:3px double #000;border-bottom:3px double #000}
+  .gate h3{border-left:5px solid #000}
+  .gate .gtag{color:#000}
+  .stepnum{color:#000;font-size:16pt;min-width:30pt}
+  .action{font-size:12pt}
+  details:not([open]) > *:not(summary){display:block}
+}
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html" aria-current="true">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html" aria-current="true">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="thome" href="truck-home.html">Truck Operations</a><span>›</span>Aerial Evolution</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <p class="kicker">TRUCK OPERATIONS · AERIAL EVOLUTION</p>
+    <h1>Aerial Evolution</h1>
+    <p class="provenance">Spot it, secure it, deploy it. Section 6&rsquo;s spotting calls sit right in the
+    positioning steps; the Pierce manual&rsquo;s stabilizer procedure sits behind the deploy steps.</p>
+  </header>
+
+  <div class="modebar">
+    <div class="mode" role="group" aria-label="Sheet mode">
+      <button type="button" id="refBtn" aria-pressed="true">Reference</button>
+      <button type="button" id="checkBtn" aria-pressed="false">Check-off</button>
+    </div>
+    <button type="button" id="resetBtn">Reset all</button>
+    <span class="progress" id="progress"></span>
+  </div>
+
+  <h2 class="cardlabel">CARD 1 · POSITION AND SET UP</h2>
+  <div class="sheet">
+
+    <section class="phase sec-pos" aria-labelledby="positioning">
+      <h2 id="positioning">Positioning &amp; spotting</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: position up-hill / up-wind"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">Position Up-Hill / Up-Wind</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: position outside collapse zone"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">Position Outside Collapse Zone</p>
+          <p class="stepnote">Defensive / master-stream measure: <strong>1.5 &times; the height of the tallest
+          exterior wall</strong> &mdash; a 20&nbsp;ft wall wants 30&nbsp;ft, the further the better.
+          <span class="cite">Engine Company Operations 2023 V-1, p.7-2</span></p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: position on corner of building if possible"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">Position on Corner of Building if Possible</p>
+          <ul class="stepbul">
+            <li>Going to the roof, it is the <strong>offside corner</strong> &mdash; sit a <strong>few feet
+            off it</strong>, which gives crews <strong>two ways on and off</strong> the ladder in a hurry.</li>
+            <li>Tip <strong>kisses the roof with both beams</strong>. That takes the bounce out and is far
+            safer to move up and down with tools.</li>
+            <li><strong>Beams on the roof, not the egress section.</strong></li>
+          </ul>
+          <span class="srcline">OFD Truck Manual v3.1, Section 6 &ldquo;Apparatus Positioning,&rdquo; p.143</span>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: assess grade and surface conditions"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">Assess Grade &amp; Surface Conditions</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: assess overhead hazards"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">Assess Overhead Hazards (Power Lines, Trees, Wires)</p></div>
+      </div>
+
+      <div class="doct">
+        <p class="dtag">SPOT IT LIKE THIS &mdash; TRUCK MANUAL SECTION 6</p>
+        <ul>
+          <li><strong>Spot for the aerial and for truck work.</strong> That is the Truck&rsquo;s job on the
+          fireground &mdash; make every effort to do it. <span class="cite">p.143</span></li>
+
+          <li><strong>First in and the Officer initiates fire attack &rarr; spot as an Engine.</strong>
+          The aerial spot gives way to the attack. <span class="cite">p.143</span></li>
+
+          <li><strong>Do not block the lay.</strong> &ldquo;The Truck takes the numbers&rdquo; only goes so
+          far &mdash; a poorly positioned Truck delays an arriving Engine from laying to the fire and getting
+          water on it. <span class="cite">p.143</span></li>
+
+          <li><strong>Uninvolved to involved.</strong> Put the ladder where the fire <em>is going</em>, not
+          where it is &mdash; that buys roof crews time to assess and vent, and sets up to protect the
+          uninvolved side if aerial master streams are coming. <span class="cite">p.143</span></li>
+
+          <li><strong>Take the outside spot.</strong> It lets Engines get in close <em>under</em> the ladder,
+          keeps the waterway out of the way, gives a better climbing angle, and sets up aerial master streams.
+          The inside spot only buys a longer throw &mdash; tall building or a long setback.
+          <span class="cite">p.143</span></li>
+
+          <li><strong>Pull past or stop short</strong> to land the tip where it is needed. Pulling past also
+          clears the front of the structure for quick ground ladders and lets the Engine line its transverse
+          bed up with its objective. <span class="cite">pp.143&ndash;144</span></li>
+
+          <li><strong>Commercial &mdash; the aerial is the primary ladder</strong> any time crews go to the
+          roof, one-story included: a ground ladder will not get that crew off in a hurry, and the aerial&rsquo;s
+          angle is easier with tools. <span class="cite">p.144</span></li>
+
+          <li><strong>Steep pitch &mdash; tip to the bottom of a valley</strong> in the area the roof work is
+          happening. Stable platform, two sections of roof to open, a strong part of the roof, and roof
+          ladders can go out from there. <span class="cite">p.144</span></li>
+
+          <li><strong>Second-due Truck takes the opposite offside corner</strong> and ladders the roof too,
+          unless its aerial is needed for a rescue. Secondary ladders go on its own side of the building.
+          <span class="cite">p.144</span></li>
+        </ul>
+      </div>
+
+      <details class="dd dd-pos">
+        <summary>The manual&rsquo;s fuller wording &mdash; Section 6</summary>
+        <div class="ddbody">
+          <p>Positioning &mdash; &ldquo;spotting&rdquo; &mdash; the aerial apparatus requires skill and
+          practice. Trucks should make every effort to spot for use of the aerial device and truck company
+          operations on the fireground; if arriving first and the Truck Company Officer decides to initiate
+          fire attack, the apparatus should be positioned as an
+          <a data-nav="eflow" href="engine-flow.html">Engine</a>.
+          Often the term is thrown around that the Truck takes the numbers &mdash; hose can be extended,
+          ladders can&rsquo;t. There is some truth to it, but more should be considered, as a poorly
+          positioned Truck can delay an arriving Engine from quickly laying to the fire and providing
+          extinguishment. The manual breaks aerial positioning into four basic considerations.</p>
+          <span class="srcline">OFD Truck Manual v3.1, Section 6 &ldquo;Apparatus Positioning,&rdquo; p.143</span>
+
+          <h4>1 &middot; Uninvolved to involved</h4>
+          <p>Spot the ladder to create distance between where the fire is and where it will be going. If going
+          to the roof for ventilation, crews will need time to assess the roof and perform ventilation
+          operations. It also sets up to protect uninvolved portions of the building if aerial master streams
+          are anticipated.</p>
+
+          <h4>2 &middot; Corners</h4>
+          <p>The &ldquo;offside&rdquo; corner is where the aerial ladder aims when going to the roof. Placing
+          the ladder just a few feet off the corner allows two ways on and off the ladder &mdash; which can
+          come in handy if crews need to exit the roof in a hurry. The tip should &ldquo;kiss&rdquo; the roof
+          with both beams: that takes the bounce out of the ladder and is much safer to maneuver up and down
+          with tools. Stay away from placing the egress section on the roof and opt to place the beams on
+          instead.</p>
+
+          <h4>3 &middot; Inside vs. outside</h4>
+          <p>Taking an inside spot means needing the aerial for a longer throw &mdash; the height of a
+          building or a long setback. An outside spot allows Engine companies to position closer to the
+          building underneath the Truck&rsquo;s ladder; this lets the waterway get out of the way and produces
+          a better climbing angle for crews going to the roof. Securing an outside spot also sets up aerial
+          master stream operations should the need arise.</p>
+
+          <h4>4 &middot; Pull past / stop short</h4>
+          <p>Pulling past a structure could allow the aerial ladder to be placed where needed. It also allows
+          ground ladders to be pulled out right in front of the structure in a quick manner, whether for
+          primary or secondary access/egress, and allows the Engine the option of aligning its transverse bed
+          up with its objective. Stopping short might be needed for placement of the aerial ladder.</p>
+          <span class="srcline">OFD Truck Manual v3.1, Section 6, pp.143&ndash;144</span>
+
+          <h4>Commercial buildings</h4>
+          <p>All commercial buildings should be laddered with the aerial ladder as the primary ladder when
+          roof operations are being performed. While it may seem easy to ladder a one-story commercial with a
+          ground ladder, it will not be easy to get that crew off the roof in a timely manner should the need
+          arise; in addition the angle of the aerial ladder will be much easier to ascend and descend with
+          tools. <em>Published as the default rather than an absolute &mdash; ruling R-42.</em></p>
+
+          <h4>Steep pitched roofs</h4>
+          <p>When going to the roof of a steep residential or possibly a commercial, aim at placing the aerial
+          ladder to the bottom of a valley in the area where roof operations are going to be performed. This
+          allows a stable platform to work from and two different sections of roof to open up; roof ladders
+          can also be deployed from this position. Placing the ladder low in the valley also places the crew
+          in a stronger area of the roof and allows more roof to work.</p>
+
+          <h4>Second due Trucks</h4>
+          <p>Second arriving Trucks should be placing their ladders to the roof if the first arriving Truck is
+          performing roof operations &mdash; as long as there isn&rsquo;t an imminent need for a rescue with
+          the second due Truck&rsquo;s aerial ladder. Second due Trucks should attempt to place their ladder
+          on the opposite &ldquo;offside&rdquo; corner; secondary ladders should be placed on their side of
+          the building.</p>
+
+          <h4>How the manual closes the section</h4>
+          <p>While not covering every possible scenario, the guidelines should set Truck companies up for
+          success on the fireground by starting off their operations in a good position. Truck companies
+          should be routinely spotting their apparatus on buildings throughout the city in attempts to hone
+          their skills.</p>
+          <span class="srcline">OFD Truck Manual v3.1, Section 6, p.144</span>
+        </div>
+      </details>
+    </section>
+
+    <section class="phase sec-red" aria-labelledby="secure">
+      <h2 id="secure">SECURE THE RIG</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set parking brake"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">SET PARKING BRAKE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set front wheel locks"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">SET FRONT WHEEL LOCKS</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: engage PTO, aerial master, high idle, generator"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">ENGAGE: PTO · AERIAL MASTER · HIGH IDLE · Generator</p></div>
+      </div>
+    </section>
+
+    <section class="phase sec-prep" aria-labelledby="prepare">
+      <h2 id="prepare">Prepare</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: chock front tires"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">CHOCK FRONT TIRES (leave space)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: pull aerial step out"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">Pull Aerial Step Out</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set up pads, verbalize surface conditions"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">Set Up Pads</p>
+          <p class="subact">Verbalize Surface Conditions</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase sec-red" aria-labelledby="deploy">
+      <h2 id="deploy">DEPLOY</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: deploy stabilizers using gauges"></span>
+        <span class="stepnum">12</span>
+        <div class="stepbody"><p class="action">DEPLOY STABILIZERS (USE GAUGES)</p></div>
+      </div>
+
+      <details class="dd dd-red">
+        <summary>Deploying the stabilizers — Pierce manual</summary>
+        <div class="ddbody">
+          <div class="jnote">
+            <p><strong>This rig:</strong> one large rear stabilizer in the middle plus two mid-ship —
+            a <strong>three-stabilizer</strong> apparatus, so the manual’s three-stabilizer leveling and
+            chocking procedures are the ones that apply. And there are <strong>no pins</strong> on the new
+            truck, so the manual’s jack-pin steps — written “if equipped” at 1-9.2 and at 4-3.8 items 4
+            and 5 — are not part of this evolution.</p>
+            <p class="srcline">Jason, ruling R-49, 2026-08-30</p>
+          </div>
+
+          <h4>Where the rig can sit</h4>
+          <ul>
+            <li>The surface must be firm and stable — stability cannot be assured on grass, dirt, or hot
+            asphalt. Avoid loose objects, utility access covers, chambers, pipes, culverts, broken pavement,
+            and areas that drop off suddenly.</li>
+            <li>The apparatus must be able to be leveled within the safe operating limits.</li>
+            <li>Ensure clearance from power lines during operation; position clear of areas exposed to fire
+            or falling debris.</li>
+            <li>Always use warning lights when positioning in traffic. Never position on or near a railroad
+            track or an active airport runway.</li>
+            <li>The ground must support <strong>75 psi</strong> of pressure between each stabilizer pad and
+            the ground (NFPA 1901 design limit).</li>
+          </ul>
+          <span class="srcline">Pierce Rear Mount Steel Aerial Ladder (Command Zone) manual, 1-9 Safe Aerial Set-Up ·
+          1-9.1 Aerial Apparatus Positioning · 1-9.1a Ground Bearing Support, pp.1-11–1-12</span>
+
+          <h4>Deploying</h4>
+          <ul>
+            <li>Clear the area of personnel; use spotters to maneuver into position. Engage parking brake and
+            front wheel lock, and deploy wheel chocks.</li>
+            <li>Determine where the jacks will land and set out stabilizer pads centered under them.
+            <strong>Deploy ground pads every time</strong>, even on concrete or other firm surfaces.</li>
+            <li>Walk around and beneath the vehicle to ensure no one is in the area — stabilizers are a crush
+            hazard. Shout your intention to deploy before you deploy.</li>
+            <li>Deploy the stabilizers and level the apparatus, keeping the stabilizers in sight at all
+            times.</li>
+          </ul>
+          <span class="srcline">Pierce manual, 1-9.2 Aerial Stabilizer Deployment, p.1-12</span>
+
+          <h4>Operating sequence at the controls</h4>
+          <ul>
+            <li>Locate the stabilizer controls · confirm the area is clear · shout your intention · HIGH IDLE
+            on · extend the stabilizer beams <strong>completely</strong> · place the ground pads centered
+            beneath the jacks.</li>
+            <li>Stabilizers must be fully extended for safe operation through 360° of rotation, and the
+            apparatus must be within the safe level range before operation.</li>
+          </ul>
+          <span class="srcline">Pierce manual, 4-3 Stabilizing the Apparatus · 4-3.2 Stabilizer Deployment, p.4-4</span>
+
+          <h4>Leveling a three-stabilizer rig</h4>
+          <ul>
+            <li>Lower each front (mid-ship) jack until its on-ground indicator is flashing.</li>
+            <li>Lower each jack further, keeping the apparatus within the safe level limits in slope and
+            grade, until the rear tires are off the ground.</li>
+            <li>Lower the rear center downrigger until its on-ground indicator glows steady.</li>
+            <li>Install wheel chocks on <strong>both sides of the front axle tires</strong> (the manual’s
+            chock placement for two- and three-stabilizer apparatus).</li>
+            <li>Level Assist (if equipped): lower the front stabilizers until the indicators flash, engage
+            Level Assist, then lower the center downrigger until its indicator is steady. For full aerial
+            reach over the front, the front tires must remain in firm contact with the ground.</li>
+          </ul>
+          <span class="srcline">Pierce manual, 4-3.1 Aerial Set-Up Preparation, p.4-3 ·
+          4-3.4 Leveling Apparatus Equipped with Three Stabilizers, p.4-6 ·
+          4-3.7a Level Assist for Three Stabilizer System, p.4-11</span>
+
+          <h4>Short-jacking</h4>
+          <ul>
+            <li>Partial extension of the stabilizer beams is only for when you are forced to set up in tight
+            quarters. Extend fully on the side you will work over; extend as far as possible on the other.</li>
+            <li>You must <strong>only operate the aerial over the side where the stabilizers are fully
+            extended and set</strong>. An interlock prevents rotation over the short-jacked side — do not
+            rely on it; never rotate past the centerline toward the short-jacked side.</li>
+            <li>An Incident Safety Officer should observe aerial operations during short-jack procedures.</li>
+          </ul>
+          <span class="srcline">Pierce manual, 1-9.3 Stabilizer Short-Jack Deployment, p.1-13 ·
+          4-3.9 Short-Jack Stabilizer Set-Up, p.4-12</span>
+
+          <h4>Cribbing and blocking</h4>
+          <ul>
+            <li>Use only if trained in the proper methods, with cribbing that supports at least 100 psi of
+            ground contact pressure.</li>
+            <li>Place on a firm level base with no debris underneath; stack directly beneath the outrigger to
+            avoid slipping.</li>
+            <li>On a sloped surface, level the first layers so the jack foot sits on a level surface. The
+            apparatus stabilizer pad is always the top layer, directly under the jack foot.</li>
+            <li>Cover at least as much area as the stabilizer pads; never build taller than twice the width
+            of the base; use only undamaged hardwood.</li>
+            <li>Inspect frequently during operation for settling, slippage, cracking, bending, crushing, or
+            shear failure.</li>
+          </ul>
+          <span class="srcline">Pierce manual, 1-9.4 Cribbing and Blocking, p.1-13</span>
+
+          <h4>Final setup</h4>
+          <ul>
+            <li>Check the slope and grade indicators are still in the safe zone — if not, stow the
+            stabilizers and reposition.</li>
+            <li>Check each stabilizer pad is centered under its jack foot; HIGH IDLE off.</li>
+            <li>Reposition wheel chocks so the downhill chock is against the tire and the uphill chock is
+            about 2 inches from it.</li>
+          </ul>
+          <span class="srcline">Pierce manual, 4-3.8 Final Setup - All Apparatus, p.4-11
+          (items 4 and 5 omitted — they are the jack safety-pin steps, and there are no pins on this rig, R-49)</span>
+        </div>
+      </details>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: change aerial rescue/fire mode"></span>
+        <span class="stepnum">13</span>
+        <div class="stepbody"><p class="action">CHANGE AERIAL RESCUE/FIRE MODE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: change nozzle if required"></span>
+        <span class="stepnum">14</span>
+        <div class="stepbody"><p class="action">CHANGE NOZZLE IF REQUIRED</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: deploy aerial, verbalize weight chart, overhead hazards, wind, tip weights"></span>
+        <span class="stepnum">15</span>
+        <div class="stepbody"><p class="action">DEPLOY AERIAL</p>
+          <p class="subact">VERBALIZE WEIGHT CHART, OVERHEAD HAZARDS, WIND, Tip Weights</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase sec-theory" aria-labelledby="theory">
+      <h2 id="theory">STABILIZER THEORY</h2>
+      <div class="theory">
+        <ul>
+          <li><strong>Front wheels should not be lifted.</strong> If the front tires come off the ground:
+            <ul>
+              <li>The truck can teeter (rock forward and back) on the stabilizers.</li>
+              <li>The aerial may not bed properly (mechanical issue). The front is much lighter — so
+              there's less weight pressing down = less stabilizer effectiveness.</li>
+              <li>You also lose traction at the front, which helps resist sliding (especially downhill).</li>
+            </ul>
+          </li>
+          <li><strong>Downhill deployment:</strong>
+            <ul>
+              <li>Accept that you can't flatten the slope with the jacks.</li>
+              <li>Keep all wheels, especially the front, on the ground.</li>
+              <li>Set the stabilizers for balance, but don't try to force the truck level if it means
+              lifting the front.</li>
+            </ul>
+          </li>
+        </ul>
+        <div class="unv">
+          <p class="utag">UNVERIFIED WORDING</p>
+          <p><strong>Uphill deployment:</strong> Preferred position is to have rear stabilizers support
+          enough weight to remove the bulge from the rear tires. The front stabilizers should be firmly
+          planted on the ground but leaving the front suspension compressed, allowing for full aerial
+          operation. When positioning uphill, raise the rear of the truck until the truck is level. Front
+          stabilizers should be set until they are firm on ground.</p>
+          <p class="srcline">Part of this paragraph was glared in the transcription photo. It is shown as
+          read while the wording is verified.</p>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /card 1 -->
+
+  <details class="bigdd" id="water">
+    <summary>FLOWING WATER <span class="sumhint">— open when the truck is pumping</span></summary>
+    <div class="sheet" style="border:0;border-radius:0;box-shadow:none">
+
+    <section class="phase sec-water" aria-label="Water sequence">
+      <div class="step" style="border-top:0"><span class="tick"><input type="checkbox" aria-label="Done: open tank to pump"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">Open Tank to Pump</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open tank fill / recirc line"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">Open Tank Fill / Recirc Line</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set PSI mode"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">Set PSI Mode</p>
+          <div class="adj"><span class="atag">OREM</span>
+            <p>PSI/RPM mode is a PUC feature — at Orem it exists on <strong>Engine 34's Pierce PUC only</strong>.
+            There is no PSI mode on Orem's other pumps.</p>
+            <p class="srcline">Ruling SR-8, 2026-08-29</p>
+          </div>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set transfer valve pressure/volume"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">Set Transfer Valve: Pressure/Volume</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: pull hose for firefighters"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">Pull Hose for Firefighters</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: charge hand lines"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">Charge Hand Lines</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: calculate / set PDP"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">Calculate / Set PDP</p></div>
+      </div>
+
+      <div class="step groupbreak"><span class="tick"><input type="checkbox" aria-label="Done: connect LDH supply"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">CONNECT LDH SUPPLY</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open pressure relief valve"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">OPEN PRESSURE RELIEF VALVE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: signal water"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">SIGNAL WATER</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: close relief valve"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">CLOSE RELIEF VALVE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open supply intake slowly, monitor gauges"></span>
+        <span class="stepnum">12</span>
+        <div class="stepbody"><p class="action">OPEN SUPPLY INTAKE SLOWLY (*MONITOR GAUGES)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: prime pump"></span>
+        <span class="stepnum">13</span>
+        <div class="stepbody"><p class="action">**PRIME PUMP**</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: close tank to pump"></span>
+        <span class="stepnum">14</span>
+        <div class="stepbody"><p class="action">CLOSE TANK TO PUMP</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: refill tank valve open, note hydrant static intake pressure"></span>
+        <span class="stepnum">15</span>
+        <div class="stepbody"><p class="action">REFILL TANK VALVE OPEN</p>
+          <p class="subact cardbold">*NOTE HYDRANT STATIC INTAKE PRESSURE</p>
+        </div>
+      </div>
+
+      <details class="dd dd-water">
+        <summary>Pumping tips that apply on this rig</summary>
+        <div class="ddbody">
+          <ul>
+            <li><strong>Maintain 20 PSI intake pressure.</strong> 20 psi minimum protects from drawing a
+            vacuum on the intake hose. <span class="srcline">Jason's engine evolution card, closing
+            note</span></li>
+            <li><strong>Ladder 32's waterway is pre-plumbed</strong> <em>(the hydraulic manual's “T33”)</em> —
+            appliance loss <strong>25 psi ± elevation</strong>. Name the rig, not the appliance.
+            <span class="srcline">OFD Hydraulic Manual, appliance loss · Ruling R-38, 2026-08-29</span></li>
+          </ul>
+        </div>
+      </details>
+
+      <div class="step groupbreak"><span class="tick"><input type="checkbox" aria-label="Done: calculate / set PDP for the aerial"></span>
+        <span class="stepnum">16</span>
+        <div class="stepbody"><p class="action">CALCULATE / SET PDP</p>
+          <div class="adj"><span class="atag">OREM — RULED ORDER</span>
+            <p><strong>PDP is calculated and set before the waterway opens.</strong> As printed, the card
+            opens the aerial water flow valve first, which flows water at an uncalculated pressure. The card
+            lines are kept; the ruled order runs PDP → notify → confirm → open.</p>
+            <p class="srcline">Ruling R-48, 2026-08-30</p>
+          </div>
+          <div class="adj"><span class="atag">OREM — NAME THE RIG, NOT THE APPLIANCE</span>
+            <p><strong>Ladder 32</strong> <em>(the hydraulic manual's “T33”)</em> — pre-plumbed waterway:
+            <strong>25 psi ± elevation</strong>.</p>
+            <p><strong>The tiller</strong> <em>(manual's “Tiller33”)</em> — playpipe: Q² for the 3″ +
+            ladder elevation + <strong>15 psi</strong> appliance + NP.</p>
+            <p class="srcline">OFD Hydraulic Manual, appliance loss · Ruling R-38, 2026-08-29</p>
+          </div>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: notify command big water is ready"></span>
+        <span class="stepnum">17</span>
+        <div class="stepbody"><p class="action">NOTIFY COMMAND BIG WATER IS READY</p></div>
+      </div>
+
+      <div class="gate">
+        <span class="tick"><input type="checkbox" aria-label="Done: confirmed with Command that all members are out of the building"></span>
+        <div class="gatebody">
+          <p class="gtag">STOP — COMMAND CONFIRMATION REQUIRED</p>
+          <h3>Confirm all department members are out of the building before flowing the master stream.</h3>
+          <p>Affirmative acknowledgement, not a one-way notification. The rule covers “any master stream or
+          elevated ladder pipe” — the aerial is included. A master stream must be shut down to be
+          repositioned — the safest positions are the building corners; the front is dangerous, ineffective,
+          and inside the collapse zone.</p>
+          <span class="srcline">OFD Engine Company Operations 2023 V-1, Master Stream Operations, p.7-1</span>
+        </div>
+      </div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open aerial water flow valve"></span>
+        <span class="stepnum">18</span>
+        <div class="stepbody"><p class="action">OPEN AERIAL WATER FLOW VALVE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: adjust nozzle pattern"></span>
+        <span class="stepnum">19</span>
+        <div class="stepbody"><p class="action">ADJUST NOZZLE PATTERN</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open aerial drain when stowing"></span>
+        <span class="stepnum blank">✱</span>
+        <div class="stepbody"><p class="action">*OPEN AERIAL DRAIN WHEN STOWING</p></div>
+      </div>
+    </section>
+
+    </div>
+  </details><!-- /flowing water -->
+
+  <details class="bigdd tillerdd" id="tiller">
+    <summary>TILLER SETUP <span class="sumhint">— differences</span></summary>
+    <div class="ddbody">
+      <h4>What is sourced today</h4>
+      <ul>
+        <li><strong>The tiller carries the playpipe</strong> <em>(the hydraulic manual's “Tiller33”)</em>.
+        Its master-stream PDP: <strong>Q² for the 3″ + ladder elevation + 15 psi appliance + NP</strong>.
+        Ladder 32 carries the pre-plumbed waterway instead (25 psi ± elevation) — name the rig, not the
+        appliance.</li>
+      </ul>
+      <p class="srcline">OFD Hydraulic Manual, appliance loss · Ruling R-38, 2026-08-29</p>
+      <h4>What is not published yet</h4>
+      <p>The tiller's own Pierce operator's manual is not on file, so its full setup differences —
+      stabilizer configuration, leveling, chocking, jackknife limits — are not published yet. Nothing here
+      is guessed; this section grows when that manual is sourced.</p>
+    </div>
+  </details>
+
+  <div class="sidebox">
+    <p class="btag">QUICK RULE · VOLUME REMAINING</p>
+    <p class="action">USE 1ST DIGIT METHOD TO DETERMINE ADDITIONAL LIKE VOLUMES REMAINING.</p>
+  </div>
+
+  <div class="emerg" role="region" aria-labelledby="emergency">
+    <h2 id="emergency">EMERGENCY</h2>
+    <div class="step"><span class="stepnum blank" aria-hidden="true">·</span>
+      <div class="stepbody"><p class="action">NOTIFY COMMAND</p></div>
+    </div>
+    <div class="step"><span class="stepnum blank" aria-hidden="true">·</span>
+      <div class="stepbody"><p class="action">WORK BACKWARDS</p></div>
+    </div>
+    <div class="step"><span class="stepnum blank" aria-hidden="true">·</span>
+      <div class="stepbody"><p class="action">CHECK INDICATOR STABILITY LIGHTS</p></div>
+    </div>
+    <div class="step"><span class="stepnum blank" aria-hidden="true">·</span>
+      <div class="stepbody"><p class="action">USE HYDRAULIC OVERRIDE CONTROLS</p></div>
+    </div>
+    <div class="step"><span class="stepnum blank" aria-hidden="true">·</span>
+      <div class="stepbody"><p class="action">EPU</p></div>
+    </div>
+  </div>
+
+  <div class="docfoot">
+    <p><strong>Sources.</strong> My own laminated aerial evolution cards, transcribed 2026-08-28 — wording,
+    order and groupings verbatim, caps as printed. Two changes from the printed cards, both mine: the
+    master-stream order is per my 2026-08-30 review (R-48), and the pin step is removed because this rig has
+    no pins (R-49). Manual material layered in behind the steps: OFD Truck Manual v3.1, Section 6
+    (pp.143–144, spotting) · Pierce Rear Mount Steel Aerial Ladder (Command Zone) operator's manual, sections
+    1-9 and 4-3 · OFD Hydraulic Manual, appliance loss · OFD Engine Company Operations 2023 V-1,
+    Master Stream Operations, p.7-1 (confirm-all-out, corners vs front) and p.7-2 (the 1.5&times; collapse
+    zone).</p>
+    <p>The tiller's own operator's manual is not on file, so its setup differences are not published yet.
+    Page numbers follow each manual's own footers — the Truck Manual runs a single sequence, Engine Company
+    Operations and the Pierce manual paginate per chapter.</p>
+    <p>Version: prototype · Last reviewed 2026-08-30 · Compiled by Engineer Jason Anderson</p>
+  </div>
+
+</div>
+
+<details class="fab">
+  <summary>Sections</summary>
+  <nav class="fabmenu" aria-label="Jump to section">
+    <a href="#positioning">Positioning &amp; spotting</a>
+    <a href="#secure">Secure the rig</a>
+    <a href="#prepare">Prepare</a>
+    <a href="#deploy">Deploy</a>
+    <a href="#theory">Stabilizer theory</a>
+    <a href="#water">Water</a>
+    <a href="#tiller">Tiller</a>
+    <a href="#emergency">Emergency</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  // night mode
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // modes
+  var refBtn=document.getElementById('refBtn'),checkBtn=document.getElementById('checkBtn');
+  var resetBtn=document.getElementById('resetBtn'),prog=document.getElementById('progress');
+  var boxes=[].slice.call(document.querySelectorAll('.tick input'));
+  function setMode(m){
+    document.body.classList.toggle('checkoff',m==='check');
+    refBtn.setAttribute('aria-pressed',m==='ref');
+    checkBtn.setAttribute('aria-pressed',m==='check');
+    sessionStorage.setItem('aerial-mode',m);
+    update();
+  }
+  refBtn.addEventListener('click',function(){setMode('ref')});
+  checkBtn.addEventListener('click',function(){setMode('check')});
+  function update(){
+    var done=0;
+    boxes.forEach(function(b){
+      var st=b.closest('.step');
+      if(st){st.classList.toggle('done',b.checked)}
+      if(b.checked)done++;
+    });
+    prog.textContent=done+' / '+boxes.length+' done';
+  }
+  boxes.forEach(function(b,i){
+    b.checked=sessionStorage.getItem('aerial-s'+i)==='1';
+    b.addEventListener('change',function(){
+      sessionStorage.setItem('aerial-s'+i,b.checked?'1':'0');update();
+    });
+  });
+  resetBtn.addEventListener('click',function(){
+    boxes.forEach(function(b,i){b.checked=false;sessionStorage.removeItem('aerial-s'+i)});update();
+  });
+  setMode(sessionStorage.getItem('aerial-mode')||'ref');
+
+  // jump links inside collapsed sections: open the section before scrolling
+  document.querySelectorAll('.fabmenu a').forEach(function(a){
+    a.addEventListener('click',function(){
+      var id=a.getAttribute('href').slice(1);
+      var t=document.getElementById(id);
+      if(!t)return;
+      var d=t.closest('details');
+      if(d&&!d.open){d.open=true}
+      if(t.tagName==='DETAILS'&&!t.open){t.open=true}
+      var fab=a.closest('details.fab');
+      if(fab){fab.open=false}
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

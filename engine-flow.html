@@ -1,0 +1,1123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Engine Evolution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+/* ============================================================
+   Field-instrument system · per the adopted spec.
+   Rev 2026-08-30b: Positioning rebuilt on Engine Company
+   Operations ch.1 doctrine with labeled disclosures; density
+   tightened for a phone at the pump panel; manual material
+   layered onto the steps that have real source behind them.
+   No sticky jump bar — floating Sections menu only.
+   Production note: self-host WOFF2 for offline use.
+   ============================================================ */
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  /* section palette — muted, one identity per phase */
+  --c-pos:#3D5A80;  --c-pos-t:#E9EEF5;
+  --c-wtr:#0F6F78;  --c-wtr-t:#DFEEEF;
+  --c-sup:#5B4E9E;  --c-sup-t:#ECE9F6;
+  --c-mst:#7C3F87;  --c-mst-t:#F4E9F5;
+  --c-fom:#2F7D4F;  --c-fom-t:#E4F2E9;
+  --c-dig:#8A6116;  --c-dig-t:#F6EEDC;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --c-pos:#9FBCDF; --c-pos-t:#18232F;
+    --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+    --c-sup:#B7ADE9; --c-sup-t:#231E38;
+    --c-mst:#D9A2DB; --c-mst-t:#301D33;
+    --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+    --c-dig:#DFBC77; --c-dig-t:#332A15;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --c-pos:#9FBCDF; --c-pos-t:#18232F;
+  --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+  --c-sup:#B7ADE9; --c-sup-t:#231E38;
+  --c-mst:#D9A2DB; --c-mst-t:#301D33;
+  --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+  --c-dig:#DFBC77; --c-dig-t:#332A15;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:18px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2);margin:0}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:14px 0 4px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(27px,5vw,40px);line-height:1.1;
+  margin:0 0 8px;text-wrap:balance}
+.lede{margin:0;font-size:16.5px;color:var(--text2);max-width:60ch}
+
+/* mode bar */
+.modebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:16px 0 4px}
+.mode{display:flex;border:1.5px solid var(--divider);border-radius:12px;overflow:hidden;background:var(--surface)}
+.mode button{min-height:56px;min-width:118px;padding:0 18px;border:0;background:transparent;
+  font-weight:700;font-size:16px;color:var(--text2)}
+.mode button[aria-pressed="true"]{background:var(--accent-tint);color:var(--text)}
+#resetBtn{min-height:56px;padding:0 18px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);font-weight:600;font-size:15px;color:var(--text2);display:none}
+body.checkoff #resetBtn{display:inline-block}
+.progress{font-size:15px;color:var(--text2);display:none;font-variant-numeric:tabular-nums}
+body.checkoff .progress{display:inline}
+
+/* floating Sections menu — mobile only; <details> so it works with JS off */
+.secmenu{display:none}
+@media (max-width:640px){
+  .secmenu{display:block;position:fixed;right:14px;bottom:14px;z-index:40}
+  .secmenu > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+    min-height:56px;min-width:56px;padding:0 22px;border:1.5px solid var(--divider);border-radius:999px;
+    background:var(--surface);color:var(--text);font-family:var(--head);font-weight:700;font-size:16px;
+    cursor:pointer;box-shadow:0 4px 14px rgba(10,30,28,.22)}
+  .secmenu > summary::-webkit-details-marker{display:none}
+  .secmenu[open] > summary{border-color:var(--accent);color:var(--accent)}
+  .secpanel{position:absolute;bottom:calc(100% + 10px);right:0;min-width:220px;max-width:78vw;
+    background:var(--surface);border:1.5px solid var(--divider);border-radius:14px;
+    box-shadow:0 8px 24px rgba(10,30,28,.25);padding:8px;display:grid;gap:2px}
+  .secpanel a{display:flex;align-items:center;min-height:56px;padding:6px 14px;border-radius:10px;
+    text-decoration:none;color:var(--text);font-weight:600;font-size:16px;border-left:5px solid transparent}
+  .secpanel a.spos{border-left-color:var(--c-pos)}
+  .secpanel a.ssec{border-left-color:var(--safety)}
+  .secpanel a.swtr{border-left-color:var(--c-wtr)}
+  .secpanel a.ssup{border-left-color:var(--c-sup)}
+  .secpanel a.smst{border-left-color:var(--c-mst)}
+  .secpanel a.sfom{border-left-color:var(--c-fom)}
+  .secpanel a.sdig{border-left-color:var(--c-dig)}
+}
+
+/* the one procedure surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:16px;overflow:hidden}
+
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2,.phase > summary{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:15px 22px 3px;scroll-margin-top:14px}
+/* collapsible section header behaves like the h2 but is a tap target */
+.phase > summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:56px;cursor:pointer;
+  padding-top:0;padding-bottom:0}
+.phase > summary::-webkit-details-marker{display:none}
+.phase > summary::after{content:"▾";font-size:12px;transition:transform .15s}
+.phase[open] > summary::after{transform:rotate(180deg)}
+
+/* section colour identities — tinted ground + matching header accent,
+   never colour alone: every tint is paired with its coloured heading + left rule */
+.phase.cpos{background:var(--c-pos-t);border-left:6px solid var(--c-pos)}
+.phase.cpos > h2,.phase.cpos > summary{color:var(--c-pos)}
+.phase.cwtr{background:var(--c-wtr-t);border-left:6px solid var(--c-wtr)}
+.phase.cwtr > h2,.phase.cwtr > summary{color:var(--c-wtr)}
+.phase.csup{background:var(--c-sup-t);border-left:6px solid var(--c-sup)}
+.phase.csup > h2,.phase.csup > summary{color:var(--c-sup)}
+.phase.cmst{background:var(--c-mst-t);border-left:6px solid var(--c-mst)}
+.phase.cmst > h2,.phase.cmst > summary{color:var(--c-mst)}
+.phase.cfom{background:var(--c-fom-t);border-left:6px solid var(--c-fom)}
+.phase.cfom > h2,.phase.cfom > summary{color:var(--c-fom)}
+
+/* Secure the rig keeps red */
+.phase.cardred{background:var(--safety-tint);border-left:6px solid var(--safety)}
+.phase.cardred > h2{color:var(--safety)}
+.phase.cardred .step{border-top-color:color-mix(in srgb,var(--safety) 18%,transparent)}
+@supports not (color:color-mix(in srgb,red 10%,blue)){.phase.cardred .step{border-top-color:var(--divider)}}
+
+.step{display:flex;align-items:flex-start;gap:14px;padding:12px 22px;min-height:62px;
+  border-top:1px solid var(--divider)}
+.phase > h2 + .step,.phase > summary + .step{border-top:0}
+.stepnum{font-family:var(--head);font-weight:700;font-size:30px;line-height:1.05;color:var(--text2);
+  min-width:46px;font-variant-numeric:tabular-nums;padding-top:1px}
+.stepnum.sub{font-size:20px;padding-top:8px}
+.stepbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:19.5px;line-height:1.32;margin:0}
+.subaction{font-weight:600;font-size:18px;line-height:1.32;margin:0;font-style:italic}
+.stepsrc{font-size:14px;color:var(--text2);margin:5px 0 0;max-width:62ch}
+
+/* percent lines on the FOAM step */
+.figrow{display:flex;align-items:baseline;gap:14px;margin-top:8px;flex-wrap:wrap}
+.figrow .figname{font-size:16px;color:var(--text2);min-width:12ch}
+.figrow .figval{font-family:var(--head);font-weight:800;font-size:24px;font-variant-numeric:tabular-nums}
+
+/* small attached Orem tag on a line */
+.oretag{display:inline-flex;align-items:center;gap:6px;margin-top:7px;margin-right:8px;
+  font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.02em;
+  color:var(--accent);background:var(--accent-tint);border-radius:8px;padding:5px 10px}
+
+/* small plain note attached to a step */
+.plainnote{margin:7px 0 0;font-size:15px;color:var(--text2);max-width:62ch}
+
+/* check-off */
+.tick{display:none;flex:0 0 auto;padding-top:0}
+body.checkoff .tick{display:block}
+.tick input{width:30px;height:30px;margin:8px 10px 8px 0;accent-color:var(--accent);cursor:pointer}
+body.checkoff .step.done .action,body.checkoff .step.done .subaction{color:var(--text2)}
+body.checkoff .step.done .stepnum{color:var(--accent)}
+
+/* disclosures — one per step, labeled by content, closed by default */
+details.disc{margin-top:8px}
+details.disc > summary{list-style:none;display:inline-flex;align-items:center;min-height:48px;
+  padding:6px 14px;border:1.5px solid var(--divider);border-radius:10px;color:var(--accent);
+  font-weight:600;font-size:15px;cursor:pointer;background:transparent}
+details.disc > summary::-webkit-details-marker{display:none}
+details.disc > summary::after{content:"▾";margin-left:8px;font-size:12px;transition:transform .15s}
+details.disc[open] > summary::after{transform:rotate(180deg)}
+details.disc > .dbody{background:var(--expanded);border-radius:12px;padding:13px 16px;margin-top:8px;
+  font-size:16px}
+details.disc > .dbody p{margin:0 0 9px;max-width:64ch}
+details.disc > .dbody p:last-child{margin:0}
+details.disc > .dbody ul{margin:0 0 9px;padding-left:20px;max-width:64ch}
+details.disc > .dbody li{margin:0 0 6px}
+.srcline{font-size:14px;color:var(--text2)}
+blockquote{margin:0 0 9px;padding:0 0 0 13px;border-left:3px solid var(--accent);color:var(--text)}
+
+/* positioning doctrine — punchy bullets, manual wording folded underneath */
+.doctrine{border-top:1px solid var(--divider);padding:14px 22px 18px}
+.doclabel{font-family:var(--head);font-weight:800;font-size:13.5px;letter-spacing:.05em;
+  color:var(--c-pos);margin:0 0 12px;text-transform:uppercase}
+ul.docl{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+ul.docl > li{border-left:4px solid var(--c-pos);padding-left:13px}
+.docline{font-family:var(--head);font-weight:800;font-size:17px;line-height:1.25;margin:0;
+  letter-spacing:.01em}
+.docsub{margin:4px 0 0;font-size:15.5px;color:var(--text2);max-width:62ch}
+
+/* the safety gate — permanent full-width interruption; reminder only, no button.
+   In check-off mode it carries a checkbox like any step. */
+.gate{border-top:1px solid var(--divider);background:var(--safety-tint);padding:17px 22px;
+  display:flex;align-items:flex-start;gap:14px}
+.gatebody{flex:1;min-width:0}
+.gate .gtag{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:800;
+  font-size:15px;letter-spacing:.06em;color:var(--safety);margin:0 0 7px}
+.gate .gtag::before{content:"";width:0;height:0;border-left:11px solid transparent;
+  border-right:11px solid transparent;border-bottom:19px solid currentColor}
+.gate h3{font-family:var(--head);font-weight:800;font-size:20px;line-height:1.24;margin:0 0 7px;
+  border-left:5px solid var(--safety);padding-left:13px}
+.gate p{margin:0 0 7px;max-width:62ch;font-size:16px}
+.gate .srcline{display:block;margin-top:6px;font-size:14px;color:var(--text2)}
+body.checkoff .gate.done h3{color:var(--text2);border-left-color:var(--text2)}
+
+/* closing note — the 20 psi line */
+.noterow{border-top:1px solid var(--divider);display:flex;align-items:flex-start;gap:14px;
+  padding:15px 22px;background:var(--accent-tint)}
+.noterow .bignum{font-family:var(--head);font-weight:800;font-size:34px;line-height:1;
+  color:var(--accent);min-width:46px;font-variant-numeric:tabular-nums;padding-top:2px}
+.noterow .action{font-size:19.5px}
+.noterow .why{font-size:15.5px;color:var(--text2);margin:5px 0 0;max-width:60ch}
+
+/* boxes below the sheet — EMERGENCY (red) + 1st digit method */
+.cols{display:grid;grid-template-columns:3fr 2fr;gap:16px;margin-top:20px;align-items:start}
+.boxpanel{background:var(--surface);border:1px solid var(--divider);border-radius:16px;overflow:hidden}
+.boxpanel.red{border:2px solid var(--safety);background:var(--safety-tint)}
+.boxlabel{font-family:var(--head);font-weight:800;font-size:15px;letter-spacing:.06em;margin:0;
+  padding:16px 20px 7px;scroll-margin-top:14px}
+.boxpanel.red .boxlabel{color:var(--safety)}
+.boxpanel.digit{border-left:6px solid var(--c-dig);background:var(--c-dig-t)}
+.boxpanel.digit .boxlabel{color:var(--c-dig)}
+summary.boxlabel{list-style:none;display:flex;align-items:center;gap:10px;min-height:56px;
+  cursor:pointer;padding-top:0;padding-bottom:0}
+summary.boxlabel::-webkit-details-marker{display:none}
+summary.boxlabel::after{content:"▾";font-size:12px;transition:transform .15s}
+.boxpanel[open] > summary.boxlabel::after{transform:rotate(180deg)}
+.emrow{display:flex;align-items:flex-start;gap:13px;padding:10px 20px;min-height:56px;
+  border-top:1px solid var(--divider)}
+.boxpanel.red .emrow{border-top-color:color-mix(in srgb,var(--safety) 22%,transparent)}
+@supports not (color:color-mix(in srgb,red 10%,blue)){.boxpanel.red .emrow{border-top-color:var(--divider)}}
+.emnum{font-family:var(--head);font-weight:800;font-size:24px;line-height:1.05;color:var(--safety);
+  min-width:34px;font-variant-numeric:tabular-nums;padding-top:1px}
+.emrow .action{font-size:18px}
+.sidebody{padding:6px 20px 18px}
+.sidebody .action{font-size:19px}
+
+/* wide content never pushes the page sideways */
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 6px}
+.tblwrap table{border-collapse:collapse;min-width:330px;font-size:15.5px}
+.tblwrap th,.tblwrap td{text-align:left;padding:7px 12px 7px 0;border-bottom:1px solid var(--divider);
+  white-space:nowrap}
+.tblwrap th{font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.04em;color:var(--text2)}
+.scrollhint{font-size:13.5px;color:var(--text2);margin:0 0 9px}
+
+/* field notes — the card-vs-Orem observations, kept off the steps */
+.notesblock{margin-top:20px;background:var(--surface);border:1px solid var(--divider);
+  border-left:6px solid var(--accent);border-radius:14px;padding:16px 20px;scroll-margin-top:14px}
+.notesblock h2{font-family:var(--head);font-weight:800;font-size:14px;letter-spacing:.06em;
+  color:var(--accent);margin:0 0 12px;text-transform:uppercase}
+.notesblock .nitem + .nitem{margin-top:14px;padding-top:14px;border-top:1px solid var(--divider)}
+.notesblock .nhead{font-family:var(--head);font-weight:700;font-size:16.5px;margin:0 0 5px}
+.notesblock p{margin:0 0 6px;font-size:15.5px;max-width:66ch}
+.notesblock p:last-child{margin:0}
+
+.docfoot{margin-top:22px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+@media (max-width:640px){
+  .cols{grid-template-columns:1fr}
+  .wrap{padding-bottom:104px} /* clear the floating Sections button */
+  details.disc > summary{min-height:56px}
+}
+@media (max-width:560px){
+  body{font-size:16.5px}
+  .step{padding:10px 14px;gap:11px;min-height:56px}
+  .stepnum{font-size:26px;min-width:36px}
+  .stepnum.sub{font-size:17px}
+  .action{font-size:18px}
+  .phase > h2,.phase > summary,.gate,.noterow,.doctrine{padding-left:14px;padding-right:14px}
+  .emrow,.boxlabel,.sidebody{padding-left:14px;padding-right:14px}
+  .notesblock{padding-left:14px;padding-right:14px}
+  .noterow .bignum{font-size:30px;min-width:38px}
+  .docline{font-size:16.5px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.modebar,.nightbtn,.secmenu{display:none}
+  .sheet,.boxpanel,.notesblock{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  .boxpanel.red{border:2.5px solid #000;background:#fff}
+  .boxpanel.digit{background:#fff;border-left:6px solid #000}
+  .notesblock{border-left:6px solid #000}
+  .notesblock h2{color:#000}
+  .step,.emrow{break-inside:avoid;min-height:0;padding:8px 12px}
+  .phase{break-inside:avoid-page;background:#fff!important;border-left:none}
+  .phase.cpos,.phase.cwtr,.phase.csup,.phase.cmst,.phase.cfom,.phase.cardred{border-left:6px solid #000}
+  .phase > h2,.phase > summary{color:#000!important}
+  .phase > summary::after,summary.boxlabel::after{display:none}
+  .doctrine{border-top:1px solid #000}
+  .doclabel{color:#000}
+  ul.docl > li{border-left:4px solid #000}
+  .emnum,.boxpanel.red .boxlabel,.boxpanel.digit .boxlabel{color:#000}
+  .tick{display:block}
+  .tick input{width:14pt;height:14pt;margin:2pt 8pt 2pt 0}
+  details.disc{display:none}
+  .oretag{background:#fff;border:1px solid #000;color:#000}
+  .gate{background:#fff;border-top:3px double #000;border-bottom:3px double #000}
+  .gate h3{border-left:5px solid #000}
+  .noterow{background:#fff;border-top:2px solid #000}
+  .noterow .bignum{color:#000}
+  .stepnum{color:#000;font-size:16pt;min-width:28pt}
+  .action{font-size:12pt}
+  .cols{display:block}
+  .boxpanel + .boxpanel{margin-top:12pt}
+}
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="ehome" href="engine-home.html">Engine Operations</a><span>›</span>Engine Evolution</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <h1>Engine Evolution</h1>
+    <p class="lede">The main pumping evolution. Spot the rig, lock it down, get water on the line, take the
+    hydrant without dropping the attack, and go big when it is called for. The steps are the muscle memory —
+    tap a drop-down for what the manual says behind the step.</p>
+  </header>
+
+  <div class="modebar">
+    <div class="mode" role="group" aria-label="Sheet mode">
+      <button type="button" id="refBtn" aria-pressed="true">Reference</button>
+      <button type="button" id="checkBtn" aria-pressed="false">Check-off</button>
+    </div>
+    <button type="button" id="resetBtn">Reset all</button>
+    <span class="progress" id="progress"></span>
+  </div>
+
+  <div class="sheet">
+
+    <section class="phase cpos" aria-labelledby="positioning">
+      <h2 id="positioning">Positioning</h2>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: position outside collapse zone"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">POSITION OUTSIDE COLLAPSE ZONE</p>
+          <details class="disc"><summary>Collapse zone — the manual's number</summary><div class="dbody">
+            <p>If a stream has to go in front of a building it must be set back far enough that it will not
+            be struck by falling walls or debris. The accepted figure is <strong>one and one-half times the
+            height of the tallest exterior wall</strong> — a store front with a 20-foot wall gets a 30-foot
+            zone, "the further the better."</p>
+            <p>Anyone working a stream from the front of the building is standing in that zone and may not
+            have time to react to a sudden collapse of an exterior wall.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7 Master Stream Operations, pp.7-1–7-2</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: uphill and upwind of hazards"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">UPHILL &amp; UPWIND OF HAZARDS</p></div>
+      </div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: leave room for aerial"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">LEAVE ROOM FOR AERIAL</p>
+          <details class="disc"><summary>Who needs the front — and the rack</summary><div class="dbody">
+            <p>"Generally, the first engine should leave the front of the building open for the Truck's
+            aerial if needed." Getting the engine in close is a <em>coordinated</em> effort between the
+            Engineer, the Engine Company Officer and the first arriving Truck.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.1-9</p>
+            <p>The first Truck positions to cover side Alpha.</p>
+            <p class="srcline">OFD Quick Reference Guide for Initial Company Operations, May 2024 ·
+            <a data-nav="qrg" href="qrg.html">Initial company assignments</a></p>
+            <p>It runs the other way too — the ground ladders live on your rig. "On arrival in any apparatus,
+            attention should be given to the location and accessibility of ground ladders." Parking tight to
+            the <strong>ladder-rack side</strong> of an engine can block Outside Operations and Search from
+            getting to them, and "it is recommended that Engineers be proactive in lowering ladder racks
+            where applicable, for our Truck crews to access ground ladders faster." Ladder 33 needs a minimum
+            of over 20 feet of clearance at the <strong>rear</strong> to pull its longest ladders.</p>
+            <p class="srcline">OFD Truck Manual v3.1, §5, p.95 — Ladder-conscious positioning of apparatus</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="doctrine">
+        <p class="doclabel">Spotting doctrine · Engine Company Operations, ch.1</p>
+        <ul class="docl">
+
+          <li>
+            <p class="docline">GIVE THE OFFICER A LOOK AT THE BUILDING</p>
+            <p class="docsub">Your first job on the brake is the officer's view.</p>
+            <details class="disc"><summary>Manual wording</summary><div class="dbody">
+              <p>"On arrival the Engineer of the first arriving engine needs to make every attempt to provide
+              the Company Officer with a sufficient view of the fire building."</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.1-9</p>
+            </div></details>
+          </li>
+
+          <li>
+            <p class="docline">GET CLOSE — EVERY LENGTH COSTS TIME</p>
+            <p class="docsub">Tight to the building so the stretch is short and the connection is quick.</p>
+            <details class="disc"><summary>Manual wording</summary><div class="dbody">
+              <p>"1st arriving Engine Company apparatus should be positioned as close as possible to the fire
+              building to reduce the time, effort and number of lengths needed to connect to a water source.
+              This tactic requires a coordinated effort between the Engineer, the Engine Company Officer, and
+              the first arriving Truck Company for optimal placement."</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.1-9</p>
+            </div></details>
+          </li>
+
+          <li>
+            <p class="docline">SPOT FOR THE WATER YOU ARE GOING TO NEED</p>
+            <p class="docsub">Supply, FDC, line placement, and where the fire actually is.</p>
+            <details class="disc"><summary>The manual's spotting list</summary><div class="dbody">
+              <p>Other spotting considerations for the Engine Company: <strong>water supply needs · FDC
+              connections · line placement · fire location and intensity.</strong></p>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.1-9</p>
+              <p>And when you stretch off the rig: "The apparatus should be positioned so that it will not
+              interfere with Truck Company operations."</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.1-11</p>
+            </div></details>
+          </li>
+
+          <li>
+            <p class="docline">POSITION FOR A FORWARD LAY WHENEVER SUPPLY IS COMING</p>
+            <p class="docsub">Decide the lay while you are still rolling, not at the panel.</p>
+            <details class="disc"><summary>Forward lay and the near hydrant</summary><div class="dbody">
+              <p>"The Engineer should position the apparatus for a Forward Lay whenever the need for water
+              supply is determined. A hydrant in the immediate vicinity of the fire building may be used if
+              it allows for a rapid stretch and will not interfere with ladder company positioning."</p>
+              <p>The first arriving Engine Company Officer makes the call on the need for water supply, or
+              hands that responsibility to the second arriving engine — either way it is transmitted from
+              first due to second due.</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.1-10</p>
+              <p>The three lays and the wet/dry choice are laid out in
+              <a data-nav="water" href="water-supply.html">Water Supply</a>.</p>
+            </div></details>
+          </li>
+
+          <li>
+            <p class="docline">NOTHING SHOWING — PARK WHERE A TRUCK STILL GETS IN</p>
+            <p class="docsub">Alarms and investigations: pump in service, no hydrant yet, stay on the panel.</p>
+            <details class="disc"><summary>1st due — nothing showing and alarms</summary><div class="dbody">
+              <ul>
+                <li>Park in a location that allows for easy access by ladder trucks.</li>
+                <li>Fully prepare the engine — complete all steps required to put the pump in service and
+                supply water to hose.</li>
+                <li>No hydrant connection made until otherwise warranted by fire involvement.</li>
+                <li>Stay by the pump and monitor radio traffic for further assignments.</li>
+              </ul>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.1-9</p>
+            </div></details>
+          </li>
+
+          <li>
+            <p class="docline">2ND DUE — DO NOT BLOCK, AND BE ABLE TO LAY</p>
+            <p class="docsub">Your spot has to leave you able to put a supply line into the first-in engine.</p>
+            <details class="disc"><summary>Manual wording</summary><div class="dbody">
+              <p>"Second arriving engines should position so as not to block any apparatus movement on the
+              fireground and be able to lay a supply line from the first-in engine to the hydrant."</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.1-9</p>
+              <p>"The Engineer of the second arriving engine is assigned to supply the first engine, this
+              should be accomplished without placing their apparatus at the front of the fire scene. This is
+              best accomplished by laying a supply line away from the first engine, spotting the second
+              engine at the hydrant, connecting to that hydrant, and supplying the first arriving engine."</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, pp.1-10–1-11</p>
+            </div></details>
+          </li>
+
+          <li>
+            <p class="docline">3RD AND LATER — OUT OF THE WAY, OR TAKE THE ALLEY</p>
+            <p class="docsub">Behind the structure buys easier additional lines.</p>
+            <details class="disc"><summary>Manual wording</summary><div class="dbody">
+              <p>"Third due engines and later-arriving engines should position their apparatus out of the way
+              of the direct fire scene or consider taking a position in the alley behind the structure to
+              provide additional lines more easily."</p>
+              <p class="srcline">Engine Company Operations 2023 V-1, p.1-9</p>
+            </div></details>
+          </li>
+
+          <li>
+            <p class="docline">KNOW WHAT ARRIVAL ORDER MAKES YOU</p>
+            <p class="docsub">The riding order sets the assignment before you ever pick a spot.</p>
+            <details class="disc"><summary>Initial company assignments</summary><div class="dbody">
+              <p>Residential and 1–3 floor multi-family: the 1st engine takes size-up and the 360 if not
+              completed, stretches the initial attack line to the fire floor, and initiates water supply if
+              the CO calls for it. The 2nd engine completes water supply, pumps the hydrant for the 1st
+              engine if needed, and stretches the 2nd attack line. The 3rd stretches the back-up line to the
+              1st engine's location. The 4th stages at a second water supply and takes RIT.</p>
+              <p>Commercial moves the FDC to the 3rd engine — position on the FDC and pump it upon a
+              "working fire".</p>
+              <p class="srcline">OFD Quick Reference Guide for Initial Company Operations, May 2024 ·
+              <a data-nav="qrg" href="qrg.html">full assignment grid</a></p>
+            </div></details>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <section class="phase cardred" aria-labelledby="secure">
+      <h2 id="secure">Secure the rig</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set parking brake"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">SET PARKING BRAKE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set neutral"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">SET NEUTRAL</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: engage pump button"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">ENGAGE PUMP BUTTON</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: chock wheels"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">CHOCK WHEELS</p>
+          <details class="disc"><summary>Immobilise before anything else</summary><div class="dbody">
+            <p>Orem's changeover procedure opens on it: <em>"Position the apparatus in a safe positon, and
+            immobilize it by setting the parking brake and chocking the wheels."</em> Step 2 is engaging the
+            pump, selecting the proper gear in the road transmission, and locking the gear in place.</p>
+            <p class="srcline">ADO Task #19, Basic Pump Skills — Changeover, operating procedure steps 1–2</p>
+            <p>On the drill ground the chock is out-of-cab step 6, right after prime.</p>
+            <p class="srcline">ADO-Pumper task book, Evolutions 1.1–1.5 — out-of-cab step 6</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase cwtr" aria-labelledby="water">
+      <h2 id="water">Get water moving</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open tank to pump"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">OPEN TANK TO PUMP</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open tank fill / recirculation"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">OPEN TANK FILL / RECIRCULATION</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: prime pump if necessary"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">PRIME PUMP (IF NECESSARY)</p>
+          <span class="oretag">from Orem's evolutions</span>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set PSI control mode button"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">SET PSI CONTROL MODE BUTTON</p>
+          <span class="oretag">Orem rigs: Engine 34 only</span>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: clear hose bed, break attack line if necessary"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">CLEAR HOSE BED · BREAK ATTACK LINE (IF NECESSARY)</p>
+          <p class="stepsrc">ADO-Pumper task book, Evolution 1.1 — out-of-cab steps 7–8</p>
+          <details class="disc"><summary>Who is breaking and flaking that line</summary><div class="dbody">
+            <p>The Nozzle Firefighter owns the first 100 feet and the nozzle — the lead length. <strong>If the
+            Back-Up Firefighter is pulled onto other duties</strong> — water supply, forced entry — then "the
+            Nozzle Firefighter is responsible for stretching and flaking the entire hoseline." That is your
+            cue that the stretch is going to take longer.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.1-13</p>
+            <p>The Back-Up Firefighter's hose management is three things: <strong>chasing kinks · exterior
+            management of the hose · supporting the movement of hose around corners and through
+            doorways.</strong> "Failure of the Back-Up Firefighter to complete these tasks will lead to the
+            delay in the initial attack line progressing to the seat of the fire."</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.1-17, restated p.1-21</p>
+            <p>And if a water supply is deemed necessary, the hydrant connection is the Back-Up Firefighter's
+            responsibility — which is exactly when you lose him off the line.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.1-21</p>
+            <p>On an extended lay into apartments, garden-style complexes or long-setback townhomes, the
+            Back-Up Firefighter deploys the 1¾" Modified Minuteman to where it can be stretched near the point
+            of entry, and the Nozzle Firefighter communicates the point of the attack line stretch.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.1-14</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: charge lines"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">CHARGE LINES</p>
+          <details class="disc"><summary>The signal to charge</summary><div class="dbody">
+            <p>The line gets flaked at a safe area near the fire area — porch, stairway landing, hallway,
+            adjoining area — and the Nozzle Firefighter finishes donning. <strong>When the line is flaked and
+            he is ready he signals the Engineer to charge it. The signal may be verbal, by radio, or by hand
+            signal.</strong></p>
+            <p>He then bleeds trapped air with the nozzle fully opened and the stream directed away from the
+            opening, and confirms pressure and pattern — a combination tip fully rotated to the straight
+            stream position. <em>"Right to Fight."</em></p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.1-15</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: mark or note discharge gauge and line length or location"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">MARK OR NOTE DISCHARGE GAUGE &amp; LINE LENGTH/LOCATION</p>
+          <span class="oretag">from Orem's evolutions</span>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: calculate PDP"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">CALCULATE PDP</p>
+          <details class="disc"><summary>What the Engineer is required to know</summary><div class="dbody">
+            <p>"In order to establish and maintain proper pumping pressures, all Engineers must know how many
+            hoselines, the size and length of the hoseline, the type of nozzles being used, and their flow."
+            The manual also lists it as a standing responsibility — know how many hose lines, size, length,
+            nozzles and flow rates on your apparatus, per the OFD hydraulic standard.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, pp.1-8 and 1-11</p>
+            <p>"It is imperative that the Engineer listen closely to the radio at all times for traffic
+            concerning charging, shutting down or adjusting hose line pressures." And monitor the residual
+            pressure on the <strong>master intake gauge</strong> — that is what tells you whether you can
+            supply additional volumes.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.1-11</p>
+            <p>The Engineer "must control how many and what type streams and hose lines are supplied and
+            should confer with and advise the officer when necessary."</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.1-8</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set PDP"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">SET PDP</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set discharge relief valve"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">SET DISCHARGE RELIEF VALVE</p>
+          <span class="oretag">Manual valve: Engine 31 · Engine 3820 · Ladder 32</span>
+          <details class="disc"><summary>Set it before pressure, not after</summary><div class="dbody">
+            <p>The changeover procedure sets the relief valve or pressure governor at <strong>step 6</strong>
+            — before the external supply is introduced and before pressure is put to the line.</p>
+            <p class="srcline">ADO Task #19, Basic Pump Skills — Changeover, operating procedure step 6</p>
+            <p>The drill-ground evolutions print the manual discharge relief valve as their <em>last</em>
+            out-of-cab item. Set it early — see the field notes at the bottom of this sheet.</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase csup" aria-labelledby="supply">
+      <h2 id="supply">Establish supply</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set discharge relief valve to about 150"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">SET DISCHARGE RELIEF VALVE TO ~150</p>
+          <details class="disc"><summary>Why</summary><div class="dbody">
+            <blockquote>"…then when I introduce hydrant water there isn't as much of a pressure spike and
+            the discharge relief valve will catch any extra. Then after hydrant is fully opened I can
+            throttle back down."</blockquote>
+            <p class="srcline">Jason, 2026-08-30</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: throttle up to 150 psi"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">THROTTLE UP TO 150 PSI</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: gate down handlines to their set PDP"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">GATE DOWN HANDLINES TO THEIR SET PDP</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: connect LDH supply"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">CONNECT LDH SUPPLY</p>
+          <details class="disc"><summary>The lay you are on the end of</summary><div class="dbody">
+            <p>Orem uses three supply line lays — <strong>Forward (lay-in) · Reverse (lay-out) · Split</strong>
+            — chosen on arrival order, direction of travel, occupancy type and anticipated water needs, and
+            each can run wet or dry. Whatever the first-in Officer selects, "they MUST announce over the radio
+            their water supply intentions so that the second due engine can adjust their strategies."</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.5-1</p>
+            <p><strong>Wet lead:</strong> the Back-Up Firefighter stays at the hydrant and charges the line
+            when told. <strong>Dry lead:</strong> the Tailboard Firefighter anchors the hose, leaves the
+            hydrant bucket, and goes to the fire with the crew — someone else is assigned to charge it.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.5-8</p>
+            <p><strong>Reverse lay</strong> splits two ways: a supply evolution (LDH between the suction side
+            of the pump and the hydrant) or an attack evolution (LDH off the discharge side to an appliance or
+            master stream). <strong>Split lay</strong> is for when the first due has to park where there is no
+            water — cul-de-sac, limited-access complex — dropping LDH at the entrance for the second due to
+            complete. The first due <em>must</em> transmit the intention to split.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, pp.5-9–5-11</p>
+            <p>"When performing a Forward Lay, the connection shall be made using 5" LDH, in the event the 5"
+            LDH connection cannot be secured on the hydrant a minimum of 2-3" hoses shall be connected, one on
+            each side of the hydrant. Pony lines are acceptable where connections are short as long as '5" LDH
+            first' rules are applied."</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.1-11 · more in
+            <a data-nav="water" href="water-supply.html">Water Supply</a></p>
+          </div></details>
+          <details class="disc"><summary>How much water that line is worth</summary><div class="dbody">
+            <p>A single 5-inch line may not flow all of the available water from a hydrant or main.
+            <strong>Provide one 5-inch hose line for every 1,000 gpm to be delivered.</strong></p>
+            <p>A double 2½" hydrant — two 2½" outlets, no steamer — is fed by a 4" main; expect
+            <strong>less than 600 gpm.</strong></p>
+            <p class="srcline">Engine Company Operations 2023 V-1, pp.5-4–5-5</p>
+            <p>To pull more out of the distribution system, least to best preferred: multiple supply lines
+            from a single hydrant · pumping the hydrant with the 2nd or 3rd due engine supplying the attack
+            pumper · multiple supply lines from different hydrants sharing the same water main · multiple
+            supply lines from different hydrants <em>not</em> sharing the same main.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.5-13 — High-Flow Hydrant Operations ·
+            relay spacing and pressures in <a data-nav="relay" href="relay-pumping.html">Relay Pumping</a></p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open pressure relief valve"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">OPEN PRESSURE RELIEF VALVE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: signal for water"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">SIGNAL FOR WATER</p>
+          <details class="disc"><summary>What is happening at the hydrant</summary><div class="dbody">
+            <p>Orem's hydrants are dry-barrel. <strong>Once a dry-barrel hydrant is charged, no additional
+            lines may be added to the other outlets unless the hydrant is shut down or a shut-off valve was
+            added before charging.</strong> Opening the stem valve supplies ALL outlets at the same time — so
+            multi-outlet dry barrels must have a 2½" gate valve attached to an unused outlet <em>at the
+            onset</em> of any hydrant operation.</p>
+            <p>Stem valves open counter-clockwise — "open-left" — across every district around Orem.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, pp.5-2 and 5-5</p>
+            <p>The hydrant bucket carries what the connection needs: screw-handle hydrant wrench, 5" Storz ×
+            2½" female, 2½" and Storz spanners, two 2½" hydrant gate valves, a 2½" double-female for a 3"
+            supply line, and a rubber mallet for stuck caps. Depending on the lay, the 1st or 2nd due engine
+            leaves it at the hydrant.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.5-6</p>
+            <p>Orem's own hydrant sequence: stretch LDH with the gate valve and hydrant bag · connect LDH to
+            the steamer port and attach both gate valves to the 2½" outlets · <strong>flush the hydrant</strong>
+            · open the hydrant slowly until the hose is charged · close the intake bleeder valve · open the
+            intake valve · close tank to pump · mark or note the intake gauge · open tank fill to refill or
+            confirm the tank is full · <strong>verbalize supply is established.</strong></p>
+            <p class="srcline">ADO-Pumper task book, Evolution 1.0 — out-of-cab hydrant/water supply steps 4–13</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: close pressure relief valve"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">CLOSE PRESSURE RELIEF VALVE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open supply intake slowly, monitor gauges"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">OPEN SUPPLY INTAKE SLOWLY (MONITOR GAUGES)</p>
+          <details class="disc"><summary>Changeover doctrine — ADO Task #19</summary><div class="dbody">
+            <p><strong>Purge the air first.</strong> Air sitting in an empty supply hose causes problems if it
+            enters the pump while the pump is supplying attack lines under pressure. Open the bleeder valve on
+            the gated intake so the air escapes as the line fills; when all the air has been forced out, close
+            the bleeder. The water is now at the pump and ready for the transition.</p>
+            <p><strong>Then the transition.</strong> "The operator opens the intake valve from the supply line
+            very slowly while observing the pressure on the intake and discharge gauges." Keep opening the
+            intake and adjusting the discharge pressure until the intake is completely open — it may take
+            throttle to hold the discharge pressure you want.</p>
+            <p><strong>Then close tank-to-pump.</strong> After the intake valve is open the tank-to-pump valve
+            can be closed — but leave the tank fill partially open until the tank has refilled. "A full tank
+            provides a limited reserve water supply in the event that the external water supply is lost
+            unexpectedly."</p>
+            <p class="srcline">ADO Task #19, Basic Pump Skills — Changeover (Transition to an External Water Supply)</p>
+            <p>On the drill ground the standard is that the changeover has <strong>minimal impact on the hand
+            lines — approximately 10 psi or less.</strong></p>
+            <p class="srcline">ADO-Pumper task book, Evolution 1.2 — objective note 2</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: throttle back down once hydrant fully open"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">THROTTLE BACK DOWN (ONCE HYDRANT IS FULLY OPEN)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: close tank to pump"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">CLOSE TANK TO PUMP</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: refill tank"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">REFILL TANK</p>
+          <details class="disc"><summary>Why the tank goes back up first</summary><div class="dbody">
+            <p>"As soon as an adequate supply of water is available, divert enough of it through the tank-fill
+            line to replenish the supply in the tank." The full tank is your reserve if the external supply is
+            lost unexpectedly.</p>
+            <p class="srcline">ADO Task #19, Basic Pump Skills — Changeover, operating procedure step 8</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: note static hydrant pressure"></span>
+        <span class="stepnum sub">11a</span>
+        <div class="stepbody"><p class="action">*NOTE STATIC HYDRANT PRESSURE*</p>
+          <p class="plainnote">It is the number every like-volume call on this sheet works off.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase cmst" aria-labelledby="master">
+      <h2 id="master">MASTER STREAM</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: properly secure device"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">PROPERLY SECURE DEVICE</p>
+          <details class="disc"><summary>Where the device goes, and what it does to the ground</summary><div class="dbody">
+            <p>Master streams generally mean interior offensive operations have been abandoned for a defensive
+            posture. <strong>Once the line is in operation the device must be shut down to be
+            repositioned</strong> — so the position has to be right the first time.</p>
+            <p><strong>The safest exterior positions are the corners of the building.</strong> Setting up in
+            front, whether off the top of the engine or off the ground, "is a dangerous and ineffective
+            tactic" — the crew is in the collapse zone.</p>
+            <p>Two more things the higher flow does to you: it is more likely to knock debris loose from the
+            building and throw it at people and apparatus; and in portable mode the device has a limited
+            side-to-side range — <strong>turning the nozzle too far left or right can make the base unstable
+            and tip it over.</strong></p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-1</p>
+            <p>The Stinger is a break-apart monitor that works as a deck gun or as a portable — plumbed to an
+            outlet on top of the engine so it goes into operation without running a supply line, or pulled off
+            and dropped onto its base, which has folding legs and a single 5" LDH inlet and stows in the rear
+            compartment. Going portable is how you get the fire away from the apparatus.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, pp.7-4–7-5 ·
+            <a data-nav="mstream" href="master-streams.html">Master Streams</a></p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: calculate PDP"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">CALCULATE PDP</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set PDP"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">SET PDP</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: notify command of big water"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">NOTIFY COMMAND OF BIG WATER</p>
+          <details class="disc"><summary>Why this is a radio transmission, not a valve turn</summary><div class="dbody">
+            <p>"Master stream operations require a coordinated effort from the companies operating on scene,
+            one of which is ensuring that all department members have been backed out of the building prior to
+            flowing any master stream or elevated ladder pipe."</p>
+            <p>By most definitions any stream greater than <strong>350 gpm</strong> that requires mechanical
+            assistance to handle is a master stream — portable, elevated, or mounted on the apparatus.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, p.7-1</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="gate step" id="gateStep">
+        <span class="tick"><input type="checkbox" aria-label="Done: confirmed all members out of the building with Command"></span>
+        <div class="gatebody">
+          <p class="gtag">STOP</p>
+          <h3>Confirm all department members are out of the building before flowing the master stream.</h3>
+          <p>Affirmative acknowledgement, not a one-way notification. A master stream must be shut down to be
+          repositioned — the safest positions are the building corners; the front is dangerous, ineffective,
+          and inside the collapse zone.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, ch.7 Master Stream Operations, p.7-1</span>
+        </div>
+      </div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open discharge"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">OPEN DISCHARGE</p>
+          <details class="disc"><summary>Deck gun geometry — where that water lands</summary><div class="dbody">
+            <p>A deck gun nozzle sitting nine to ten feet above the ground loses a lot of effectiveness at low
+            angles. On a narrow street most of the water is wasted — the stream hits the floor only
+            <strong>25 to 30 feet inside</strong> the structure.</p>
+            <p>The most effective use of the pre-connected deck gun is a <strong>quick application of
+            high-pressure water through the window</strong> to knock down heavy fire while other members get a
+            handline into position by whatever means available. Faster fire control means increased life safety
+            for civilians and firefighters.</p>
+            <p>At upper-floor angles the stream is less likely to push fire through the compartment and out
+            into the hallway — most of the water strikes the ceiling and coarse droplets rain down on the
+            burning contents. A smaller tip than normally used, and limiting the application, reduces that risk
+            further; a 1½" tip generates the high velocity needed for reach and conserves water.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, ch.7, pp.7-2–7-3</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+    <details class="phase cfom collapsible" id="foam" open>
+      <summary>FOAM</summary>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: turn on foam"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">TURN ON FOAM</p>
+          <div class="figrow"><span class="figname">Fire Attack / Overhaul</span><span class="figval">.2% – .5%</span></div>
+          <div class="figrow"><span class="figname">Exposure</span><span class="figval">.5% – 1%</span></div>
+          <details class="disc"><summary>Orem's Class B foam math</summary><div class="dbody">
+            <p><strong>Field method.</strong> Hydrocarbons: area ÷ 20. Polar solvents / alcohols: area ÷ 5.
+            That gives gallons of concentrate.</p>
+            <p><strong>Full formula.</strong> Area × Critical Application Rate × Eduction Rate × 15 minutes =
+            concentrate needed. CAR is 0.1 gpm/sq ft for hydrocarbons, 0.2 for polars. The eduction rate — the
+            minimum metering valve setting — is 1–3% for hydrocarbons, 3–6% for polars. The 15 minutes is the
+            NFPA 11 standard for concentrate on hand.</p>
+            <p><strong>Worked example.</strong> A 10' × 10' gasoline spill: 100 × 0.1 × 0.03 × 15 = 4.5
+            gallons. Field method: 100 ÷ 20 = 5 gallons.</p>
+            <p><strong>In-line eductors.</strong> Rated at 95 gpm — the eductor and the nozzle must have
+            matching flow rates or the concentrate will not pick up. Designed for a 200 psi inlet. Do not
+            exceed 70% back pressure beyond the eductor.</p>
+            <p class="srcline">OFD Hydraulic Standard — Foam Operations §1–2</p>
+          </div></details>
+        </div>
+      </div>
+    </details>
+
+    <div class="noterow">
+      <span class="bignum">20</span>
+      <div class="stepbody">
+        <p class="action">Maintain 20 PSI intake pressure</p>
+        <p class="why">20 psi minimum protects from drawing a vacuum on the intake hose.</p>
+      </div>
+    </div>
+
+  </div><!-- /sheet -->
+
+  <div class="cols">
+
+    <section class="boxpanel red" aria-labelledby="emergency">
+      <h2 class="boxlabel" id="emergency">EMERGENCY</h2>
+      <div class="emrow"><span class="emnum">1</span><p class="action">NOTIFY COMMAND</p></div>
+      <div class="emrow"><span class="emnum">2</span><p class="action">OPEN TANK TO PUMP</p></div>
+      <div class="emrow"><span class="emnum">3</span><p class="action">PRIMER</p></div>
+      <div class="emrow"><span class="emnum">4</span><p class="action">CHECK GAUGES</p></div>
+      <div class="emrow"><span class="emnum">5</span><p class="action">CHECK CONNECTIONS AIR TIGHT</p></div>
+      <div class="emrow"><span class="emnum">6</span><p class="action">CHECK HOSE FOR KINKS</p></div>
+      <div class="emrow"><span class="emnum">7</span><p class="action">CHECK HYDRANT</p></div>
+      <div class="emrow"><span class="emnum">8</span><p class="action">WORK BACKWARDS TO CAB</p></div>
+    </section>
+
+    <details class="boxpanel digit collapsible" id="firstdigit" open>
+      <summary class="boxlabel">1ST DIGIT METHOD</summary>
+      <div class="sidebody">
+        <p class="action">USE 1ST DIGIT METHOD TO DETERMINE ADDITIONAL LIKE VOLUMES REMAINING.</p>
+        <details class="disc"><summary>Run it off a 90 psi intake</summary><div class="dbody">
+          <p>First digit of the intake pressure × 1, × 2, × 3. Compare the residual drop against those three
+          numbers.</p>
+          <p class="scrollhint">Table scrolls sideways →</p>
+          <div class="tblwrap">
+            <table>
+              <thead><tr><th>Multiple</th><th>Residual drop</th><th>Like volumes left</th></tr></thead>
+              <tbody>
+                <tr><td>90 × 1 = 9</td><td>1–9 psi</td><td>3</td></tr>
+                <tr><td>90 × 2 = 18</td><td>10–18 psi</td><td>2</td></tr>
+                <tr><td>90 × 3 = 27</td><td>19–27 psi</td><td>1</td></tr>
+                <tr><td>—</td><td>28+ psi</td><td>0</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Related: net pump discharge pressure off a positive supply is PDP − intake psi. A 150 psi PDP on
+          a 90 psi intake is 60 psi of actual work by the pump.</p>
+          <p class="srcline">OFD Hydraulic Standard §3–4</p>
+        </div></details>
+      </div>
+    </details>
+
+  </div>
+
+  <section class="notesblock" id="notes" aria-labelledby="noteshead">
+    <h2 id="noteshead">Field notes — this sheet vs. Orem's printed evolutions</h2>
+
+    <div class="nitem">
+      <p class="nhead">Evolution 1.0 has no chock step.</p>
+      <p>Orem's <a data-nav="evo10" href="evo-1-0.html">Evolution 1.0</a>
+      skill sheet runs its out-of-cab list from "verify pump is engaged" straight into the hydrant work — no
+      wheel chocks anywhere in it. Evolutions 1.1 through 1.5 all carry "Set wheel chocks" as out-of-cab step
+      6, and ADO Task #19 opens by immobilising the rig with the parking brake <em>and</em> the chocks. The
+      step belongs on 1.0 too. Committee item.</p>
+      <p class="srcline">ADO-Pumper task book, Evolutions 1.0–1.5 · ADO Task #19 step 1</p>
+    </div>
+
+    <div class="nitem">
+      <p class="nhead">The relief valve is printed last, and set early.</p>
+      <p>The drill-ground evolutions list the manual discharge relief valve as the final out-of-cab item.
+      ADO Task #19 sets the relief valve or pressure governor at step 6 — before the external supply is
+      introduced. This sheet follows #19: set it before pressure reaches the line.</p>
+      <p class="srcline">ADO Task #19 step 6 · ADO-Pumper task book, Evolution 1.1 out-of-cab step 12</p>
+    </div>
+  </section>
+
+  <div class="docfoot">
+    <p><strong>Source.</strong> Engine evolution card, transcribed 2026-08-28 — wording, order and
+    groupings as written, caps as printed. Orem's evolution material is layered in where tagged (ADO-Pumper
+    task book · ADO Task #19); the Positioning doctrine is from Engine Company Operations chapter 1, with the
+    Truck Manual and the Quick Reference Guide where they touch spotting; the relief-valve pre-set steps in
+    Establish Supply and the master-stream order are per my 2026-08-30 review.</p>
+    <p>Version: prototype · Last reviewed 2026-08-30 · Compiled by Engineer Jason Anderson</p>
+  </div>
+
+</div>
+
+<details class="secmenu" id="secMenu">
+  <summary aria-label="Open sections menu">Sections</summary>
+  <nav class="secpanel" aria-label="Jump to phase">
+    <a class="spos" href="#positioning">Positioning</a>
+    <a class="ssec" href="#secure">Secure the rig</a>
+    <a class="swtr" href="#water">Get water moving</a>
+    <a class="ssup" href="#supply">Establish supply</a>
+    <a class="smst" href="#master">Master stream</a>
+    <a class="sfom" href="#foam">Foam</a>
+    <a class="ssec" href="#emergency">Emergency</a>
+    <a class="sdig" href="#firstdigit">1st digit method</a>
+    <a class="spos" href="#notes">Field notes</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  // night mode
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // modes
+  var refBtn=document.getElementById('refBtn'),checkBtn=document.getElementById('checkBtn');
+  var resetBtn=document.getElementById('resetBtn'),prog=document.getElementById('progress');
+  var boxes=[].slice.call(document.querySelectorAll('.tick input'));
+  function setMode(m){
+    document.body.classList.toggle('checkoff',m==='check');
+    refBtn.setAttribute('aria-pressed',m==='ref');
+    checkBtn.setAttribute('aria-pressed',m==='check');
+    sessionStorage.setItem('eflow-mode',m);
+    update();
+  }
+  refBtn.addEventListener('click',function(){setMode('ref')});
+  checkBtn.addEventListener('click',function(){setMode('check')});
+  function update(){
+    var done=0;
+    boxes.forEach(function(b){
+      b.closest('.step').classList.toggle('done',b.checked);
+      if(b.checked)done++;
+    });
+    prog.textContent=done+' / '+boxes.length+' done';
+  }
+  boxes.forEach(function(b,i){
+    b.checked=sessionStorage.getItem('eflow-s'+i)==='1';
+    b.addEventListener('change',function(){
+      sessionStorage.setItem('eflow-s'+i,b.checked?'1':'0');update();
+    });
+  });
+  resetBtn.addEventListener('click',function(){
+    boxes.forEach(function(b,i){b.checked=false;sessionStorage.removeItem('eflow-s'+i)});update();
+  });
+  setMode(sessionStorage.getItem('eflow-mode')||'ref');
+
+  // narrow screens: fold the lower sections shut so the sheet is a shorter scroll.
+  // They ship open, so with JS off nothing is hidden.
+  var fold=[].slice.call(document.querySelectorAll('.collapsible'));
+  if(window.matchMedia&&window.matchMedia('(max-width:640px)').matches){
+    fold.forEach(function(d){d.removeAttribute('open')});
+  }
+  // a hash aimed at a folded section opens it
+  function openTarget(){
+    var id=location.hash.slice(1); if(!id)return;
+    var t=document.getElementById(id);
+    if(t&&t.classList.contains('collapsible'))t.setAttribute('open','');
+  }
+  window.addEventListener('hashchange',openTarget); openTarget();
+  // never print a folded section
+  window.addEventListener('beforeprint',function(){fold.forEach(function(d){d.setAttribute('open','')})});
+
+  // floating Sections menu — close on link tap (works without JS too; this is a nicety)
+  var menu=document.getElementById('secMenu');
+  if(menu){
+    [].slice.call(menu.querySelectorAll('a')).forEach(function(a){
+      a.addEventListener('click',function(){menu.removeAttribute('open')});
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1053 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Evolution 1.3 — Place the portable monitor in service</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+/* ============================================================
+   Field-instrument system · tokens per site2/engine-flow.html
+   (rev 2026-08-30). Official evolution page: task-book steps
+   verbatim with printed numbering, Jason's muscle-memory steps
+   merged where they apply, manual material in drop-downs.
+   ============================================================ */
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  /* section palette — muted, one identity per phase */
+  --c-pos:#3D5A80;  --c-pos-t:#E9EEF5;
+  --c-wtr:#0F6F78;  --c-wtr-t:#DFEEEF;
+  --c-sup:#5B4E9E;  --c-sup-t:#ECE9F6;
+  --c-mst:#7C3F87;  --c-mst-t:#F4E9F5;
+  --c-fom:#2F7D4F;  --c-fom-t:#E4F2E9;
+  --c-dig:#8A6116;  --c-dig-t:#F6EEDC;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --c-pos:#9FBCDF; --c-pos-t:#18232F;
+    --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+    --c-sup:#B7ADE9; --c-sup-t:#231E38;
+    --c-mst:#D9A2DB; --c-mst-t:#301D33;
+    --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+    --c-dig:#DFBC77; --c-dig-t:#332A15;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --c-pos:#9FBCDF; --c-pos-t:#18232F;
+  --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+  --c-sup:#B7ADE9; --c-sup-t:#231E38;
+  --c-mst:#D9A2DB; --c-mst-t:#301D33;
+  --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+  --c-dig:#DFBC77; --c-dig-t:#332A15;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2)}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:18px 0 8px}
+.kicker{font-family:var(--head);font-weight:700;font-size:14px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--text2);margin:0 0 8px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1.1;
+  margin:0 0 10px;text-wrap:balance}
+.objective{font-family:var(--head);font-weight:700;font-size:19px;margin:0 0 6px}
+.honestnote{font-size:15px;color:var(--text2);margin:8px 0 0;max-width:66ch}
+
+/* mode bar */
+.modebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0 6px}
+.mode{display:flex;border:1.5px solid var(--divider);border-radius:12px;overflow:hidden;background:var(--surface)}
+.mode button{min-height:56px;min-width:120px;padding:0 20px;border:0;background:transparent;
+  font-weight:700;font-size:16px;color:var(--text2)}
+.mode button[aria-pressed="true"]{background:var(--accent-tint);color:var(--text)}
+#resetBtn{min-height:56px;padding:0 18px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);font-weight:600;font-size:15px;color:var(--text2);display:none}
+body.checkoff #resetBtn{display:inline-block}
+.progress{font-size:15px;color:var(--text2);display:none;font-variant-numeric:tabular-nums}
+body.checkoff .progress{display:inline}
+
+/* jump to phase — sticky on wide screens */
+.jump{position:sticky;top:0;z-index:10;background:var(--canvas);padding:10px 0;
+  display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--divider)}
+.jump a{min-height:44px;display:inline-flex;align-items:center;padding:6px 14px;
+  border:1.5px solid var(--divider);border-radius:999px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:14.5px}
+.jump a:hover{border-color:var(--accent)}
+
+/* floating Sections menu — mobile only; <details> so it works with JS off */
+.secmenu{display:none}
+@media (max-width:640px){
+  .jump{display:none}
+  .secmenu{display:block;position:fixed;right:16px;bottom:16px;z-index:40}
+  .secmenu > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+    min-height:56px;min-width:56px;padding:0 22px;border:1.5px solid var(--divider);border-radius:999px;
+    background:var(--surface);color:var(--text);font-family:var(--head);font-weight:700;font-size:16px;
+    cursor:pointer;box-shadow:0 4px 14px rgba(10,30,28,.22)}
+  .secmenu > summary::-webkit-details-marker{display:none}
+  .secmenu[open] > summary{border-color:var(--accent);color:var(--accent)}
+  .secpanel{position:absolute;bottom:calc(100% + 10px);right:0;min-width:230px;
+    background:var(--surface);border:1.5px solid var(--divider);border-radius:14px;
+    box-shadow:0 8px 24px rgba(10,30,28,.25);padding:8px;display:grid;gap:2px}
+  .secpanel a{display:flex;align-items:center;min-height:48px;padding:6px 14px;border-radius:10px;
+    text-decoration:none;color:var(--text);font-weight:600;font-size:16px;border-left:5px solid transparent}
+  .secpanel a.spos{border-left-color:var(--c-pos)}
+  .secpanel a.swtr{border-left-color:var(--c-wtr)}
+  .secpanel a.ssup{border-left-color:var(--c-sup)}
+  .secpanel a.smst{border-left-color:var(--c-mst)}
+  .secpanel a.sfom{border-left-color:var(--c-fom)}
+  .secpanel a.sdig{border-left-color:var(--c-dig)}
+}
+
+/* the one procedure surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:18px;overflow:hidden}
+
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:18px 24px 4px;scroll-margin-top:70px}
+
+/* section colour identities — tinted ground + matching header accent,
+   never colour alone: every tint is paired with its coloured heading + left rule */
+.phase.cpos{background:var(--c-pos-t);border-left:6px solid var(--c-pos)}
+.phase.cpos > h2{color:var(--c-pos)}
+.phase.cwtr{background:var(--c-wtr-t);border-left:6px solid var(--c-wtr)}
+.phase.cwtr > h2{color:var(--c-wtr)}
+.phase.csup{background:var(--c-sup-t);border-left:6px solid var(--c-sup)}
+.phase.csup > h2{color:var(--c-sup)}
+.phase.cmst{background:var(--c-mst-t);border-left:6px solid var(--c-mst)}
+.phase.cmst > h2{color:var(--c-mst)}
+.phase.cfom{background:var(--c-fom-t);border-left:6px solid var(--c-fom)}
+.phase.cfom > h2{color:var(--c-fom)}
+.phase.cdig{background:var(--c-dig-t);border-left:6px solid var(--c-dig)}
+.phase.cdig > h2{color:var(--c-dig)}
+
+.step{display:flex;align-items:flex-start;gap:16px;padding:16px 24px;min-height:76px;
+  border-top:1px solid var(--divider)}
+.phase > h2 + .step{border-top:0}
+.stepnum{font-family:var(--head);font-weight:700;font-size:36px;line-height:1;color:var(--text2);
+  min-width:56px;font-variant-numeric:tabular-nums;padding-top:2px}
+.stepnum.sub{font-size:22px;padding-top:10px}
+.stepbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:21px;line-height:1.35;margin:0}
+.subaction{font-weight:600;font-size:18px;line-height:1.35;margin:0;font-style:italic}
+.stepsrc{font-size:14px;color:var(--text2);margin:6px 0 0;max-width:62ch}
+
+/* merged muscle-memory step — his, added where it applies */
+.step.merged{background:color-mix(in srgb,var(--accent-tint) 55%,transparent)}
+@supports not (color:color-mix(in srgb,red 10%,blue)){.step.merged{background:var(--accent-tint)}}
+.step.merged .stepnum{color:var(--accent)}
+
+/* rig-note sub-block heading inside a phase */
+.subhead{display:flex;align-items:center;gap:10px;padding:14px 24px 0}
+
+/* small attached Orem tag on a line */
+.oretag{display:inline-flex;align-items:center;gap:6px;margin-top:8px;margin-right:8px;
+  font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.02em;
+  color:var(--accent);background:var(--accent-tint);border-radius:8px;padding:5px 10px}
+
+/* small plain note attached to a step */
+.plainnote{margin:8px 0 0;font-size:15px;color:var(--text2);max-width:62ch}
+
+/* starting-condition strip */
+.startrow{border-top:1px solid var(--divider);padding:14px 24px;font-size:16px;color:var(--text2)}
+.startrow strong{color:var(--text)}
+
+/* check-off */
+.tick{display:none;flex:0 0 auto;padding-top:2px}
+body.checkoff .tick{display:block}
+.tick input{width:32px;height:32px;margin:12px;accent-color:var(--accent);cursor:pointer}
+body.checkoff .step.done .action,body.checkoff .step.done .subaction{color:var(--text2)}
+body.checkoff .step.done .stepnum{color:var(--accent)}
+
+/* disclosures — labeled by content */
+details.disc{margin-top:8px}
+details.disc > summary{list-style:none;display:inline-flex;align-items:center;min-height:44px;
+  padding:6px 14px;border:1.5px solid var(--divider);border-radius:10px;color:var(--accent);
+  font-weight:600;font-size:15px;cursor:pointer;background:transparent}
+details.disc > summary::-webkit-details-marker{display:none}
+details.disc > summary::after{content:"▾";margin-left:8px;font-size:12px;transition:transform .15s}
+details.disc[open] > summary::after{transform:rotate(180deg)}
+details.disc > .dbody{background:var(--expanded);border-radius:12px;padding:14px 18px;margin-top:8px;
+  font-size:16px}
+details.disc > .dbody p{margin:0 0 10px;max-width:64ch}
+details.disc > .dbody p:last-child{margin:0}
+details.disc > .dbody ul{margin:0 0 10px;padding-left:22px;max-width:60ch}
+details.disc > .dbody li{margin:0 0 6px}
+.srcline{font-size:14px;color:var(--text2)}
+/* wide figure tables — always scroll inside their own box, never the page */
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 10px;
+  border:1px solid var(--divider);border-radius:10px;background:var(--surface)}
+.tablewrap table{border-collapse:collapse;width:100%;min-width:340px;font-size:15.5px}
+.tablewrap th,.tablewrap td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--divider);
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.tablewrap thead th{font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--text2)}
+.tablewrap tr:last-child td{border-bottom:0}
+.tablewrap td.wrapcell{white-space:normal;min-width:210px}
+.formula{font-family:var(--head);font-weight:800;font-size:20px;letter-spacing:.02em;
+  margin:0 0 10px;color:var(--text)}
+blockquote{margin:0 0 10px;padding:0 0 0 14px;border-left:3px solid var(--accent);color:var(--text)}
+
+/* manual study blocks — full-width disclosures inside the manual phase */
+.manblock{padding:8px 24px 16px}
+.manblock + .manblock{border-top:1px solid var(--divider);padding-top:16px}
+.manblock > details.disc{margin-top:0}
+.manblock > details.disc > summary{font-family:var(--head);font-weight:700;font-size:17px;
+  color:var(--text);width:100%;justify-content:space-between;border-color:var(--divider);
+  background:var(--surface)}
+
+/* the safety gate — permanent full-width interruption; reminder only, no button.
+   In check-off mode it carries a checkbox like any step. */
+.gate{border-top:1px solid var(--divider);background:var(--safety-tint);padding:20px 24px;
+  display:flex;align-items:flex-start;gap:16px}
+.gatebody{flex:1;min-width:0}
+.gate .gtag{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:800;
+  font-size:15px;letter-spacing:.06em;color:var(--safety);margin:0 0 8px}
+.gate .gtag::before{content:"";width:0;height:0;border-left:11px solid transparent;
+  border-right:11px solid transparent;border-bottom:19px solid currentColor}
+.gate h3{font-family:var(--head);font-weight:800;font-size:21px;line-height:1.25;margin:0 0 8px;
+  border-left:5px solid var(--safety);padding-left:14px}
+.gate p{margin:0 0 8px;max-width:62ch;font-size:16px}
+.gate .srcline{display:block;margin-top:6px;font-size:14px;color:var(--text2)}
+body.checkoff .gate.done h3{color:var(--text2);border-left-color:var(--text2)}
+
+/* prev / next evolution links */
+.pagenav{display:flex;justify-content:space-between;gap:12px;margin-top:22px;flex-wrap:wrap}
+.pagenav a{min-height:48px;display:inline-flex;align-items:center;padding:8px 18px;
+  border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:15.5px}
+.pagenav a:hover{border-color:var(--accent)}
+
+.docfoot{margin-top:26px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+@media (max-width:640px){
+  .wrap{padding-bottom:110px} /* clear the floating Sections button */
+}
+@media (max-width:560px){
+  .step{padding:14px 16px;gap:12px}
+  .stepnum{font-size:30px;min-width:44px}
+  .action{font-size:19px}
+  .phase > h2,.gate,.startrow,.subhead{padding-left:16px;padding-right:16px}
+  .manblock{padding-left:16px;padding-right:16px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.modebar,.jump,.nightbtn,.secmenu,.pagenav{display:none}
+  .sheet{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  .step{break-inside:avoid;min-height:0;padding:8px 12px}
+  .phase{break-inside:avoid-page;background:#fff!important;border-left:none}
+  .phase.cpos,.phase.cwtr,.phase.csup,.phase.cmst,.phase.cfom,.phase.cdig{border-left:6px solid #000}
+  .phase > h2{color:#000!important}
+  .step.merged{background:#fff;border-left:4px solid #000}
+  .tick{display:block}
+  .tick input{width:14pt;height:14pt;margin:2pt 8pt}
+  details.disc{display:none}
+  .oretag{background:#fff;border:1px solid #000;color:#000}
+  .gate{background:#fff;border-top:3px double #000;border-bottom:3px double #000}
+  .gate h3{border-left:5px solid #000}
+  .stepnum{color:#000;font-size:16pt;min-width:30pt}
+  .action{font-size:12pt}
+}
+.headnote{margin-top:12px}
+/* FAB clearance — the floating Sections button must never cover the last content */
+@media (max-width:640px){ .wrap{ padding-bottom:132px } }
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="ehome" href="engine-home.html">Engine Operations</a><span>›</span>Evolution 1.3</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <p class="kicker">Official evolution · ADO-Pumper Task Book · September 2024</p>
+    <h1>Evolution 1.3 — Place the portable monitor in service</h1>
+    <p class="objective">OBJECTIVE: Pump to portable RAM monitor</p>
+    <details class="disc headnote">
+      <summary>Which appliance is on the ground — monitor or R.A.M.</summary>
+      <div class="dbody"><p>Note: the portable monitor and the R.A.M. are two different appliances with
+    different appliance losses &mdash; a ground monitor is <strong>25 psi</strong>, the R.A.M. is
+    <strong>10 psi</strong>. The manual covers them separately (Engine Company Operations 2023 V-1,
+    pp.136&#8211;138, 7-4&#8211;7-6; OFD Hydraulic Manual, Appliance Loss &mdash; Large Appliances).
+    The printed objective names the R.A.M.; this evolution's title says portable monitor. Both are covered
+    in the drop-downs below, and the appliance loss you carry into the PDP depends on which one is on the
+    ground.</p></div>
+    </details>
+  </header>
+
+  <div class="modebar">
+    <div class="mode" role="group" aria-label="Sheet mode">
+      <button type="button" id="refBtn" aria-pressed="true">Reference</button>
+      <button type="button" id="checkBtn" aria-pressed="false">Check-off</button>
+    </div>
+    <button type="button" id="resetBtn">Reset all</button>
+    <span class="progress" id="progress"></span>
+  </div>
+
+  <div class="sheet">
+
+    
+
+    <section class="phase cwtr" aria-labelledby="incab">
+      <h2 id="incab">In-cab operations</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: right foot on brake"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">Right foot on brake</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set parking brake"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">Set parking brake</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift transmission to neutral"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">Shift transmission to neutral</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift from road to pump"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">Shift from road to pump (engage the pump shift control lever)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: pump engaged light is on"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">Pump engaged light is on</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift transmission to drive"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">Shift transmission to Drive (D)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: OK TO PUMP light is on"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">OK TO PUMP light is on and</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: speedometer registers about 15 mph"></span>
+        <span class="stepnum sub">7a</span>
+        <div class="stepbody"><p class="subaction">Speedometer registers about 15 mph</p>
+          <p class="plainnote">The speedometer reading confirms the road-to-pump shift completed.</p>
+        </div>
+      </div>
+
+      <div class="subhead"><span class="oretag">Orem rigs: Engine 34 only — pump shift operations</span></div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: Engine 34 right foot on brake"></span>
+        <span class="stepnum sub">1</span>
+        <div class="stepbody"><p class="action">Right foot on brake</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: Engine 34 neutral"></span>
+        <span class="stepnum sub">2</span>
+        <div class="stepbody"><p class="action">Neutral</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: Engine 34 park brake"></span>
+        <span class="stepnum sub">3</span>
+        <div class="stepbody"><p class="action">Park brake</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: Engine 34 engage water pump switch"></span>
+        <span class="stepnum sub">4</span>
+        <div class="stepbody"><p class="action">Engage &ldquo;water pump&rdquo; switch</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: Engine 34 green light indicator on"></span>
+        <span class="stepnum sub">5</span>
+        <div class="stepbody"><p class="action">Green light indicator on</p></div>
+      </div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: emergency and warning lights are on"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">Emergency/warning lights are on</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: change radio to correct channel"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">Change radio to correct channel</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: remove right foot from brake"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">Remove right foot from brake</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: apparatus does not move"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">Apparatus does not move</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: exit cab after looking both directions"></span>
+        <span class="stepnum">12</span>
+        <div class="stepbody"><p class="action">Exit cab after looking both directions</p></div>
+      </div>
+    </section>
+
+    <section class="phase csup" aria-labelledby="outcab">
+      <h2 id="outcab">Out-of-cab operations</h2>
+      <div class="startrow"><strong>Starting condition on the printed sheet:</strong> apparatus is connected
+        to a hydrant, all connections have been made. Intake is not open.</div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: verify pump is engaged"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">Verify pump is engaged</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open tank to pump"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">Open Tank to Pump</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: crack re-circulating tank fill valve"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">Crack re-circulating/tank fill valve</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set to PSI mode if equipped"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">Set to PSI mode (if equipped)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: prime pump if necessary"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">Prime Pump (if necessary)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set wheel chocks"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">Set wheel chocks</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: break 3 inch supply line and connect to discharge"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">Break 3 in. supply line and connect to discharge</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open correct discharge"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">Open correct discharge</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set discharge to the right pressure"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">Set discharge to the right pressure</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: must be in PSI mode for engines with pressure governors"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">Must be in PSI mode (for engines with pressure governors)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: mark or note discharge gauge and line length or location"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">Mark or note discharge gauge &amp; line length/location.</p></div>
+      </div>
+
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: set discharge relief valve to about 150"></span>
+        <span class="stepnum">+</span>
+        <div class="stepbody"><p class="action">SET DISCHARGE RELIEF VALVE TO ~150</p>
+          <span class="oretag">from <a href="engine-flow.html" style="color:inherit">Engine Evolution</a></span>
+          <details class="disc"><summary>Why</summary><div class="dbody">
+            <blockquote>&ldquo;&hellip;then when I introduce hydrant water there isn't as much of a pressure
+            spike and the discharge relief valve will catch any extra. Then after hydrant is fully opened I
+            can throttle back down.&rdquo;</blockquote>
+            <p class="srcline">Jason, 2026-08-30</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: throttle up to 150 psi"></span>
+        <span class="stepnum">+</span>
+        <div class="stepbody"><p class="action">THROTTLE UP TO 150 PSI</p>
+          <span class="oretag">from Engine Evolution</span>
+        </div>
+      </div>
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: gate down handlines to their set PDP"></span>
+        <span class="stepnum">+</span>
+        <div class="stepbody"><p class="action">GATE DOWN HANDLINES TO THEIR SET PDP</p>
+          <span class="oretag">from Engine Evolution</span>
+        </div>
+      </div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open intake from hydrant slowly"></span>
+        <span class="stepnum">12</span>
+        <div class="stepbody"><p class="action">Open intake from hydrant slowly, make sure Pressure governor adjusts pump pressure or manually adjust pressure if needed.</p>
+          <p class="plainnote">Watch the intake gauge as it comes open. <strong>Maintain 20 psi intake
+          pressure</strong> &mdash; 20 psi minimum protects from drawing a vacuum on the intake hose.</p>
+          <span class="oretag">from <a href="engine-flow.html" style="color:inherit">Engine Evolution</a></span>
+        </div>
+      </div>
+
+      <div class="step merged"><span class="tick"><input type="checkbox" aria-label="Done: throttle back down once hydrant is fully open"></span>
+        <span class="stepnum">+</span>
+        <div class="stepbody"><p class="action">THROTTLE BACK DOWN (ONCE HYDRANT IS FULLY OPEN)</p>
+          <span class="oretag">from Engine Evolution</span>
+        </div>
+      </div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: close intake bleeder valve and tank to pump"></span>
+        <span class="stepnum">13</span>
+        <div class="stepbody"><p class="action">Close intake bleeder valve and tank to pump</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: check discharge pressure and adjust if needed"></span>
+        <span class="stepnum">14</span>
+        <div class="stepbody"><p class="action">Check discharge pressure and adjust if needed</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: verbalize supply is established"></span>
+        <span class="stepnum">15</span>
+        <div class="stepbody"><p class="action">Verbalize supply is established</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set manual discharge relief valve"></span>
+        <span class="stepnum">16</span>
+        <div class="stepbody"><p class="action">Set manual discharge relief valve</p>
+          <span class="oretag">Manual valve: Engine 31 · Engine 3820 · Ladder 32</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase cmst" aria-labelledby="monitor">
+      <h2 id="monitor">MASTER STREAM — the monitor</h2>
+      <div class="startrow">The portable monitor is a master stream device, so the master-stream order
+        applies once the discharge is set and supply is established. Order per my 2026-08-30 review:
+        secure the device &rarr; calculate PDP &rarr; set PDP &rarr; notify Command &rarr; confirm everyone
+        is out &rarr; open the discharge. The sequence lives on
+        <a href="engine-flow.html">Engine Evolution</a>.</div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: properly secure device"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">PROPERLY SECURE DEVICE</p>
+          <details class="disc"><summary>Why &amp; source</summary><div class="dbody">
+            <p>Operating in the portable mode, a master stream has a limited side-to-side range. Turning the
+            nozzle too far left or right may cause the base to become unstable and tip over. Higher flows
+            also knock debris loose from the building that can strike people or apparatus.</p>
+            <p class="srcline">Engine Company Operations 2023 V-1, p.133 (7-1)</p>
+          </div></details>
+          <details class="disc"><summary>The force you are securing against</summary><div class="dbody">
+            <p>Nozzle reaction is what tips a monitor over, and it climbs with pressure and tip size:</p>
+            <p class="formula">NR = 1.57 &times; d&sup2; &times; NP</p>
+            <p>1.57 is the constant, <em>d</em> is nozzle diameter in inches, <em>NP</em> is nozzle pressure.
+            Field method for a smooth bore: <strong>one third of the flow</strong>. For a fog straight
+            stream, NR = .0505 &times; GPM &times; &radic;NP, field method <strong>half the flow</strong>.</p>
+            <p>The R.A.M. is designed around this &mdash; its hydraulic stability system harnesses the
+            reaction force to stabilize the monitor, and four fold-out forged-aluminum legs with
+            carbide-tipped ground spikes give it the largest footprint in its class, the rear spikes angled
+            to grip the ground.</p>
+            <p class="srcline">OFD Hydraulic Manual, Nozzle Reaction &middot; Engine Company Operations 2023 V-1, p.138 (7-6)</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: calculate PDP"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">CALCULATE PDP</p>
+          <p class="plainnote">The arithmetic for this evolution &mdash; formula, appliance loss, 3&Prime;
+          friction loss and the tip flows &mdash; is in <a href="#numbers">The numbers</a> below.</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set PDP"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">SET PDP</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: notify Command big water is ready"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">NOTIFY COMMAND BIG WATER IS READY</p></div>
+      </div>
+
+      <div class="gate step" id="gateStep">
+        <span class="tick"><input type="checkbox" aria-label="Done: confirmed all members out of the building with Command"></span>
+        <div class="gatebody">
+          <p class="gtag">STOP</p>
+          <h3>Confirm all department members are out of the building before flowing the master stream.</h3>
+          <p>Affirmative acknowledgement, not a one-way notification. A master stream must be shut down to be
+          repositioned — the safest positions are the building corners; the front is dangerous, ineffective,
+          and inside the collapse zone.</p>
+          <span class="srcline">Engine Company Operations 2023 V-1, p.133 (7-1)</span>
+        </div>
+      </div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open discharge"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">OPEN DISCHARGE</p></div>
+      </div>
+    </section>
+
+    <section class="phase cfom" aria-labelledby="numbers">
+      <h2 id="numbers">The numbers &mdash; what CALCULATE PDP actually means here</h2>
+
+      <div class="manblock">
+        <details class="disc"><summary>The formula &mdash; and the one place the manual's notation is wrong</summary><div class="dbody">
+          <p class="formula">PDP = F + E + A + N</p>
+          <ul>
+            <li><strong>F</strong> &mdash; friction loss. Repeat F for every additional line or hose segment
+            in the layout (F&middot;F&middot;E&middot;A&middot;N and beyond as the layout requires).</li>
+            <li><strong>E</strong> &mdash; elevation loss or gain.</li>
+            <li><strong>A</strong> &mdash; appliance loss.</li>
+            <li><strong>N</strong> &mdash; nozzle pressure, counted <strong>exactly once</strong>.</li>
+          </ul>
+          <p>Always start at the nozzle and work back to the pump.</p>
+          <p><strong>N appears once.</strong> Nozzle pressure is a component of PDP, not a component of
+          friction loss. The OFD Hydraulic Manual writes <em>&ldquo;PDP = Nozzle Pressure + Total Friction
+          Loss&rdquo;</em> and then lists &ldquo;N &ndash; Nozzle Pressure&rdquo; <em>inside</em> the Total
+          Friction Loss list. Read literally that adds nozzle pressure twice and over-pumps every line. That
+          is a defect in the manual's notation, not a doctrinal difference &mdash; on the committee list.</p>
+          <p class="srcline">OFD Hydraulic Manual &sect;2.a and &sect;2.c &middot; corrected notation per my
+          review</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>A &mdash; the appliance loss, and which appliance is on the ground</summary><div class="dbody">
+          <p>This is the term that changes depending on whether the portable monitor or the R.A.M. is in
+          service. Get it wrong and the whole PDP is off by 15 psi.</p>
+          <div class="tablewrap"><table>
+            <thead><tr><th scope="col">Appliance</th><th scope="col">Loss</th></tr></thead>
+            <tbody>
+              <tr><td>Deck gun / ground monitor</td><td>25 psi</td></tr>
+              <tr><td>Rapid Attack Monitor (R.A.M.)</td><td>10 psi</td></tr>
+              <tr><td>Standpipe</td><td class="wrapcell">25 psi regardless of flow</td></tr>
+              <tr><td class="wrapcell">Wyes, gated wyes, siamese, reducer, increaser</td><td class="wrapcell">10 psi if combined flow exceeds 350 gpm &middot; 0 psi below 350 gpm</td></tr>
+            </tbody>
+          </table></div>
+          <p class="srcline">OFD Hydraulic Manual, Appliance Loss &mdash; small and large appliances</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>F &mdash; friction loss in the 3&Prime; supply to the monitor</summary><div class="dbody">
+          <p>Printed setup step 1 puts a <strong>3 inch</strong> line on the monitor, so 3&Prime; is the F
+          you are calculating.</p>
+          <p><strong>Field method for 3&Prime; hose, 300 gpm and up &mdash; condensed Q, squared.</strong>
+          GPM &divide; 100 = Q; square the Q; that is psi per 100 ft. At 300 gpm: 300 &divide; 100 = 3,
+          3 &times; 3 = <strong>9 psi per 100 ft</strong>.</p>
+          <p><strong>Long form:</strong> FL = C &times; Q&sup2; &times; L, where L is length per 100 ft and
+          the coefficient for 3&Prime; is <strong>.8</strong>. The same 300 gpm works out to 7.2 psi per
+          100 ft &mdash; the field method reads slightly higher than the long form at this flow.</p>
+          <div class="tablewrap"><table>
+            <thead><tr><th scope="col">Hose</th><th scope="col">GPM</th><th scope="col">Field FL / 100&prime;</th><th scope="col">CQ&sup2;L / 100&prime;</th><th scope="col">C</th></tr></thead>
+            <tbody>
+              <tr><td>1&frac34;&Prime;</td><td>160</td><td>30</td><td>40</td><td>15.5</td></tr>
+              <tr><td>2&frac12;&Prime;</td><td>265</td><td>16</td><td>14</td><td>2</td></tr>
+              <tr><td>3&Prime;</td><td>300</td><td>9</td><td>7.2</td><td>.8</td></tr>
+              <tr><td>5&Prime;</td><td>1,000</td><td>10</td><td>8 *</td><td>.08</td></tr>
+            </tbody>
+          </table></div>
+          <p>* The manual's printed table puts <strong>.08</strong> in the 5&Prime; CQ&sup2;L cell &mdash;
+          that is the coefficient, not the loss. Worked out, .08 &times; 10&sup2; &times; 1 = <strong>8 psi
+          per 100 ft</strong>, which is what the field method's 10 is approximating. Corrected here and on
+          the error list.</p>
+          <p class="srcline">OFD Hydraulic Manual, Friction Loss Standard per 100&prime; &middot; coefficients
+          from flow testing and IFSTA</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>E &mdash; elevation</summary><div class="dbody">
+          <ul>
+            <li><strong>Geographical:</strong> .5 psi per foot.</li>
+            <li><strong>Structural:</strong> 5 psi per floor, minus the first floor.</li>
+            <li><strong>Sub-level</strong> is a gain &mdash; subtract it from the PDP.</li>
+          </ul>
+          <p>A portable monitor sitting on the same grade as the engine is normally an E of zero. Check the
+          grade before you assume that.</p>
+          <p class="srcline">OFD Hydraulic Manual, Elevation Loss &mdash; field hydraulic calculation</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>N &mdash; master-stream tip flows</summary><div class="dbody">
+          <p>Printed setup step 2 has you flow both a fog tip and smooth bore stacked tips, so you will
+          re-calculate when the tip changes. Master-stream smooth bore tips are rated at <strong>80 psi</strong>
+          nozzle pressure, not the 50 psi you use on a hand line:</p>
+          <div class="tablewrap"><table>
+            <caption class="srcline" style="caption-side:bottom;padding:8px 12px;text-align:left">Standard GPM for master-stream smooth bore tips. A calculation table, not a list of what is on any rig.</caption>
+            <thead><tr><th scope="col">Tip</th><th scope="col">Nozzle pressure</th><th scope="col">GPM</th></tr></thead>
+            <tbody>
+              <tr><td>1&#8540;&Prime;</td><td>80 psi</td><td>500</td></tr>
+              <tr><td>1&frac12;&Prime;</td><td>80 psi</td><td>600</td></tr>
+              <tr><td>1&frac34;&Prime;</td><td>80 psi</td><td>800</td></tr>
+              <tr><td>2&Prime;</td><td>80 psi</td><td>1,000</td></tr>
+            </tbody>
+          </table></div>
+          <p>If you need a tip that is not on the table: GPM = 29.7 &times; D&sup2; &times; &radic;NP.</p>
+          <p>On the fog side there is no blanket figure &mdash; nozzle pressure is a property of the nozzle
+          model. The R.A.M.'s combination fog runs <strong>500 gpm at 75 psi</strong>; its select-gallonage
+          auto fog is also 75 psi (250 / 350 / 500 gpm), and the same table lists a fog row at 50 psi
+          flowing 400 gpm. Read the nozzle, do not assume 100.</p>
+          <p class="srcline">OFD Hydraulic Manual, Solid Stream / Smooth Bore Tips &mdash; master streams;
+          Determining GPM from FOG Nozzles; Elkhart R.A.M. nozzle table</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Rounding, and the number you actually set on the panel</summary><div class="dbody">
+          <p>Round to the easiest whole number to set on the panel &mdash; the gauge is not a calculator, and
+          a component sum of 171 is set as 170.</p>
+          <p class="srcline">Rounding convention per my 2026-08-30 review</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>NPDP &mdash; how much work the pump is really doing</summary><div class="dbody">
+          <p class="formula">NPDP = PDP &minus; intake psi</p>
+          <p>No work is being performed on the suction side of the pump, so the incoming pressure is
+          subtracted from the discharge pressure. A PDP of 150 psi on a 90 psi intake is a net of 60 psi
+          &mdash; that is how much work the pump is actually doing.</p>
+          <p class="srcline">OFD Hydraulic Manual, Net Pump Discharge Pressure (NPDP<sub>pps</sub>)</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Can this hydrant give me another line? &mdash; the 1st digit method</summary><div class="dbody">
+          <p>Printed out-of-cab step 15 has you verbalise that supply is established. The next question
+          Command will ask is how much more you have. Watch the drop on the master intake gauge from static
+          to residual, then read it against the first digit of your static pressure. Worked at a 90 psi
+          static:</p>
+          <div class="tablewrap"><table>
+            <thead><tr><th scope="col">Multiple</th><th scope="col">Residual drop</th><th scope="col">Like volumes remaining</th></tr></thead>
+            <tbody>
+              <tr><td>90 &times; 1 = 9</td><td>1&ndash;9 psi</td><td>3 like volumes</td></tr>
+              <tr><td>90 &times; 2 = 18</td><td>10&ndash;18 psi</td><td>2 like volumes</td></tr>
+              <tr><td>90 &times; 3 = 27</td><td>19&ndash;27 psi</td><td>1 like volume</td></tr>
+              <tr><td>&mdash;</td><td>28+ psi</td><td>0 like volumes</td></tr>
+            </tbody>
+          </table></div>
+          <p>This is the Engineer's standing job at the panel, not an optional extra: monitor the residual
+          pressure of the pump master intake gauge to determine the capability of supplying additional
+          volumes when available or as needed.</p>
+          <p class="srcline">OFD Hydraulic Manual, Calculating Like Volumes &middot; Engine Company Operations
+          2023 V-1, Ch.1 (1-11)</p>
+        </div></details>
+      </div>
+
+    </section>
+
+    <section class="phase cdig" aria-labelledby="manual">
+      <h2 id="manual">What the manual teaches — master streams, the monitor, and getting water to it</h2>
+
+      <div class="manblock">
+        <details class="disc"><summary>What counts as a master stream</summary><div class="dbody">
+          <p>By most definitions, any stream greater than 350 gpm that requires mechanical assistance for
+          handling is a &ldquo;master&rdquo; stream — also called large-caliber streams (LCS). They may be
+          portable (&ldquo;ground-based&rdquo;), elevated (ladder pipes, elevating-platform nozzles), or
+          mounted atop the engine itself. They're deployed in situations, usually defensive, where the fire
+          is beyond the ability of hand lines to control, or where a location is no longer safe for
+          department members.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.133 (7-1)</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Everyone backed out first</summary><div class="dbody">
+          <p>Master stream operations require a coordinated effort from the companies operating on scene —
+          one part of which is ensuring that all department members have been backed out of the building
+          prior to flowing any master stream or elevated ladder pipe. That's the STOP gate above.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.133 (7-1)</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Positioning — corners, never the front</summary><div class="dbody">
+          <p>When master streams go into service it generally means interior offensive operations have been
+          abandoned and a defensive posture is being employed. The device must be positioned to give an
+          effective stream — once the line is in operation, <strong>it must be shut down to be
+          repositioned</strong>.</p>
+          <p>The safest exterior positions are at the <strong>corners of the building</strong>. Setting up in
+          front of the building — from the top of the engine or from the ground — is a dangerous and
+          ineffective tactic: firefighters operating the stream are in the collapse zone and may not have
+          time to react to a sudden wall collapse.</p>
+          <p>If a master stream must operate from the front, it should be set back far enough that it will
+          not be struck by falling walls or debris. The widely accepted figure is a collapse zone of one and
+          one-half times the height of the tallest exterior wall — a store front with a 20-foot wall gets a
+          30-foot collapse safety zone, and the further the better.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, pp.133&#8211;134 (7-1&#8211;7-2)</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Portable-device safety facts</summary><div class="dbody">
+          <ul>
+            <li>Higher flows are more likely to knock debris loose from the building, sending it through the
+            air to strike people or apparatus.</li>
+            <li>In the portable mode the master stream has a limited side-to-side range. Turning the nozzle
+            too far left or right may cause the base to become unstable and tip over.</li>
+          </ul>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.133 (7-1)</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Components — nozzle and base</summary><div class="dbody">
+          <p>The two components that make up the monitor are the <strong>nozzle</strong> and the
+          <strong>base</strong>. The nozzle is typically a combination fog nozzle, or a stacked set of smooth
+          bore tips varying in size and gpm delivery. The base is a portable stand with folding legs for
+          stability and a single LDH inlet (a 5&rdquo; LDH inlet supplies the monitor). Normally stored in
+          the rear compartment, the base can be set up at any desired location — removing the dangers of the
+          fire from the apparatus and any firefighters operating in the area.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, pp.136&#8211;137 (7-4&#8211;7-5)</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>The Stinger</summary><div class="dbody">
+          <p>The Stinger is a dual-purpose break-apart monitor usable as a deck gun or a portable monitor.
+          Mounted to a plumbed outlet on top of the engine with the nozzle assembly attached, it can be
+          placed into operation rapidly without running a supply line. Based on the tip in use, it can
+          deliver up to 1,250 gallons per minute. A disadvantage of the deck-gun configuration: it may
+          require the engine to park in close proximity for proper reach, placing the engine in a
+          potentially dangerous position.</p>
+          <p>The nozzle assembly — combination nozzle or stacked tip set — includes a hand wheel for
+          adjusting the tip angle and an in-line pressure gauge, and can be affixed to either the engine or
+          the portable base. For remote operation: set up the base, remove the Stinger from the engine, and
+          stretch the LDH supply line.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, pp.136&#8211;137 (7-4&#8211;7-5)</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>The R.A.M. — a different appliance</summary><div class="dbody">
+          <p>The Rapid Attack Monitor is a lightweight, compact portable monitor deployed and operated by a
+          single firefighter. Its hydraulic stability system harnesses reaction force to stabilize the
+          monitor; four fold-out forged-aluminum legs with carbide-tipped ground spikes give it the largest
+          footprint in its class, the rear spikes angled to grip the ground. It can be carried while
+          attached to a charged line and stored pre-connected.</p>
+          <ul>
+            <li>Supplied with either 2&frac12;&rdquo; or 3&rdquo; hoselines.</li>
+            <li>Minimal appliance loss of <strong>10 psi</strong>, from the waterway design.</li>
+            <li>Tips: smooth bore 1&frac12;&rdquo;, 1&#8540;&rdquo;, 1&frac14;&rdquo;, or combination fog nozzles.</li>
+          </ul>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.138 (7-6)</p>
+          <p><strong>Flow ceiling &mdash; two Orem documents, two answers. Do not pump to a single
+          number.</strong> Engine Ops p.138 states a maximum delivery of <strong>500 gpm at 75 psi</strong>
+          nozzle pressure and lists 1&frac12;&rdquo; among the approved tips. The OFD Hydraulic Manual's own
+          R.A.M. table lists <strong>1&frac12;&rdquo; at 80 psi = 600 gpm</strong>. One appliance, two
+          ceilings, both Orem &mdash; unresolved, and on the committee list. Until it is ruled, work from the
+          tip rows both documents support:</p>
+          <div class="tablewrap"><table>
+            <caption class="srcline" style="caption-side:bottom;padding:8px 12px;text-align:left">R.A.M. tip rows both Orem documents support.</caption>
+            <thead><tr><th scope="col">Hose</th><th scope="col">Tip</th><th scope="col">Nozzle pressure</th><th scope="col">GPM</th></tr></thead>
+            <tbody>
+              <tr><td>3&Prime;</td><td>1&frac14;&Prime; smooth bore</td><td>80 psi</td><td>400</td></tr>
+              <tr><td>3&Prime;</td><td>1&#8540;&Prime; smooth bore</td><td>80 psi</td><td>500</td></tr>
+            </tbody>
+          </table></div>
+          <p class="srcline">OFD Hydraulic Manual, Elkhart R.A.M. nozzle table &middot; Engine Company
+          Operations 2023 V-1, p.138 (7-6). Flag it and check the appliance at the rig.</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>R.A.M. offensive application</summary><div class="dbody">
+          <p>Besides the defensive application, the R.A.M. is well suited to interior offensive operations —
+          a large amount of water with long reach, for knockdown in a large building or a long hallway. It
+          transitions easily from exterior attack to advancing inside with minimal personnel: a two-person
+          team, one firefighter controlling the monitor by shutting it down fully or halfway to move it
+          forward, the other moving the supplying hoseline. Once in position, open it fully again.</p>
+          <p>Another advantage: once the bulk of the fire is knocked down, a smaller hoseline can be advanced
+          from it — the R.A.M. becomes similar to an extended lay from a 2&frac12;&rdquo; shutoff, with a
+          large supply line already in place that can supply a 2&frac12;&rdquo; or 1&frac34;&rdquo; handline
+          at lower gpms. Good applications: garden apartments, strip malls, warehouses, and other
+          occupancies with long setbacks.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, pp.139&#8211;140 (7-7&#8211;7-8)</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Transitioning to the hydrant &mdash; why the printed order is the order</summary><div class="dbody">
+          <p>Out-of-cab steps 3, 12 and 13 are one maneuver, and the department's own changeover task
+          explains each piece:</p>
+          <ul>
+            <li><strong>Air is the enemy.</strong> Air in the empty supply hose causes problems if it enters
+            the pump while the pump is supplying attack lines under pressure. Open the bleeder valve on the
+            gated intake so the air escapes as the supply line fills. When all the air has been forced out,
+            close the bleeder &mdash; the water is now at the pump and ready for the transition.</li>
+            <li><strong>Open the intake very slowly</strong> while watching <em>both</em> the intake and the
+            discharge gauges, adjusting discharge pressure as you go until the intake is completely open. It
+            may be necessary to adjust the engine throttle to get the desired discharge pressure.</li>
+            <li><strong>Then</strong> close tank-to-pump &mdash; but leave the tank-fill valve partially open
+            until the water tank has refilled. A full tank provides a limited reserve if the external supply
+            is lost unexpectedly. That is why printed step 3 cracks the re-circulating/tank-fill valve early
+            and step 13 closes tank-to-pump late.</li>
+          </ul>
+          <p>The task's own operating procedure also sets the relief valve or pressure governor
+          <em>before</em> the external supply arrives (its step 6, ahead of its step 8) &mdash; the same
+          logic as the relief-valve pre-set merged into the out-of-cab section above.</p>
+          <p class="srcline">ADO Task #19, Basic Pump Skills &mdash; Changeover (Transition to an External
+          Water Supply)</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>Getting more water to a master stream &mdash; the high-flow ranking</summary><div class="dbody">
+          <p>A monitor eats more water than a hand line, so the supply question comes up fast. The manual
+          ranks the tactics for getting the most out of a distribution system, least preferred to best
+          preferred:</p>
+          <ol>
+            <li>Multiple supply lines from a <strong>single hydrant</strong> <em>(least preferred)</em></li>
+            <li><strong>Pumping the hydrant</strong> with the 2nd or 3rd due engine supplying the attack
+            pumper</li>
+            <li>Multiple supply lines from <strong>different hydrants sharing the same water main</strong></li>
+            <li>Multiple supply lines from <strong>different hydrants not sharing the same water main</strong>
+            <em>(best preferred)</em></li>
+          </ol>
+          <p>The manual introduces this list as &ldquo;three basic tactics&rdquo; and then prints four
+          bullets &mdash; noted, not silently corrected.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, p.109 (5-13)</p>
+        </div></details>
+      </div>
+
+      <div class="manblock">
+        <details class="disc"><summary>What the Engineer is expected to know at the panel</summary><div class="dbody">
+          <p>To establish and maintain proper pumping pressures, every Engineer must know <strong>how many
+          hoselines, the size and length of the hoseline, the type of nozzles being used, and their
+          flow</strong>. It is imperative that the Engineer listen closely to the radio at all times for
+          traffic concerning charging, shutting down or adjusting hose line pressures. They should also
+          monitor the residual pressure of the pump master intake gauge to determine the capability of
+          supplying additional volumes when available or as needed.</p>
+          <p>That is printed in-cab step 9 (change radio to correct channel) and
+          <a href="#numbers">The numbers</a> above, stated as a standing duty rather than a checkbox.</p>
+          <p class="srcline">Engine Company Operations 2023 V-1, Ch.1 (1-11)</p>
+        </div></details>
+      </div>
+
+    </section>
+
+  </div><!-- /sheet -->
+
+  <nav class="pagenav" aria-label="Evolutions">
+    <a data-nav="evo12" href="evo-1-2.html">&larr; Evolution 1.2 — Changeover &amp; various hose loads</a>
+    <a data-nav="evo14" href="evo-1-4.html">Evolution 1.4 — Deck gun with additional hand lines &rarr;</a>
+  </nav>
+
+  <div class="docfoot">
+    <p><strong>Sources.</strong> ADO-Pumper Task Book, Evolution 1.3 (September 2024 version) — objective,
+    setup, in-cab and out-of-cab steps verbatim with the printed numbering. Steps marked
+    &ldquo;+&rdquo; and the master-stream order are merged in from
+    <a href="engine-flow.html">Engine Evolution</a>
+    per my 2026-08-30 review. Manual material: Engine Company Operations 2023 V-1 — Chapter 7 (Master Stream
+    Operations), Chapter 5 (Water Supply, p.109) and Chapter 1 (Firefighter Assignments, 1-11); ADO Task #19
+    (Changeover); OFD Hydraulic Manual for every figure in The numbers. The R.A.M. flow ceiling is
+    unresolved between two Orem documents and is flagged rather than published as one number.</p>
+    <p>Version: prototype · Last reviewed 2026-08-30 · Compiled by Engineer Jason Anderson</p>
+  </div>
+
+</div>
+
+<details class="secmenu" id="secMenu">
+  <summary aria-label="Open sections menu">Sections</summary>
+  <nav class="secpanel" aria-label="Jump to section">
+    <a class="swtr" href="#incab">In-cab operations</a>
+    <a class="ssup" href="#outcab">Out-of-cab operations</a>
+    <a class="smst" href="#monitor">Master stream</a>
+    <a class="sfom" href="#numbers">The numbers</a>
+    <a class="sdig" href="#manual">The manual</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  // night mode
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // modes
+  var refBtn=document.getElementById('refBtn'),checkBtn=document.getElementById('checkBtn');
+  var resetBtn=document.getElementById('resetBtn'),prog=document.getElementById('progress');
+  var boxes=[].slice.call(document.querySelectorAll('.tick input'));
+  function setMode(m){
+    document.body.classList.toggle('checkoff',m==='check');
+    refBtn.setAttribute('aria-pressed',m==='ref');
+    checkBtn.setAttribute('aria-pressed',m==='check');
+    sessionStorage.setItem('evo13-mode',m);
+    update();
+  }
+  refBtn.addEventListener('click',function(){setMode('ref')});
+  checkBtn.addEventListener('click',function(){setMode('check')});
+  function update(){
+    var done=0;
+    boxes.forEach(function(b){
+      b.closest('.step').classList.toggle('done',b.checked);
+      if(b.checked)done++;
+    });
+    prog.textContent=done+' / '+boxes.length+' done';
+  }
+  boxes.forEach(function(b,i){
+    b.checked=sessionStorage.getItem('evo13-s'+i)==='1';
+    b.addEventListener('change',function(){
+      sessionStorage.setItem('evo13-s'+i,b.checked?'1':'0');update();
+    });
+  });
+  resetBtn.addEventListener('click',function(){
+    boxes.forEach(function(b,i){b.checked=false;sessionStorage.removeItem('evo13-s'+i)});update();
+  });
+  setMode(sessionStorage.getItem('evo13-mode')||'ref');
+
+  // floating Sections menu — close on link tap (works without JS too; this is a nicety)
+  var menu=document.getElementById('secMenu');
+  if(menu){
+    [].slice.call(menu.querySelectorAll('a')).forEach(function(a){
+      a.addEventListener('click',function(){menu.removeAttribute('open')});
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

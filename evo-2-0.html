@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Evolution 2.0 — Foam operations with Pro/Pak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+/* ============================================================
+   Official evolution page — Evolution 2.0, Foam operations
+   with Pro/Pak. Field-instrument system, same tokens as
+   engine-flow.html (rev 2026-08-30: section colour identities,
+   floating mobile Sections menu, verification pass).
+   Production note: self-host WOFF2 for offline.
+   ============================================================ */
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  /* section palette — muted, one identity per phase */
+  --c-pos:#3D5A80;  --c-pos-t:#E9EEF5;
+  --c-wtr:#0F6F78;  --c-wtr-t:#DFEEEF;
+  --c-sup:#5B4E9E;  --c-sup-t:#ECE9F6;
+  --c-mst:#7C3F87;  --c-mst-t:#F4E9F5;
+  --c-fom:#2F7D4F;  --c-fom-t:#E4F2E9;
+  --c-dig:#8A6116;  --c-dig-t:#F6EEDC;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --c-pos:#9FBCDF; --c-pos-t:#18232F;
+    --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+    --c-sup:#B7ADE9; --c-sup-t:#231E38;
+    --c-mst:#D9A2DB; --c-mst-t:#301D33;
+    --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+    --c-dig:#DFBC77; --c-dig-t:#332A15;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --c-pos:#9FBCDF; --c-pos-t:#18232F;
+  --c-wtr:#6BC6C8; --c-wtr-t:#15383A;
+  --c-sup:#B7ADE9; --c-sup-t:#231E38;
+  --c-mst:#D9A2DB; --c-mst-t:#301D33;
+  --c-fom:#8FCEA4; --c-fom-t:#1A3023;
+  --c-dig:#DFBC77; --c-dig-t:#332A15;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2)}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:18px 0 6px}
+.kicker{font-family:var(--head);font-weight:700;font-size:14px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1.1;
+  margin:0 0 10px;text-wrap:balance}
+.objective{font-size:18px;color:var(--text2);margin:0;max-width:66ch}
+.objective strong{color:var(--text)}
+
+/* mode bar */
+.modebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0 6px}
+.mode{display:flex;border:1.5px solid var(--divider);border-radius:12px;overflow:hidden;background:var(--surface)}
+.mode button{min-height:56px;min-width:120px;padding:0 20px;border:0;background:transparent;
+  font-weight:700;font-size:16px;color:var(--text2)}
+.mode button[aria-pressed="true"]{background:var(--accent-tint);color:var(--text)}
+#resetBtn{min-height:56px;padding:0 18px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);font-weight:600;font-size:15px;color:var(--text2);display:none}
+body.checkoff #resetBtn{display:inline-block}
+.progress{font-size:15px;color:var(--text2);display:none;font-variant-numeric:tabular-nums}
+body.checkoff .progress{display:inline}
+
+/* jump to phase — sticky on wide screens */
+.jump{position:sticky;top:0;z-index:10;background:var(--canvas);padding:10px 0;
+  display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--divider)}
+.jump a{min-height:44px;display:inline-flex;align-items:center;padding:6px 14px;
+  border:1.5px solid var(--divider);border-radius:999px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:14.5px}
+.jump a:hover{border-color:var(--accent)}
+
+/* floating Sections menu — mobile only; <details> so it works with JS off */
+.secmenu{display:none}
+@media (max-width:640px){
+  .jump{display:none}
+  .secmenu{display:block;position:fixed;right:16px;bottom:16px;z-index:40}
+  .secmenu > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+    min-height:56px;min-width:56px;padding:0 22px;border:1.5px solid var(--divider);border-radius:999px;
+    background:var(--surface);color:var(--text);font-family:var(--head);font-weight:700;font-size:16px;
+    cursor:pointer;box-shadow:0 4px 14px rgba(10,30,28,.22)}
+  .secmenu > summary::-webkit-details-marker{display:none}
+  .secmenu[open] > summary{border-color:var(--accent);color:var(--accent)}
+  .secpanel{position:absolute;bottom:calc(100% + 10px);right:0;min-width:230px;
+    background:var(--surface);border:1.5px solid var(--divider);border-radius:14px;
+    box-shadow:0 8px 24px rgba(10,30,28,.25);padding:8px;display:grid;gap:2px}
+  .secpanel a{display:flex;align-items:center;min-height:48px;padding:6px 14px;border-radius:10px;
+    text-decoration:none;color:var(--text);font-weight:600;font-size:16px;border-left:5px solid transparent}
+  .secpanel a.spos{border-left-color:var(--c-pos)}
+  .secpanel a.ssec{border-left-color:var(--safety)}
+  .secpanel a.swtr{border-left-color:var(--c-wtr)}
+  .secpanel a.sfom{border-left-color:var(--c-fom)}
+  .secpanel a.sdig{border-left-color:var(--c-dig)}
+  .secpanel a.ssup{border-left-color:var(--c-sup)}
+  .secpanel a.smst{border-left-color:var(--c-mst)}
+}
+
+/* the one procedure surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:18px;overflow:hidden}
+
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2{font-family:var(--head);font-weight:700;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:18px 24px 4px;scroll-margin-top:70px}
+
+/* section colour identities — tinted ground + matching header accent,
+   never colour alone: every tint is paired with its coloured heading + left rule */
+.phase.cpos{background:var(--c-pos-t);border-left:6px solid var(--c-pos)}
+.phase.cpos > h2{color:var(--c-pos)}
+.phase.cwtr{background:var(--c-wtr-t);border-left:6px solid var(--c-wtr)}
+.phase.cwtr > h2{color:var(--c-wtr)}
+.phase.cdig{background:var(--c-dig-t);border-left:6px solid var(--c-dig)}
+.phase.cdig > h2{color:var(--c-dig)}
+.phase.csup{background:var(--c-sup-t);border-left:6px solid var(--c-sup)}
+.phase.csup > h2{color:var(--c-sup)}
+.phase.cfom{background:var(--c-fom-t);border-left:6px solid var(--c-fom)}
+.phase.cfom > h2{color:var(--c-fom)}
+.phase.cmst{background:var(--c-mst-t);border-left:6px solid var(--c-mst)}
+.phase.cmst > h2{color:var(--c-mst)}
+
+/* Secure the rig / in-cab keeps red */
+.phase.cardred{background:var(--safety-tint);border-left:6px solid var(--safety)}
+.phase.cardred > h2{color:var(--safety)}
+.phase.cardred .step{border-top-color:color-mix(in srgb,var(--safety) 18%,transparent)}
+@supports not (color:color-mix(in srgb,red 10%,blue)){.phase.cardred .step{border-top-color:var(--divider)}}
+
+.step{display:flex;align-items:flex-start;gap:16px;padding:16px 24px;min-height:76px;
+  border-top:1px solid var(--divider)}
+.phase > h2 + .step{border-top:0}
+.stepnum{font-family:var(--head);font-weight:700;font-size:36px;line-height:1;color:var(--text2);
+  min-width:56px;font-variant-numeric:tabular-nums;padding-top:2px}
+.stepnum.sub{font-size:22px;padding-top:10px}
+.stepbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:21px;line-height:1.35;margin:0}
+.subaction{font-weight:600;font-size:18px;line-height:1.35;margin:8px 0 0;font-style:italic}
+/* printed sub-lettered figures — upright, so they never read as a merged card step */
+.figs{margin:8px 0 0;font-weight:600;font-size:17px;line-height:1.6;max-width:62ch;
+  font-variant-numeric:tabular-nums}
+.figs span{display:block;margin:0 0 3px}
+.stepsrc{font-size:14px;color:var(--text2);margin:6px 0 0;max-width:62ch}
+
+/* small plain note attached to a step */
+.plainnote{margin:8px 0 0;font-size:15px;color:var(--text2);max-width:62ch}
+
+/* rig note — the Engine 34 sub-sequence, boxed inside the section */
+.rignote{margin:6px 24px 16px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);padding:14px 18px}
+.rignote .rigtag{display:inline-flex;align-items:center;font-family:var(--head);font-weight:700;
+  font-size:13.5px;letter-spacing:.02em;color:var(--accent);background:var(--accent-tint);
+  border-radius:8px;padding:5px 10px;margin:0 0 10px}
+.rignote h3{font-family:var(--head);font-weight:700;font-size:17px;margin:0 0 8px}
+.rignote ol{margin:0;padding-left:26px}
+.rignote li{font-weight:600;font-size:18px;padding:3px 0}
+.rignote .srcline{margin:10px 0 0}
+
+/* check-off */
+.tick{display:none;flex:0 0 auto;padding-top:2px}
+body.checkoff .tick{display:block}
+.tick input{width:32px;height:32px;margin:12px;accent-color:var(--accent);cursor:pointer}
+body.checkoff .step.done .action,body.checkoff .step.done .subaction{color:var(--text2)}
+body.checkoff .step.done .stepnum{color:var(--accent)}
+
+/* disclosures — one per step or block, labeled by content */
+details.disc{margin-top:8px}
+details.disc > summary{list-style:none;display:inline-flex;align-items:center;min-height:44px;
+  padding:6px 14px;border:1.5px solid var(--divider);border-radius:10px;color:var(--accent);
+  font-weight:600;font-size:15px;cursor:pointer;background:transparent}
+details.disc > summary::-webkit-details-marker{display:none}
+details.disc > summary::after{content:"▾";margin-left:8px;font-size:12px;transition:transform .15s}
+details.disc[open] > summary::after{transform:rotate(180deg)}
+details.disc > .dbody{background:var(--expanded);border-radius:12px;padding:14px 18px;margin-top:8px;
+  font-size:16px}
+details.disc > .dbody p{margin:0 0 10px;max-width:64ch}
+details.disc > .dbody p:last-child{margin:0}
+details.disc > .dbody ul,details.disc > .dbody ol{margin:0 0 10px;padding-left:22px;max-width:64ch}
+details.disc > .dbody li{margin:0 0 6px}
+.srcline{font-size:14px;color:var(--text2)}
+blockquote{margin:0 0 10px;padding:0 0 0 14px;border-left:3px solid var(--accent);color:var(--text)}
+
+/* prose rows (non-step content) */
+.tankrow{border-top:1px solid var(--divider);padding:16px 24px}
+.tankrow h3{font-family:var(--head);font-weight:700;font-size:19px;margin:0 0 6px}
+.tankrow p{margin:0 0 8px;max-width:64ch}
+.tankrow ul{margin:0 0 10px;padding-left:22px;max-width:64ch}
+.tankrow li{margin:0 0 6px}
+.phase.cdig .tankrow h3{color:var(--c-dig)}
+.phase.csup .tankrow h3{color:var(--c-sup)}
+
+/* wide content never pushes the page — it scrolls inside its own box */
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;margin:0 0 10px}
+table.dur{border-collapse:collapse;min-width:280px;font-variant-numeric:tabular-nums}
+table.dur th,table.dur td{border:1px solid var(--divider);padding:8px 16px;text-align:left;
+  font-size:16px;white-space:nowrap}
+table.dur th{font-family:var(--head);font-weight:700;font-size:13.5px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--text2)}
+table.dur td{font-weight:600}
+
+/* boxes below the sheet */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+.boxpanel{background:var(--surface);border:1px solid var(--divider);border-radius:16px;overflow:hidden}
+.boxpanel.red{border:2px solid var(--safety);background:var(--safety-tint)}
+.boxlabel{font-family:var(--head);font-weight:800;font-size:15px;letter-spacing:.06em;margin:0;
+  padding:18px 22px 8px;scroll-margin-top:70px}
+.boxpanel.red .boxlabel{color:var(--safety)}
+.boxpanel.note{border-left:6px solid var(--c-mst);background:var(--c-mst-t)}
+.boxpanel.note .boxlabel{color:var(--c-mst)}
+.sidebody{padding:6px 22px 20px}
+.sidebody .action{font-size:19px}
+.sidebody p{margin:0 0 8px;max-width:60ch}
+.sidebody ul{margin:0 0 8px;padding-left:20px;max-width:60ch}
+.sidebody li{margin:0 0 8px}
+
+/* prev/next evolution nav */
+.evonav{display:flex;justify-content:space-between;gap:12px;margin-top:26px;flex-wrap:wrap}
+.evonav a{min-height:48px;display:inline-flex;align-items:center;padding:8px 18px;
+  border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:15.5px}
+.evonav a:hover{border-color:var(--accent)}
+
+.docfoot{margin-top:26px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+@media (max-width:640px){
+  .cols{grid-template-columns:1fr}
+  .wrap{padding-bottom:110px} /* clear the floating Sections button */
+}
+@media (max-width:560px){
+  .step{padding:14px 16px;gap:12px}
+  .stepnum{font-size:30px;min-width:44px}
+  .action{font-size:19px}
+  .phase > h2,.tankrow{padding-left:16px;padding-right:16px}
+  .rignote{margin-left:16px;margin-right:16px}
+  .boxlabel,.sidebody{padding-left:16px;padding-right:16px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.modebar,.jump,.nightbtn,.secmenu,.evonav{display:none}
+  .sheet,.boxpanel{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  .boxpanel.red{border:2.5px solid #000;background:#fff}
+  .boxpanel.note{background:#fff;border-left:6px solid #000}
+  .step{break-inside:avoid;page-break-inside:avoid;min-height:0;padding:8px 12px}
+  .rignote,.tankrow{break-inside:avoid;page-break-inside:avoid}
+  .phase{break-inside:avoid-page;background:#fff!important;border-left:none}
+  .phase.cpos,.phase.cwtr,.phase.cdig,.phase.csup,.phase.cfom,.phase.cmst,.phase.cardred{border-left:6px solid #000}
+  .phase > h2{color:#000!important}
+  .phase.cdig .tankrow h3,.phase.csup .tankrow h3{color:#000}
+  .boxpanel.red .boxlabel,.boxpanel.note .boxlabel{color:#000}
+  .tick{display:block}
+  .tick input{width:14pt;height:14pt;margin:2pt 8pt}
+  details.disc{display:none}
+  .rignote .rigtag{background:#fff;border:1px solid #000;color:#000}
+  .rignote{border:1px solid #000;border-radius:0}
+  .stepnum{color:#000;font-size:16pt;min-width:30pt}
+  .action{font-size:12pt}
+  .tblwrap{overflow:visible}
+  table.dur th,table.dur td{border:1px solid #000}
+  .cols{display:block}
+  .boxpanel + .boxpanel{margin-top:12pt}
+}
+/* FAB clearance — the floating Sections button must never cover the last content */
+@media (max-width:640px){ .wrap{ padding-bottom:132px } }
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html" aria-current="true">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="ehome" href="engine-home.html">Engine Operations</a><span>&rsaquo;</span>Evolution 2.0</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <p class="kicker">Official evolution &middot; ADO-Pumper Task Book &middot; September 2024</p>
+    <h1>2.0 &mdash; Foam operations with Pro/Pak</h1>
+    <p class="objective"><strong>Objective:</strong> Become familiar with flow rates and applications of the Pro/pak.</p>
+  </header>
+
+  <div class="modebar">
+    <div class="mode" role="group" aria-label="Sheet mode">
+      <button type="button" id="refBtn" aria-pressed="true">Reference</button>
+      <button type="button" id="checkBtn" aria-pressed="false">Check-off</button>
+    </div>
+    <button type="button" id="resetBtn">Reset all</button>
+    <span class="progress" id="progress"></span>
+  </div>
+
+  <div class="sheet">
+
+    
+
+    <section class="phase cardred" aria-labelledby="incab">
+      <h2 id="incab">In-cab &mdash; secure the rig &amp; engage the pump</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: right foot on brake"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">RIGHT FOOT ON BRAKE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set parking brake"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">SET PARKING BRAKE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift transmission to neutral"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">SHIFT TRANSMISSION TO NEUTRAL</p>
+          <p class="subaction">SET NEUTRAL</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift from road to pump"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">SHIFT FROM ROAD TO PUMP (ENGAGE THE PUMP SHIFT CONTROL LEVER)</p>
+          <p class="subaction">ENGAGE PUMP BUTTON</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: pump engaged light is on"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">PUMP ENGAGED LIGHT IS ON</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: shift transmission to drive"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">SHIFT TRANSMISSION TO DRIVE (D)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: OK TO PUMP light is on and"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">OK TO PUMP LIGHT IS ON AND</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: speedometer registers about 15 mph"></span>
+        <span class="stepnum sub">7a</span>
+        <div class="stepbody"><p class="action">SPEEDOMETER REGISTERS ABOUT 15 MPH</p></div>
+      </div>
+
+      <div class="rignote">
+        <span class="rigtag">Rig note &mdash; Engine 34</span>
+        <h3>Engine 34 pump shift operations</h3>
+        <ol>
+          <li>Right foot on brake</li>
+          <li>Neutral</li>
+          <li>Park brake</li>
+          <li>Engage &ldquo;water pump&rdquo; switch</li>
+          <li>Green light indicator on</li>
+        </ol>
+        <p class="srcline">ADO-Pumper Task Book, Evolution 2.0 &mdash; printed inside the In-Cab column between
+        steps 7a and 8. The main in-cab list resumes at 8 after it.</p>
+      </div>
+
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: emergency and warning lights are on"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">EMERGENCY/WARNING LIGHTS ARE ON</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: change radio to correct channel"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">CHANGE RADIO TO CORRECT CHANNEL</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: remove right foot from brake"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">REMOVE RIGHT FOOT FROM BRAKE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: apparatus does not move"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">APPARATUS DOES NOT MOVE</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: exit cab after looking both directions"></span>
+        <span class="stepnum">12</span>
+        <div class="stepbody"><p class="action">EXIT CAB AFTER LOOKING BOTH DIRECTIONS</p></div>
+      </div>
+    </section>
+
+    <section class="phase cwtr" aria-labelledby="outcab">
+      <h2 id="outcab">Out of the cab &mdash; get water moving</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: verify pump is engaged"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">VERIFY PUMP IS ENGAGED</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open tank to pump"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">OPEN TANK TO PUMP</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: crack re-circulating or tank fill valve"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">CRACK RE-CIRCULATING/TANK FILL VALVE</p>
+          <p class="subaction">OPEN TANK FILL / RECIRCULATION</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set to PSI mode"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">SET TO PSI MODE</p>
+          <p class="subaction">SET PSI CONTROL MODE BUTTON</p>
+          <p class="plainnote">Printed here with no qualifier. The identical step on Evolutions 1.1 and 1.2
+          reads &ldquo;Set to PSI mode (if equipped).&rdquo;</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: prime pump if necessary"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">PRIME PUMP (IF NECESSARY)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set wheel chocks"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">SET WHEEL CHOCKS</p>
+          <p class="subaction">CHOCK WHEELS</p>
+          <p class="plainnote">This evolution&rsquo;s printed sheet carries the chock step at this position &mdash;
+          no correction needed here.</p>
+          <details class="disc"><summary>Where chocking sits in the pump skill</summary><div class="dbody">
+            <p>&ldquo;Step 1: Position the apparatus in a safe positon, and immobilize it by setting the parking
+            brake and chocking the wheels.&rdquo; The pump skill chocks with the parking brake, before the pump is
+            engaged; the printed evolution sheet carries it out of the cab at step 6.</p>
+            <p class="srcline">ADO Task #19, Basic Pump Skills &mdash; Changeover, Operating Procedure, Step 1</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: clear hose bed"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">CLEAR HOSE BED</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: break attack line if necessary"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">BREAK ATTACK LINE (IF NECESSARY)</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: open correct discharge once Pro/pak is connected"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">OPEN CORRECT DISCHARGE ONCE PRO/PAK IS CONNECTED TO HOSE LINE</p>
+          <p class="subaction">CHECK LINES ARE FULLY DEPLOYED &middot; CHARGE LINES</p>
+          <p class="plainnote">The card&rsquo;s CALCULATE PDP / SET PDP steps have no counterpart on this
+          evolution &mdash; the discharge pressure here comes off the Pro/Pak&rsquo;s own flow chart at step 10,
+          not from a pump-discharge calculation.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase cfom" aria-labelledby="foam">
+      <h2 id="foam">Foam &mdash; pressure, percentage, duration</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: set discharge to the correct pressure"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">SET DISCHARGE TO THE CORRECT PRESSURE ACCORDING TO DESIRED FLOW RATE</p>
+          <p class="figs"><span>a) Minimum operating pressure = 40 PSI</span><span>b) 100 PSI = 12 GPM</span><span>c) 50 PSI = 8 GPM</span></p>
+          <details class="disc"><summary>What the manual rates the Pro/Pak at</summary><div class="dbody">
+            <p><strong>Recommended rated flow:</strong> 12 gpm at 100 psi. <strong>Minimum operating
+            condition:</strong> 7 gpm at 40 psi.</p>
+            <p>Those are the only two flow/pressure points the manual publishes. The sheet&rsquo;s third point &mdash;
+            8 gpm at 50 psi &mdash; does not appear in the manual, and at the manual&rsquo;s 40 psi minimum the
+            manual says 7 gpm, not 8.</p>
+            <p class="srcline">OFD Hydraulic Manual (Apparatus Driver/Operator Hydraulic Calculation Standards),
+            Foam Operations &sect;3.a&ndash;b &middot; ADO-Pumper Task Book, Evolution 2.0, out-of-cab step 10</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: know how many minutes to use 2.5 gallons of concentrate"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">KNOW HOW MANY MINUTES TO USE 2.5 GALLONS OF CONCENTRATE</p>
+          <p class="figs"><span>a) 0.1% = 208 minutes</span><span>b) 0.3% = 69 minutes</span><span>c) 0.5% = 42 minutes</span><span>d) 1% = 21 minutes</span></p>
+          <p class="subaction">TURN ON FOAM &mdash; Fire Attack / Overhaul = .2% &ndash; .5% &middot; Exposure = .5% &ndash; 1%</p>
+          <p class="plainnote">The printed figures are reproduced exactly; the italic line is the engine evolution
+          card&rsquo;s own foam step. Neither set matches the OFD Hydraulic Manual, which meters 1&ndash;3% on
+          hydrocarbons and 3&ndash;6% on polar solvents and alcohols &mdash; see
+          <a href="#duration">How long the Pro/Pak lasts</a> for the table to work from. The card-vs-manual
+          percentages are on the committee list.</p>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: follow shut down and flush procedures"></span>
+        <span class="stepnum">12</span>
+        <div class="stepbody"><p class="action">FOLLOW SHUT DOWN AND FLUSH PROCEDURES. INSTRUCTIONS LOCATED ON SIDE OF PRO/PAK</p></div>
+      </div>
+    </section>
+
+    <section class="phase cdig" aria-labelledby="duration">
+      <h2 id="duration">How long the Pro/Pak lasts</h2>
+
+      <div class="tankrow">
+        <h3>The table to work from</h3>
+        <p>Orem&rsquo;s own hydraulic standard prints the duration table at whole percentages, on the same 12 gpm
+        basis and the same 2&frac12; gallons of concentrate:</p>
+        <div class="tblwrap">
+          <table class="dur">
+            <caption class="srcline" style="text-align:left;padding:0 0 6px">Minutes to use 2&frac12; gallons of concentrate at 12 GPM</caption>
+            <thead><tr><th scope="col">Percent</th><th scope="col">Minutes</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>21</td></tr>
+              <tr><td>3</td><td>7</td></tr>
+              <tr><td>6</td><td>3.5</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Those percentages are the ones the same section authorises for the Pro/Pak: <strong>1% and 3% AFFF</strong>
+        on flammable liquids that do not contain alcohol, <strong>3% and 6% Alcohol Resistant AFFF</strong> on
+        flammable liquids containing polar solvents.</p>
+        <p class="srcline">OFD Hydraulic Manual, Foam Operations &mdash; table &ldquo;MINUTES TO USE 2 &frac12; GALLONS OF
+        CONCENTRATE AT 12 GPM&rdquo; and &sect;3.c</p>
+      </div>
+
+      <div class="tankrow">
+        <h3>Why the printed sheet&rsquo;s percentages are not the ones to dial</h3>
+        <p>Out-of-cab step 11 prints 0.1% / 0.3% / 0.5% / 1%. The hydraulic standard prints 1% / 3% / 6%. The two
+        agree at exactly one point &mdash; <strong>1% = 21 minutes</strong> &mdash; which is what shows they are the
+        same calculation at a shifted decimal. The metering valve settings the standard gives are whole
+        percentages (1&ndash;3% on hydrocarbons, 3&ndash;6% on polars and alcohols), so the tenths-of-a-percent rows
+        have no setting to dial. <strong>Work from the 1 / 3 / 6 table.</strong></p>
+        <p class="srcline">ADO-Pumper Task Book, Evolution 2.0, out-of-cab step 11 vs OFD Hydraulic Manual, Foam
+        Operations &sect;1.a.iii and the 12 GPM duration table</p>
+      </div>
+
+      <div class="tankrow">
+        <h3>And the Pro/Pak on the rig is carried half full</h3>
+        <p>The apparatus check is explicit: &ldquo;Pro/Pak is half full with AFFF foam.&rdquo; The table above is
+        written for 2&frac12; gallons, so the real duration on the rig is <strong>roughly half of it</strong> &mdash;
+        on the order of 10 minutes at 1%, 3&frac12; at 3%, under 2 at 6%.</p>
+        <p>Carry both numbers: the full-charge table is what the drill and the manual are written to, the halved
+        figure is what you actually have when you pull it off the rig.</p>
+        <p class="srcline">OFD Apparatus Maintenance 2019, equipment checks &mdash; Pro/Pak, item 2 (full-charge
+        figures from the OFD Hydraulic Manual table above; the halved figures are that table halved)</p>
+      </div>
+    </section>
+
+    <section class="phase csup" aria-labelledby="manual">
+      <h2 id="manual">Learn the manual &mdash; foam operations</h2>
+
+      <div class="tankrow">
+        <h3>The Pro/Pak</h3>
+        <details class="disc"><summary>What it is rated to do</summary><div class="dbody">
+          <ul>
+            <li><strong>Recommended rated flow</strong> &mdash; 12 gpm at 100 psi.</li>
+            <li><strong>Minimum operating condition</strong> &mdash; 7 gpm at 40 psi.</li>
+          </ul>
+          <p class="srcline">OFD Hydraulic Manual, Foam Operations &sect;3.a&ndash;b</p>
+        </div></details>
+        <details class="disc"><summary>What concentrate goes in it</summary><div class="dbody">
+          <blockquote>&ldquo;Pro/pak can be used with 1% and 3% AFFF Class B concentrates on flammable liquids that do
+          not contain alcohol. It can be used with 3% and 6% Alcohol Resistant AFFF Class B concentrates on
+          flammable liquids containing polar solvents.&rdquo;</blockquote>
+          <p class="srcline">OFD Hydraulic Manual, Foam Operations &sect;3.c</p>
+        </div></details>
+        <details class="disc"><summary>Where the Pro/Pak stops being the right tool</summary><div class="dbody">
+          <p>&ldquo;Pro/pak should not be used on ignited Class B fuels with an area greater than 120 square feet. It
+          should not be used on burning Polar Solvents with an area greater than 60 square feet.&rdquo;</p>
+          <p>Past those areas the Pro/Pak is out of its envelope. The only other foam appliance the manual
+          covers is the in-line eductor, below; the concentrate calculation decides whether there is enough foam
+          on scene at all.</p>
+          <p class="srcline">OFD Hydraulic Manual, Foam Operations &sect;3.d</p>
+        </div></details>
+      </div>
+
+      <div class="tankrow">
+        <h3>How much concentrate the fire needs</h3>
+        <details class="disc"><summary>The calculation</summary><div class="dbody">
+          <p><strong>Area &times; Critical Application Rate &times; Eduction Rate &times; 15 minutes = amount of foam
+          concentrate needed.</strong></p>
+          <ul>
+            <li><strong>Area</strong> &mdash; square footage; length &times; width. Circle: 3.14 &times; r&sup2;.</li>
+            <li><strong>Critical Application Rate</strong> &mdash; minimum flow of finished foam per square foot.
+            Hydrocarbon fuels 0.1 gpm/sqft; polar solvents and alcohols 0.2 gpm/sqft.</li>
+            <li><strong>Eduction Rate</strong> &mdash; minimum metering valve settings. Hydrocarbons 1&ndash;3%;
+            polars and alcohols 3&ndash;6%.</li>
+            <li><strong>15 minutes</strong> &mdash; the NFPA 11 standard for the amount of concentrate to have on
+            hand to operate for 15 minutes.</li>
+          </ul>
+          <p class="srcline">OFD Hydraulic Manual, Foam Operations &sect;1.a</p>
+        </div></details>
+        <details class="disc"><summary>The short way to the same number</summary><div class="dbody">
+          <p><strong>Hydrocarbons: Area &divide; 20. Polar solvents / alcohols: Area &divide; 5.</strong></p>
+          <p>The manual&rsquo;s own worked example &mdash; a 10&prime; &times; 10&prime; (100 sqft) gasoline spill:
+          100 &times; 0.1 gpm/sqft &times; 0.03 &times; 15 = 4.5 gallons of concentrate. By the short method,
+          100 &divide; 20 = 5 gallons.</p>
+          <p class="srcline">OFD Hydraulic Manual, Foam Operations &sect;1.c&ndash;d</p>
+        </div></details>
+        <details class="disc"><summary>What you have on hand sets the size of fire you can take</summary><div class="dbody">
+          <p>&ldquo;Remember, we are limited by how much foam we have on hand and how fast we can get more. It may be
+          that if we only have 20 gallons (4 pails) we are limited to a 60&prime; x 60&prime; hydrocarbon or
+          30&prime; x 30&prime; polar solvent spill.&rdquo;</p>
+          <p class="srcline">OFD Hydraulic Manual, Foam Operations &sect;1.e</p>
+        </div></details>
+        <details class="disc"><summary>Aeration &mdash; getting more finished foam out of the same concentrate</summary><div class="dbody">
+          <p>OFD has the option to use the TFT foam jet nozzle attachment for foam expansion, which increases the
+          expansion ratio of Class B foam from 4:1 to 8:1.</p>
+          <p class="srcline">OFD Hydraulic Manual, Foam Operations &sect;1.b</p>
+        </div></details>
+      </div>
+
+      <div class="tankrow">
+        <h3>If the job outgrows the Pro/Pak &mdash; in-line eductors</h3>
+        <details class="disc"><summary>Rating, matching, and back pressure</summary><div class="dbody">
+          <ul>
+            <li>OFD in-line eductors are <strong>rated at 95 gpm</strong>. The eductor and the nozzle must have
+            matching flow rates for the concentrate to &ldquo;pick-up.&rdquo;</li>
+            <li>Eductors are designed to achieve rated flow with an <strong>inlet pressure of 200 psi</strong>.</li>
+            <li><strong>Do not exceed 70% back pressure beyond the eductor.</strong></li>
+          </ul>
+          <p>The manual&rsquo;s worked example: 70% of 200 psi is 140 psi; minus 100 psi of nozzle pressure leaves
+          40 psi to spend on everything past the eductor. By the hand method, a 1&frac34;&Prime; line flowing 95 gpm
+          loses 12 psi per 100&prime;, so 300&prime; costs 36 psi &mdash; inside the 40. Elevation gain or loss and any
+          appliance friction loss come out of the same 40 psi.</p>
+          <p class="srcline">OFD Hydraulic Manual, Foam Operations &sect;2</p>
+        </div></details>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="cols">
+
+    <section class="boxpanel red" aria-labelledby="loseswater">
+      <h2 class="boxlabel" id="loseswater">IF THE LINE LOSES WATER</h2>
+      <div class="sidebody">
+        <p class="action">This evolution runs on tank water. Work the pump.</p>
+        <p><a data-nav="epump" href="engine-emergency.html">Emergency
+        pump operations &mdash; the full sequence</a></p>
+      </div>
+    </section>
+
+    <section class="boxpanel note" aria-labelledby="sheetnotes">
+      <h2 class="boxlabel" id="sheetnotes">READING THE PRINTED SHEET</h2>
+      <div class="sidebody">
+        <ul>
+          <li>The out-of-cab column is headed <strong>&ldquo;Out-Of-Cab Operations: Draft&rdquo;</strong> &mdash; the
+          only evolution in the book carrying that qualifier. No step in 2.0 directs a drafting operation; the
+          sequence is tank-to-pump throughout.</li>
+          <li>The setup block is <strong>three lines only</strong>. Unlike 1.0, 1.1 and 1.2 it carries no
+          drill-record line and no &ldquo;make sure all in-cab and out-of-cab operations are complete.&rdquo;</li>
+          <li>2.0 carries <strong>no manual-discharge-relief-valve remark and no relief-valve step</strong>, unlike
+          Evolution 1.1.</li>
+          <li><strong>No role is named anywhere on the 2.0 page</strong> &mdash; no step reads &ldquo;Engineer
+          will&hellip;&rdquo;. These are the candidate operator&rsquo;s actions by the book&rsquo;s own frame.</li>
+        </ul>
+        <p class="srcline">ADO-Pumper Task Book, Evolution 2.0, as printed</p>
+      </div>
+    </section>
+
+  </div>
+
+  <nav class="evonav" aria-label="Evolution navigation">
+    <a data-nav="evo19" href="evo-1-9.html">&lsaquo; 1.9 Pump to a ladder company for an elevated stream</a>
+  </nav>
+
+  <div class="docfoot">
+    <p><strong>Source.</strong> ADO-Pumper Task Book, Evolution 2.0 &ldquo;Foam operations with pro/pak&rdquo;
+    (September 2024 version) &mdash; setup, in-cab and out-of-cab steps verbatim, in printed order, with their
+    printed numbering. The Engine 34 pump shift sub-sequence is the printed sheet&rsquo;s own rig note, reproduced
+    where it sits on the page (between in-cab 7a and 8).</p>
+    <p><strong>Merged steps</strong> shown in italics under a printed step &mdash; set neutral &middot; engage pump
+    button &middot; open tank fill / recirculation &middot; set PSI control mode button &middot; chock wheels
+    &middot; check lines are fully deployed / charge lines &middot; turn on foam with its percentages &mdash; are
+    from the engine evolution card, 2026-08-28 transcription.</p>
+    <p><strong>Manual material.</strong> OFD Hydraulic Manual (Apparatus Driver/Operator Hydraulic Calculation
+    Standards), Foam Operations &mdash; &sect;1 calculating foam and aeration, &sect;2 in-line eductors, &sect;3
+    Pro/pak, and the table &ldquo;MINUTES TO USE 2 &frac12; GALLONS OF CONCENTRATE AT 12 GPM&rdquo; &middot; ADO Task
+    #19, Basic Pump Skills &mdash; Changeover, Operating Procedure Step 1 &middot; OFD Apparatus Maintenance 2019,
+    equipment checks &mdash; Pro/Pak.</p>
+    <p>See also: <a data-nav="eflow" href="engine-flow.html">My
+    Engine Evolution</a> &mdash; the full muscle-memory sheet these merged steps come from.</p>
+    <p>Version: prototype &middot; Last reviewed 2026-08-30 &middot; Compiled by Engineer Jason Anderson</p>
+  </div>
+
+</div>
+
+<details class="secmenu" id="secMenu">
+  <summary aria-label="Open sections menu">Sections</summary>
+  <nav class="secpanel" aria-label="Jump to section">
+    <a class="ssec" href="#incab">In-cab</a>
+    <a class="swtr" href="#outcab">Out-of-cab</a>
+    <a class="sfom" href="#foam">Foam</a>
+    <a class="sdig" href="#duration">How long it lasts</a>
+    <a class="ssup" href="#manual">The manual</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  // night mode
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // modes
+  var refBtn=document.getElementById('refBtn'),checkBtn=document.getElementById('checkBtn');
+  var resetBtn=document.getElementById('resetBtn'),prog=document.getElementById('progress');
+  var boxes=[].slice.call(document.querySelectorAll('.tick input'));
+  function setMode(m){
+    document.body.classList.toggle('checkoff',m==='check');
+    refBtn.setAttribute('aria-pressed',m==='ref');
+    checkBtn.setAttribute('aria-pressed',m==='check');
+    sessionStorage.setItem('evo20-mode',m);
+    update();
+  }
+  refBtn.addEventListener('click',function(){setMode('ref')});
+  checkBtn.addEventListener('click',function(){setMode('check')});
+  function update(){
+    var done=0;
+    boxes.forEach(function(b){
+      b.closest('.step').classList.toggle('done',b.checked);
+      if(b.checked)done++;
+    });
+    prog.textContent=done+' / '+boxes.length+' done';
+  }
+  boxes.forEach(function(b,i){
+    b.checked=sessionStorage.getItem('evo20-s'+i)==='1';
+    b.addEventListener('change',function(){
+      sessionStorage.setItem('evo20-s'+i,b.checked?'1':'0');update();
+    });
+  });
+  resetBtn.addEventListener('click',function(){
+    boxes.forEach(function(b,i){b.checked=false;sessionStorage.removeItem('evo20-s'+i)});update();
+  });
+  setMode(sessionStorage.getItem('evo20-mode')||'ref');
+
+  // floating Sections menu — close on link tap (works without JS too; this is a nicety)
+  var menu=document.getElementById('secMenu');
+  if(menu){
+    [].slice.call(menu.querySelectorAll('a')).forEach(function(a){
+      a.addEventListener('click',function(){menu.removeAttribute('open')});
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

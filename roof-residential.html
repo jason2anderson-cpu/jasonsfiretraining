@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<title>Residential Roof Ops — Walkable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+</head>
+<body>
+<style>
+/* ============================================================
+   Field-instrument system + section-colour identities.
+   Each phase gets its own tinted ground and matching header
+   accent; EMERGENCY keeps the red family. Colour never alone —
+   always paired with the section header.
+   Production note: self-host WOFF2 for offline use.
+   ============================================================ */
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  /* section palette — muted tints, one identity per phase */
+  --s1:#E9EEF5; --s1a:#3D5A80;  /* position & ladders — slate blue */
+  --s2:#F4EDDD; --s2a:#8A6A1C;  /* up the ladder — amber */
+  --s3:#E5F0E4; --s3a:#3E7048;  /* sound & diagnose — green */
+  --s4:#ECE9F4; --s4a:#5E548E;  /* the cut — violet */
+  --s5:#F2E8EB; --s5a:#7D4A5E;  /* open & get off — plum */
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#4A1D1A;
+    --s1:#16222E; --s1a:#8FB3D9;
+    --s2:#2A2413; --s2a:#D9BC6B;
+    --s3:#16251A; --s3a:#8CC79A;
+    --s4:#201C2E; --s4a:#A99FD6;
+    --s5:#291B21; --s5a:#CE93A8;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#4A1D1A;
+  --s1:#16222E; --s1a:#8FB3D9;
+  --s2:#2A2413; --s2a:#D9BC6B;
+  --s3:#16251A; --s3a:#8CC79A;
+  --s4:#201C2E; --s4a:#A99FD6;
+  --s5:#291B21; --s5a:#CE93A8;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{max-width:860px;margin:0 auto;padding:20px 20px 0;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crumb{font-size:15px;color:var(--text2)}
+.crumb a{text-decoration:none;font-weight:600}
+.crumb span{margin:0 6px}
+.nightbtn{min-height:44px;padding:8px 16px;border:1.5px solid var(--divider);border-radius:10px;
+  background:var(--surface);font-weight:600;font-size:15px}
+
+.wrap{max-width:860px;margin:0 auto;padding:8px 20px 80px}
+header.sheet-head{padding:18px 0 20px}
+.kicker{font-family:var(--head);font-weight:700;font-size:14px;color:var(--accent);
+  letter-spacing:.04em;margin:0 0 6px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(28px,5vw,40px);line-height:1.1;
+  margin:0 0 10px;text-wrap:balance}
+.objective{font-size:18px;color:var(--text2);margin:0;max-width:60ch}
+.crewline{font-size:15.5px;margin:12px 0 0;color:var(--text)}
+.crewline .srcline{display:block;margin-top:2px}
+.sisters{font-size:14.5px;color:var(--text2);margin:10px 0 0;max-width:66ch}
+.sisters a{font-weight:600}
+
+/* mode bar */
+.modebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0 6px}
+.mode{display:flex;border:1.5px solid var(--divider);border-radius:12px;overflow:hidden;background:var(--surface)}
+.mode button{min-height:56px;min-width:120px;padding:0 20px;border:0;background:transparent;
+  font-weight:700;font-size:16px;color:var(--text2)}
+.mode button[aria-pressed="true"]{background:var(--accent-tint);color:var(--text)}
+#resetBtn{min-height:56px;padding:0 18px;border:1.5px solid var(--divider);border-radius:12px;
+  background:var(--surface);font-weight:600;font-size:15px;color:var(--text2);display:none}
+body.checkoff #resetBtn{display:inline-block}
+.progress{font-size:15px;color:var(--text2);display:none;font-variant-numeric:tabular-nums}
+body.checkoff .progress{display:inline}
+
+/* jump to phase — sticky; dots echo each section's colour */
+.jump{position:sticky;top:0;z-index:10;background:var(--canvas);padding:10px 0;
+  display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--divider)}
+.jump a{min-height:44px;display:inline-flex;align-items:center;gap:8px;padding:6px 14px;
+  border:1.5px solid var(--divider);border-radius:999px;background:var(--surface);
+  text-decoration:none;color:var(--text);font-weight:600;font-size:14.5px}
+.jump a:hover{border-color:var(--accent)}
+.jump .dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+
+/* floating Sections menu — mobile only; <details> so it works with JS off */
+.secmenu{display:none}
+@media (max-width:640px){
+  .jump{display:none}
+  .wrap{padding-bottom:110px} /* clear the floating Sections button */
+  .secmenu{display:block;position:fixed;right:16px;bottom:16px;z-index:40}
+  .secmenu > summary{list-style:none;display:inline-flex;align-items:center;justify-content:center;
+    min-height:56px;min-width:56px;padding:0 22px;border:1.5px solid var(--divider);border-radius:999px;
+    background:var(--surface);color:var(--text);font-family:var(--head);font-weight:700;font-size:16px;
+    cursor:pointer;box-shadow:0 4px 14px rgba(10,30,28,.22)}
+  .secmenu > summary::-webkit-details-marker{display:none}
+  .secmenu[open] > summary{border-color:var(--accent);color:var(--accent)}
+  .secpanel{position:absolute;bottom:calc(100% + 10px);right:0;min-width:230px;
+    background:var(--surface);border:1.5px solid var(--divider);border-radius:14px;
+    box-shadow:0 8px 24px rgba(10,30,28,.25);padding:8px;display:grid;gap:2px}
+  .secpanel a{display:flex;align-items:center;min-height:48px;padding:6px 14px;border-radius:10px;
+    text-decoration:none;color:var(--text);font-weight:600;font-size:16px;border-left:5px solid transparent}
+  .secpanel a.s1{border-left-color:var(--s1a)}
+  .secpanel a.s2{border-left-color:var(--s2a)}
+  .secpanel a.s3{border-left-color:var(--s3a)}
+  .secpanel a.s4{border-left-color:var(--s4a)}
+  .secpanel a.s5{border-left-color:var(--s5a)}
+  .secpanel a.sem{border-left-color:var(--safety)}
+}
+
+/* the one procedure surface */
+.sheet{background:var(--surface);border:1px solid var(--divider);border-radius:16px;
+  box-shadow:0 1px 3px rgba(10,30,28,.06);margin-top:18px;overflow:hidden}
+
+.phase{padding:0}
+.phase + .phase{border-top:1px solid var(--divider)}
+.phase > h2{font-family:var(--head);font-weight:800;font-size:15px;letter-spacing:.05em;
+  color:var(--text2);margin:0;padding:18px 24px 4px;scroll-margin-top:70px}
+.phase > .pnote{font-size:14.5px;color:var(--text2);margin:0;padding:0 24px 6px;max-width:64ch}
+
+/* section colour identities — tinted ground + matching header accent */
+.phase.c1{background:var(--s1)} .phase.c1 > h2{color:var(--s1a);border-left:6px solid var(--s1a);padding-left:18px}
+.phase.c2{background:var(--s2)} .phase.c2 > h2{color:var(--s2a);border-left:6px solid var(--s2a);padding-left:18px}
+.phase.c3{background:var(--s3)} .phase.c3 > h2{color:var(--s3a);border-left:6px solid var(--s3a);padding-left:18px}
+.phase.c4{background:var(--s4)} .phase.c4 > h2{color:var(--s4a);border-left:6px solid var(--s4a);padding-left:18px}
+.phase.c5{background:var(--s5)} .phase.c5 > h2{color:var(--s5a);border-left:6px solid var(--s5a);padding-left:18px}
+.phase.cardred{background:var(--safety-tint)}
+.phase.cardred > h2{color:var(--safety);border-left:6px solid var(--safety);padding-left:18px}
+.phase.c1 .step{border-top-color:color-mix(in srgb,var(--s1a) 22%,transparent)}
+.phase.c2 .step{border-top-color:color-mix(in srgb,var(--s2a) 22%,transparent)}
+.phase.c3 .step{border-top-color:color-mix(in srgb,var(--s3a) 22%,transparent)}
+.phase.c4 .step{border-top-color:color-mix(in srgb,var(--s4a) 22%,transparent)}
+.phase.c5 .step{border-top-color:color-mix(in srgb,var(--s5a) 22%,transparent)}
+.phase.cardred .step{border-top-color:color-mix(in srgb,var(--safety) 22%,transparent)}
+@supports not (color:color-mix(in srgb,red 10%,blue)){
+  .phase .step{border-top-color:var(--divider)}
+}
+.phase.c1 .stepnum{color:var(--s1a)} .phase.c2 .stepnum{color:var(--s2a)}
+.phase.c3 .stepnum{color:var(--s3a)} .phase.c4 .stepnum{color:var(--s4a)}
+.phase.c5 .stepnum{color:var(--s5a)} .phase.cardred .stepnum{color:var(--safety)}
+
+.step{display:flex;align-items:flex-start;gap:16px;padding:16px 24px;min-height:76px;
+  border-top:1px solid var(--divider)}
+.step:first-of-type{border-top:0}
+.phase > h2 + .step, .phase > .pnote + .step{border-top:0}
+.stepnum{font-family:var(--head);font-weight:700;font-size:36px;line-height:1;color:var(--text2);
+  min-width:56px;font-variant-numeric:tabular-nums;padding-top:2px}
+.stepbody{flex:1;min-width:0}
+.action{font-weight:600;font-size:21px;line-height:1.35;margin:0}
+.action em{font-style:normal;text-decoration:underline;text-underline-offset:3px}
+
+/* Orem adjustment tag — attaches to a verbatim line, never replaces it */
+.adj{display:inline-flex;align-items:baseline;gap:8px;margin-top:8px;padding:6px 12px;
+  background:var(--accent-tint);border-left:4px solid var(--accent);border-radius:8px;
+  font-size:15px;line-height:1.45}
+.adj strong{font-family:var(--head);font-weight:700}
+
+/* check-off */
+.tick{display:none;flex:0 0 auto;padding-top:2px}
+body.checkoff .tick{display:block}
+.tick input{width:32px;height:32px;margin:12px;accent-color:var(--accent);cursor:pointer}
+body.checkoff .step.done .action{color:var(--text2)}
+body.checkoff .step.done .stepnum{opacity:.55}
+
+/* disclosures — one per step, labeled by content */
+details{margin-top:8px}
+details > summary{list-style:none;display:inline-flex;align-items:center;min-height:44px;
+  padding:6px 14px;border:1.5px solid var(--divider);border-radius:10px;color:var(--accent);
+  font-weight:600;font-size:15px;cursor:pointer;background:var(--surface)}
+details > summary::-webkit-details-marker{display:none}
+details > summary::after{content:"▾";margin-left:8px;font-size:12px;transition:transform .15s}
+details[open] > summary::after{transform:rotate(180deg)}
+details > .dbody{background:var(--expanded);border-radius:12px;padding:14px 18px;margin-top:8px;
+  font-size:16px}
+details > .dbody p{margin:0 0 10px;max-width:64ch}
+details > .dbody p:last-child{margin:0}
+details > .dbody ol,details > .dbody ul{margin:0 0 10px;padding-left:22px;max-width:62ch}
+details > .dbody li{margin:0 0 6px}
+.srcline{font-size:14px;color:var(--text2)}
+blockquote{margin:0 0 10px;padding:0 0 0 14px;border-left:3px solid var(--accent);color:var(--text)}
+
+/* the safety gate — permanent full-width interruption; not red-alone */
+.gate{border-top:1px solid var(--divider);background:var(--safety-tint);padding:20px 24px}
+.gate .gtag{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:800;
+  font-size:15px;letter-spacing:.06em;color:var(--safety);margin:0 0 8px}
+.gate .gtag::before{content:"";width:0;height:0;border-left:11px solid transparent;
+  border-right:11px solid transparent;border-bottom:19px solid currentColor}
+.gate h3{font-family:var(--head);font-weight:800;font-size:21px;line-height:1.25;margin:0 0 8px;
+  border-left:5px solid var(--safety);padding-left:14px}
+.gate p{margin:0 0 12px;max-width:62ch;font-size:16px}
+.gate .ack{min-height:64px;padding:0 26px;border:2.5px solid var(--safety);border-radius:12px;
+  background:var(--surface);font-weight:700;font-size:17px}
+.gate .ack[aria-pressed="true"]{background:var(--safety-tint)}
+.gate .srcline{display:block;margin-top:10px;font-size:14px;color:var(--text2)}
+
+/* cut-sequence figure — SVG with HTML label overlay */
+.cutfig{position:relative;max-width:680px;margin:10px 0 4px}
+.cutfig svg{display:block;width:100%;height:auto;background:var(--surface);
+  border:1px solid var(--divider);border-radius:12px}
+.cl{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:6px;
+  pointer-events:none;white-space:nowrap}
+.cl .n{width:26px;height:26px;border-radius:50%;background:var(--s4a);color:var(--surface);
+  font-family:var(--head);font-weight:800;font-size:15px;display:inline-flex;align-items:center;
+  justify-content:center;flex:0 0 auto}
+.cl .t{font-family:var(--head);font-weight:700;font-size:12.5px;color:var(--text);
+  background:color-mix(in srgb,var(--surface) 82%,transparent);padding:1px 6px;border-radius:6px}
+@supports not (color:color-mix(in srgb,red 10%,blue)){.cl .t{background:var(--surface)}}
+.cl.plain .n{display:none}
+.cutkey{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0 0;font-size:14px;color:var(--text2)}
+.cutkey span{display:inline-flex;align-items:center;gap:6px}
+.cutkey i{display:inline-block;width:22px;height:0;border-top:3px solid var(--s4a);border-radius:2px}
+.cutkey i.raf{border-top:2px dashed var(--text2)}
+.cutkey i.fire{width:12px;height:12px;background:var(--safety);border:0;border-radius:50%}
+.fignote{font-size:14.5px;color:var(--text2);max-width:64ch;margin:10px 0 0}
+/* on narrow screens drop only the per-cut wording — the orientation labels
+   (FIRE / EGRESS / dimensions) stay, and the numbered badges still key to the list */
+@media (max-width:560px){.cl:not(.plain) .t{display:none}}
+
+/* footer */
+.docfoot{margin-top:22px;font-size:14px;color:var(--text2)}
+.docfoot p{margin:0 0 6px;max-width:76ch}
+
+@media (max-width:560px){
+  .step{padding:14px 16px;gap:12px}
+  .stepnum{font-size:30px;min-width:44px}
+  .action{font-size:19px}
+  .phase > h2,.phase > .pnote,.gate{padding-left:16px;padding-right:16px}
+  .phase.c1 > h2,.phase.c2 > h2,.phase.c3 > h2,.phase.c4 > h2,.phase.c5 > h2,
+  .phase.cardred > h2{padding-left:12px}
+}
+
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  .top,.modebar,.jump,.nightbtn,.secmenu{display:none}
+  .sheet{border:1.5px solid #000;border-radius:0;box-shadow:none}
+  .step{break-inside:avoid;min-height:0;padding:8px 12px}
+  .phase{break-inside:avoid-page}
+  .phase > h2{color:#000}
+  .phase.c1,.phase.c2,.phase.c3,.phase.c4,.phase.c5,.phase.cardred{background:#fff}
+  .phase.c1 > h2,.phase.c2 > h2,.phase.c3 > h2,.phase.c4 > h2,.phase.c5 > h2,
+  .phase.cardred > h2{border-left-color:#000}
+  .tick{display:block}
+  .tick input{width:14pt;height:14pt;margin:2pt 8pt}
+  details{display:none}
+  details.keep{display:block}
+  details.keep > summary{display:none}
+  details.keep > .dbody{background:#fff;border:1px solid #000;border-radius:0}
+  .adj{background:#fff;border:1px solid #000;border-left:4px solid #000}
+  .gate{background:#fff;border-top:3px double #000;border-bottom:3px double #000}
+  .gate .ack{display:none}
+  .stepnum{color:#000;font-size:16pt;min-width:30pt}
+  .action{font-size:12pt}
+}
+/* FAB clearance — the floating Sections button must never cover the last content */
+@media (max-width:640px){ .wrap{ padding-bottom:132px } }
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html" aria-current="true">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html" aria-current="true">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+
+<div class="top">
+  <p class="crumb"><a data-nav="thome" href="truck-home.html">Truck Operations</a><span>›</span>Evolution 1.0</p>
+  <button class="nightbtn" id="nightBtn" type="button">Night mode</button>
+</div>
+
+<div class="wrap">
+
+  <header class="sheet-head">
+    <p class="kicker">Official evolution · ADO-Aerial Task Book · September 2024</p>
+    <h1>1.0 — Residential Roof Operation-Walkable</h1>
+    <p class="objective">Engineer runs a walkable pitch residential roof operation.</p>
+    <p class="crewline"><strong>Crew of 2</strong> — Engineer (Lead Saw) · Lead Hook.
+      <span class="srcline">Orem rulings SR-4 / R-20 · 2026 OFD Truck Manual Version 3.1, p.46
+      (“For residential walkable pitches, two should be able to open up fairly quickly”) · p.48, two-person roof team</span></p>
+    <p class="crewline"><strong>Walkable = a 6/12 pitch and below.</strong> Anything over a 6/12 will most
+      likely require working off a ladder — that is the Steep Pitch evolution, not this one.
+      <span class="srcline">2026 OFD Truck Manual Version 3.1, p.46 (Developing a Ventilation Profile — building size-up)</span></p>
+    <details><summary>Who does what — two-person roof team, full spec</summary><div class="dbody">
+      <p><strong>Lead Hook</strong> — commonly filled by the Tillerman or Tailboard; the role, not the
+      riding position, is what is fixed (Orem SR-5). <em>Places the secondary ladder</em>,
+      brings hook to the roof, and sounds out the path of travel for the Lead Saw. Is responsible for
+      pulling and punching as well as radio communications while the saw operator is working.</p>
+      <p><strong>Lead Saw</strong> — Engineer. <em>Places the primary ladder</em>, brings saw to the
+      roof, and is in charge of the roof operation: where the heat hole is being placed, and expanding
+      the hole. Is in charge of radio communications while the Lead Hook is pulling and punching.</p>
+      <p>Positioning of Truck Company crew members is ultimately up to the Captain in charge, but
+      should be decided upon in the morning at the beginning of the shift to reduce on-scene confusion.</p>
+      <p class="srcline">2026 OFD Truck Manual Version 3.1, p.48 (Roof Team Assignments — Truck split, two-person team)</p>
+    </div></details>
+    <p class="sisters">Three distinct roof evolutions — never merged:
+      <strong>1.0 Walkable</strong> (this sheet) ·
+      <a data-nav="roofsteep" href="roof-steep.html">1.1 Steep Pitch</a> ·
+      <a data-nav="roofcom" href="roof-commercial.html">1.2 Commercial</a>.
+      <span class="srcline">Orem standing ruling SR-4</span></p>
+  </header>
+
+  <div class="modebar">
+    <div class="mode" role="group" aria-label="Sheet mode">
+      <button type="button" id="refBtn" aria-pressed="true">Reference</button>
+      <button type="button" id="checkBtn" aria-pressed="false">Check-off</button>
+    </div>
+    <button type="button" id="resetBtn">Reset all</button>
+    <span class="progress" id="progress"></span>
+  </div>
+
+  <nav class="jump" id="jumpNav" aria-label="Jump to section">
+    <a href="#position"><span class="dot" style="background:var(--s1a)"></span>Position &amp; ladders</a>
+    <a href="#ascent"><span class="dot" style="background:var(--s2a)"></span>Up the ladder</a>
+    <a href="#diagnose"><span class="dot" style="background:var(--s3a)"></span>Sound &amp; diagnose</a>
+    <a href="#thecut"><span class="dot" style="background:var(--s4a)"></span>The cut</a>
+    <a href="#openoff"><span class="dot" style="background:var(--s5a)"></span>Open &amp; get off</a>
+    <a href="#emergency"><span class="dot" style="background:var(--safety)"></span>Emergency ops</a>
+  </nav>
+
+  <div class="sheet">
+
+    <section class="phase c1" aria-labelledby="position">
+      <h2 id="position">POSITION &amp; LADDERS</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: positioning of truck"></span>
+        <span class="stepnum">1</span>
+        <div class="stepbody"><p class="action">Correct positioning of truck for operation.</p>
+          <details class="keep" open><summary>Offside-corner aerial spot — full spec</summary><div class="dbody">
+            <ul>
+              <li>The <strong>"offside" corner</strong> is where we aim to place our aerial ladder when going to the roof.</li>
+              <li>Place the ladder <strong>just a few feet off the corner</strong> — this allows <strong>two ways on and off the ladder</strong>, valuable if crews need to exit the roof in a hurry.</li>
+              <li><blockquote>"The tip of the ladder should 'kiss' the roof with both beams. This takes the bounce out of the ladder and is much safer to maneuver up and down with tools."</blockquote></li>
+              <li><blockquote>"Stay away from placing the egress section on the roof and opt to place the beams on instead."</blockquote></li>
+            </ul>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, p.143 (Section 6 Apparatus Positioning — Corners) · Orem ruling R-31</p>
+          </div></details>
+          <details><summary>The other three spotting decisions</summary><div class="dbody">
+            <p><strong>Uninvolved to Involved</strong> — spot the ladder to create distance between where
+            the fire is and where it will be going. Crews going to the roof need time to assess and
+            perform ventilation; this also sets up to protect uninvolved portions of the building if
+            aerial master streams are anticipated.</p>
+            <p><strong>Inside vs. Outside</strong> — an inside spot needs a longer throw (building height
+            or long setback). An <em>outside</em> spot lets Engine companies position closer to the
+            building underneath the Truck's ladder, gets the waterway out of the way, produces a better
+            climbing angle for crews going to the roof, and sets up aerial master stream operations
+            should the need arise.</p>
+            <p><strong>Pull past or stop short</strong> — pulling past can put the aerial where needed and
+            leaves the front of the structure open for ground ladders to be pulled quickly, for primary
+            or secondary access/egress.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, pp.143–144 (Section 6 — Apparatus Positioning)</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: primary ladder offside corner"></span>
+        <span class="stepnum">2</span>
+        <div class="stepbody"><p class="action">Primary ladder in correct position. (offside corner)</p>
+          <details><summary>Why &amp; source</summary><div class="dbody">
+            <p><strong>The Engineer places the primary ladder</strong> — Aerial or ground. The primary
+            ladder is the primary means of accessing the roof. Throwing to the off-side corner
+            <strong>trades space for time</strong>: it gives the team an opportunity to perform
+            diagnostic work prior to committing over the fire, and starts the path of travel from an
+            uninvolved portion of the building. The Aerial is the strongest, safest one-man ladder throw
+            the fire department has, and should be strongly considered on multi-story single-family
+            dwellings. <strong>On single-story residential the primary ladder will be a ground
+            ladder</strong> — as it will be on any operation lacking access to the roof with the Aerial.
+            Tip <strong>3–5 rungs above the roofline</strong>, climbing angle ~75°; <strong>high shoulder
+            carry</strong> is the preferred method for roof access, for its speed.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, p.47 (Rig to Roof) · p.48 (paths of travel start uninvolved) · p.93 (Roof Access/Egress — ladder type, tip placement, carry) · Orem ruling R-11</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: secondary ladder"></span>
+        <span class="stepnum">3</span>
+        <div class="stepbody"><p class="action">Secondary ladder in correct position (between primary and fire location)</p>
+          <p class="adj"><strong>Orem:</strong> halfway between the primary ladder and the fire, on the fire-side wall — Truck Manual p.47 · ruling R-41</p>
+          <details><summary>Why &amp; source</summary><div class="dbody">
+            <blockquote>"Ideally, every member of the roof team should pass the secondary ladder on their
+            way to the fire while traversing the roof."</blockquote>
+            <p><strong>Every Truck going to the roof for ventilation must throw two ladders</strong> — a
+            primary and a secondary. On a two-person residential roof operation the <strong>Lead Hook
+            places the secondary ladder</strong>. The secondary is <strong>utilized for egress only, if
+            conditions deteriorate topside</strong> — see Emergency Operations below.</p>
+            <p><strong>Exception — very small buildings:</strong> laddering two corners, such as the A/B
+            and A/D, might prove more beneficial. Tip <strong>3–5 rungs above the roofline</strong>,
+            same as the primary.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, p.47 (Rig to Roof — two ladders, secondary placement, exceptions) · p.48 (two-person roof team) · p.93 (egress-only rule, tip placement) · Orem rulings R-41, R-11</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase c2" aria-labelledby="ascent">
+      <h2 id="ascent">UP THE LADDER</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: start saw on the ground"></span>
+        <span class="stepnum">4</span>
+        <div class="stepbody"><p class="action">Start saw on the ground.</p></div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: mask up at bottom of ladder"></span>
+        <span class="stepnum">5</span>
+        <div class="stepbody"><p class="action">Mask up at bottom of ladder.</p>
+          <details><summary>Standard</summary><div class="dbody">
+            <p>OFD has a standard of <strong>20 seconds or less</strong> mask-up times. These critical
+            seconds help reduce the size of the fire on arrival and increase civilian survival.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, p.63</p>
+          </div></details>
+        </div>
+      </div>
+
+      <div class="gate">
+        <p class="gtag">STOP — BEFORE ANYONE STEPS ONTO THE ROOF</p>
+        <h3>At no time should we be walking where we haven't sounded.</h3>
+        <p>All buildings shall be treated as lightweight until an inspection hole proves otherwise.
+        Cross country walking across the roof is extremely dangerous and should not be done at any time.</p>
+        <button class="ack" type="button" id="ackBtn" aria-pressed="false">Understood</button>
+        <span class="srcline">2026 OFD Truck Manual Version 3.1, pp.46, 49</span>
+      </div>
+    </section>
+
+    <section class="phase c3" aria-labelledby="diagnose">
+      <h2 id="diagnose">SOUND &amp; DIAGNOSE</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: sound roof"></span>
+        <span class="stepnum">6</span>
+        <div class="stepbody"><p class="action">Lead hook sounds roof. (Bird dogs over Roof line)</p>
+          <p class="adj"><strong>Orem ruling R-9:</strong> residential = single ladder. The Engineer is usually first up — sounds, passes the hook back, takes the saw, and does the work. (Commercial differs: Lead Hook goes first and sounds; the Engineer then makes the inspection cut.)</p>
+          <details><summary>Sounding sequence — full spec</summary><div class="dbody">
+            <p><strong>Sounding sequence at the ladder, in order:</strong></p>
+            <ol>
+              <li>Sound prior to stepping onto the roof</li>
+              <li>Sound out a 180 around the ladder</li>
+              <li>Sound the area where an inspection hole will be cut</li>
+              <li>Retreat to the wall and wait for the saw</li>
+            </ol>
+            <p>Roof team safety depends on all members understanding safe paths of travel and adequate
+            sounding. Paths of travel should in most cases start from an uninvolved portion of the
+            building — that is why the primary ladder goes to the offside corner.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, p.48 (Sounding and Paths of Travel) · Orem ruling R-9 / SR-4</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: inspection hole"></span>
+        <span class="stepnum">7</span>
+        <div class="stepbody"><p class="action">Engineer cuts inspection hole if indicated and determines truss spacing, decking, type of construction etc.</p>
+          <details class="keep" open><summary>Inspection hole — full spec</summary><div class="dbody">
+            <ol>
+              <li><strong>Immediately upon making the roof</strong>, the Lead Saw cuts a <strong>triangle-shaped</strong> inspection hole at a <strong>45 degree angle to the outside load bearing wall</strong>.</li>
+              <li><strong>Out of the path of travel</strong> of the roof team and <strong>at least 3 feet away from the wall</strong>.</li>
+              <li><strong>Big enough to fit a hand into, small enough that it does not act as a ventilation hole. 6″ cuts are adequate.</strong></li>
+              <li>Clear the decking with the saw.</li>
+              <li>Reach into the hole and identify <strong>rafter type, direction, spacing</strong>.</li>
+              <li>On the way out, <strong>pinch the decking</strong> to determine type and thickness.</li>
+              <li>Relay this information to the rest of the roof team, then determine the path of travel.</li>
+            </ol>
+            <p>This determines what type of roof operations we can perform. Inspection holes are an
+            absolute on all commercial roofs and can be beneficial on long sloped roofs.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, p.49 (Diagnostics — Inspection Hole) · published in full per Orem ruling R-43</p>
+          </div></details>
+          <details><summary>What the hole tells you — residential roof types</summary><div class="dbody">
+            <p><strong>Lightweight (most homes in the city).</strong> Pitched. Trusses of <strong>2″×4″ and
+            smaller diameter wood, spaced 24″ o.c.</strong>, top chord in compression, bottom chord pulling
+            tension, parallel chords, <strong>usually held together with gusset plates</strong>. Decking is
+            plywood or OSB. <strong>Strong areas are the outside load bearing walls. There will usually not
+            be a ridge beam.</strong> TJI's can be found on long sloped sections of residential roofs.
+            <strong>Cutting directly over fire is not advised on lightweight roofs</strong> — trade space for
+            time if fire is found coming from a smoke indicator hole.</p>
+            <p><strong>Conventional.</strong> <strong>2″×6″ or larger dimensional lumber placed 16″–24″
+            o.c.</strong>, decked with 1″×6″ straight, diagonal or spaced sheathing, which can be replaced or
+            covered with plywood. Conventional roofs are <strong>very strong and can resist fire for large
+            amounts of time — cutting an offensive heat hole directly over fire in these types of roofs is
+            encouraged.</strong></p>
+            <p>All buildings are treated as lightweight until the inspection hole proves otherwise; the
+            operation differs based on what is found once the hole is cut.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, p.55 (Roof Types — Lightweight Roofs) · pp.56–57 (Conventional Roofs) · p.46 (treat all buildings as lightweight)</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: path of travel and heat hole location"></span>
+        <span class="stepnum">8</span>
+        <div class="stepbody"><p class="action">Engineer will indicate path of travel and Heat hole location.</p>
+          <details><summary>Why &amp; source</summary><div class="dbody">
+            <p><strong>The Lead Saw dictates the path of travel to the rest of the crew.</strong> All walking
+            is done as much as possible <strong>on load bearing walls and at right angles</strong>; on the
+            majority of residential roofs, work from the <strong>outside load bearing wall</strong>.</p>
+            <p><strong>The heat hole is placed as close to over the fire as possible</strong> — the goal is
+            to rapidly release heat and smoke and slow horizontal spread by sending the fire vertical.</p>
+            <p><strong>Smoke indicator holes</strong> mark the way. Two types: the small 3-sided
+            <strong>triangle</strong>, which is the go-to on commercial buildings, and the
+            <strong>kerf</strong> — a single plunge cut into the roof. Placed <strong>every 15–20′ and at
+            every change of direction</strong>, cut out of the path of travel; when passing a heavy load,
+            place a kerf before and after it. Smoke indicators are continually reassessed to determine
+            changes in interior conditions.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, pp.48–49 (Sounding and Paths of Travel · Smoke Indicator Holes · Offensive Heat Holes)</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: sound load bearing walls and cut area"></span>
+        <span class="stepnum">9</span>
+        <div class="stepbody"><p class="action">Lead hook sounds following load bearing Walls and sounds area to be cut.</p>
+          <details><summary>Why &amp; source</summary><div class="dbody">
+            <p>The Lead Hook <strong>sounds the roof ahead of the Lead Saw</strong>, following the path of
+            travel the Lead Saw dictated, and sounds out the area where the heat hole will be cut before
+            the saw goes to work.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, pp.47–48 (Roof Team Assignments · Sounding and Paths of Travel)</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase c4" aria-labelledby="thecut">
+      <h2 id="thecut">THE CUT</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: cut heat hole double center rafter"></span>
+        <span class="stepnum">10</span>
+        <div class="stepbody"><p class="action">Engineer cuts heat hole utilizing correct Cut sequence (Double center rafter).</p>
+          <details class="keep" open><summary>Double center rafter — cut sequence + diagram</summary><div class="dbody">
+            <p>Orem's <strong>primary cut sequence</strong> — versatile enough for the majority of
+            residential and commercial roofs. Yields an initial <strong>4′ × 6′ hole</strong>.</p>
+            <p>Five cuts, in this order. <strong>The numbers below are the numbers on the diagram.</strong></p>
+            <ol>
+              <li><strong>Head cut.</strong> Plunge the saw into the roof and use the top of the bar to find your outside perimeter rafter closest to the fire. Reverse the saw, heading back towards your egress, <strong>rolling two rafters and stopping at your third</strong> outside perimeter rafter.</li>
+              <li><strong>Outside dice cut</strong> — placed where you just finished your head cut. Dice cuts should be approximately 1 to 1½ lengths of your saw.</li>
+              <li><strong>Second dice</strong> — placed in the middle of your head cut.</li>
+              <li><strong>Third/final dice</strong> — placed on the inside of your fire-side perimeter rafter.</li>
+              <li><strong>Bottom final cut</strong> — a skim cut back towards your egress.</li>
+            </ol>
+            <p>The hole is then expanded with or against construction, <strong>always working back towards
+            your egress</strong>.</p>
+            <blockquote>"Care should be taken to never place a ventilation hole between you and your egress."</blockquote>
+
+            <div class="cutfig" role="img" aria-label="Top-down diagram of the double center rafter heat hole: five numbered cuts across three rafter bays, fire side on the right, egress ladder on the left. Cut order: 1 head cut toward egress, 2 outside dice at the egress end, 3 dice in the middle of the head cut, 4 dice inside the fire-side perimeter rafter, 5 bottom skim cut back toward egress. Each of the two resulting panels is supported by one center rafter.">
+              <svg viewBox="0 0 720 480" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs>
+                  <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                    <path d="M0 0 L10 5 L0 10 z" fill="var(--s4a)"/>
+                  </marker>
+                </defs>
+                <!-- roof field -->
+                <rect x="40" y="40" width="640" height="360" fill="var(--s4)" stroke="var(--divider)"/>
+                <!-- rafters, 24 inch on center (100px = 2 ft) -->
+                <g stroke="var(--text2)" stroke-width="2" stroke-dasharray="7 6" opacity=".75">
+                  <line x1="160" y1="40" x2="160" y2="400"/>
+                  <line x1="260" y1="40" x2="260" y2="400"/>
+                  <line x1="360" y1="40" x2="360" y2="400"/>
+                  <line x1="460" y1="40" x2="460" y2="400"/>
+                  <line x1="560" y1="40" x2="560" y2="400"/>
+                  <line x1="660" y1="40" x2="660" y2="400"/>
+                </g>
+                <!-- the two removable panels, each carried by ONE center rafter -->
+                <rect x="262" y="122" width="146" height="196" fill="var(--s4a)" opacity=".13"/>
+                <rect x="412" y="122" width="142" height="196" fill="var(--s4a)" opacity=".13"/>
+                <!-- fire, on the fire side (right) -->
+                <g transform="translate(636,220)">
+                  <path d="M0 22 C-14 8 -8 -10 0 -22 C3 -12 10 -9 8 0 C16 -4 14 8 10 14 C8 20 4 24 0 22 Z"
+                        fill="var(--safety)" opacity=".9"/>
+                </g>
+                <!-- egress ladder (left) -->
+                <g stroke="var(--text2)" stroke-width="3" opacity=".9">
+                  <line x1="62" y1="120" x2="62" y2="330"/>
+                  <line x1="92" y1="120" x2="92" y2="330"/>
+                  <line x1="62" y1="145" x2="92" y2="145"/>
+                  <line x1="62" y1="180" x2="92" y2="180"/>
+                  <line x1="62" y1="215" x2="92" y2="215"/>
+                  <line x1="62" y1="250" x2="92" y2="250"/>
+                  <line x1="62" y1="285" x2="92" y2="285"/>
+                  <line x1="62" y1="320" x2="92" y2="320"/>
+                </g>
+                <!-- CUTS, numbered order -->
+                <g stroke="var(--s4a)" stroke-width="6" stroke-linecap="round" fill="none">
+                  <!-- 1 head cut: start at fire-side perimeter rafter, cut back toward egress, roll 2, stop at 3rd -->
+                  <line x1="556" y1="120" x2="266" y2="120" marker-end="url(#arr)"/>
+                  <!-- 2 outside dice: where the head cut finished -->
+                  <line x1="260" y1="126" x2="260" y2="314" marker-end="url(#arr)"/>
+                  <!-- 3 second dice: middle of the head cut -->
+                  <line x1="410" y1="126" x2="410" y2="314" marker-end="url(#arr)"/>
+                  <!-- 4 third dice: inside of the fire-side perimeter rafter -->
+                  <line x1="556" y1="126" x2="556" y2="314" marker-end="url(#arr)"/>
+                  <!-- 5 bottom skim cut: back toward egress -->
+                  <line x1="556" y1="320" x2="266" y2="320" marker-end="url(#arr)"/>
+                </g>
+                <!-- 4x6 dimension ticks -->
+                <g stroke="var(--text2)" stroke-width="1.5" opacity=".8">
+                  <line x1="260" y1="442" x2="556" y2="442"/>
+                  <line x1="260" y1="436" x2="260" y2="448"/>
+                  <line x1="556" y1="436" x2="556" y2="448"/>
+                  <line x1="590" y1="120" x2="590" y2="320"/>
+                  <line x1="584" y1="120" x2="596" y2="120"/>
+                  <line x1="584" y1="320" x2="596" y2="320"/>
+                </g>
+              </svg>
+              <!-- HTML label overlay -->
+              <div class="cl" style="left:66%;top:20%"><span class="n">1</span><span class="t">Head cut → egress</span></div>
+              <div class="cl" style="left:33.5%;top:46%"><span class="n">2</span><span class="t">Outside dice</span></div>
+              <div class="cl" style="left:52%;top:46%"><span class="n">3</span><span class="t">Middle dice</span></div>
+              <div class="cl" style="left:72%;top:46%"><span class="n">4</span><span class="t">Fire-side dice</span></div>
+              <div class="cl" style="left:56%;top:71.5%"><span class="n">5</span><span class="t">Bottom skim → egress</span></div>
+              <div class="cl plain" style="left:90%;top:57%"><span class="t">FIRE</span></div>
+              <div class="cl plain" style="left:19%;top:21%"><span class="t">EGRESS</span></div>
+              <div class="cl plain" style="left:56.7%;top:92%"><span class="t">6′</span></div>
+              <div class="cl plain" style="left:84%;top:38%"><span class="t">4′</span></div>
+            </div>
+            <div class="cutkey">
+              <span><i></i>Cut (numbered, in order)</span>
+              <span><i class="raf"></i>Rafter</span>
+              <span><i class="fire"></i>Fire side</span>
+              <span>4′ × 6′ — the 6′ span is three rafter bays at 24″ o.c.</span>
+            </div>
+            <p class="fignote">Geometry computed from the manual's stated facts: five cuts; the head cut
+            rolls two rafters and stops at the third, which at 24″ o.c. is the stated <strong>6′</strong>,
+            and the dice cuts give the stated <strong>4′</strong>. The middle dice splits the span so each
+            of the two panels is left supported by <strong>one center rafter</strong> — the "double center
+            rafter." A dice is made by turning the saw 90° off the head-cut line (the manual describes
+            dicing this way in its strip-cut sequences, p.51). Dice cuts run approximately 1–1½ saw
+            lengths.</p>
+            <p class="fignote"><strong>The sequence changes per structure.</strong> The manual's own words:
+            the double center rafter works for "the majority of residential and commercial roofs"; the
+            <em>single</em> center rafter cut is "reserved for steep pitch roofs where our reach is
+            limited, or where rafter spacing is greater than 24″ o.c." (p.49); on panelized commercial
+            roofs the cut is made entirely from a beam or purlin, with its own sequence (pp.58–59); and
+            strips are cut with or against construction as the building dictates (pp.50–51).</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, p.49 (Offensive Heat Holes — the two cut sequences, 4′×6′ yield, single-centre-rafter scope) · p.50 (Double Center Rafter Cut, step by step) · p.51 (dicing, 90° turn) · pp.58–59 (panelized variant)</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase c5" aria-labelledby="openoff">
+      <h2 id="openoff">OPEN THE ROOF &amp; GET OFF</h2>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: pull decking and punch sheetrock"></span>
+        <span class="stepnum">11</span>
+        <div class="stepbody"><p class="action">Lead hook pulls decking material and Punches sheetrock.</p>
+          <details><summary>Why &amp; source</summary><div class="dbody">
+            <p><strong>All decking is pulled back onto the roof. Louvering is discouraged</strong> — it
+            blocks the ventilation opening, and material can fall in, making punching the lid difficult or
+            falling onto interior crews.</p>
+            <p>Decking varies: 1×6″ straight, diagonal or spaced sheathing on older conventional roofs
+            (commonly covered with plywood for earthquake stability); plywood and OSB on newer roofs.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, p.50 (Opening the Roof)</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: determine if hole needs extending"></span>
+        <span class="stepnum">12</span>
+        <div class="stepbody"><p class="action">After opening up vent hole Engineer will Determine if hole needs to be extended (demonstrate extending with and against Construction)</p>
+          <details><summary>Why &amp; source</summary><div class="dbody">
+            <p>To be effective the hole must exhaust the built-up pressure from inside.
+            <strong>If the initial hole is exhausting smoke and/or fire under pressure, it needs to be
+            expanded.</strong> The Lead Saw makes the determination. Expand with or against construction,
+            always working back towards your egress.</p>
+            <blockquote>"Care should be taken to never place a ventilation hole between you and your egress."</blockquote>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, pp.49–50 (Offensive Heat Holes · Double Center Rafter)</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step"><span class="tick"><input type="checkbox" aria-label="Done: sound off the roof"></span>
+        <span class="stepnum">13</span>
+        <div class="stepbody"><p class="action">Lead hook will sound off the roof following Load bearing walls.</p>
+          <details><summary>Why &amp; source</summary><div class="dbody">
+            <p><strong>Sound your way off, following the same path of travel you came up.</strong> Never
+            walk where you haven't sounded.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, p.49 (exiting the roof — sounding your way off)</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase cardred" aria-labelledby="emergency">
+      <h2 id="emergency">EMERGENCY OPERATIONS — IF IT GOES WRONG TOPSIDE</h2>
+      <p class="pnote">What the Truck Manual actually supports for a roof team in trouble. Cited line by line — nothing added.</p>
+      <div class="step">
+        <span class="stepnum">E1</span>
+        <div class="stepbody"><p class="action">Conditions deteriorate topside — egress via the second means.</p>
+          <details class="keep" open><summary>The manual's egress rules</summary><div class="dbody">
+            <p><strong>The Secondary Ladder will be utilized for egress only if conditions deteriorate
+            topside.</strong> It was thrown halfway between the primary ladder and the fire on the fire-side
+            wall, and ideally every member of the roof team passed it on their way to the fire while
+            traversing the roof.</p>
+            <p>The offside-corner aerial spot, placed just a few feet off the corner, allows for
+            <strong>two ways on and off the ladder</strong> — "this can come in handy if crews need to exit
+            the roof in a hurry."</p>
+            <p><strong>When exiting the roof we sound our way off, following the same path of travel that
+            we came up. At no time should we be walking where we haven't sounded.</strong> Cross country
+            walking across the roof is extremely dangerous and should not be done at any time.</p>
+            <blockquote>"Care should be taken to never place a ventilation hole between you and your egress."</blockquote>
+            <p>Smoke indicators placed on the way in should be <strong>continually reassessed to determine
+            changes in interior conditions</strong>.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, p.93 (Secondary = egress only if conditions deteriorate topside) · p.47 (secondary placement · every member passes it) · p.143 (two ways off) · p.49 (sound your way off · no cross country walking · indicator holes reassessed) · p.50 (hole never between you and egress)</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step">
+        <span class="stepnum">E2</span>
+        <div class="stepbody"><p class="action">Drop bag — down on making the roof, so a line can reach you.</p>
+          <details><summary>Full spec</summary><div class="dbody">
+            <p>On each member's SCBA going to the roof there should be a <strong>drop bag</strong> attached,
+            containing <strong>75′ of utility rope</strong>. The Engineer (or Captain) from the roof team
+            <strong>drops it upon making the roof</strong>. Engineers on the ground should be looking for
+            drop bags from the roof and should bring a <strong>1¾″ line with an attached fog nozzle</strong>
+            to them when possible.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, p.60 (Roof Member Rescue — Member into the roof, Drop Bag) · repeated p.61 (Member through the roof)</p>
+          </div></details>
+        </div>
+      </div>
+      <div class="step">
+        <span class="stepnum">E3</span>
+        <div class="stepbody"><p class="action">Roof Mayday — Who, What, Where. Immediately.</p>
+          <details><summary>Three categories — the manual's plan</summary><div class="dbody">
+            <p>Roof Maydays are broken into three categories. In every one, the Mayday is
+            <strong>transmitted immediately</strong> and includes three basic facts:
+            <strong>Who, What and Where</strong>.</p>
+            <blockquote>"Mayday, Mayday, Mayday. L33 has a member partially into the roof, halfway down
+            the Charlie wall, 20 ft. in."</blockquote>
+            <p><strong>Member INTO the roof:</strong> call the Mayday · get a line to the roof via the drop
+            bag, flowing onto the member if fire conditions are present, from an area determined safe ·
+            <strong>never just go for the grab</strong> — the area is compromised; sound out around the
+            downed member first, then present a hook under the armpits (hooks up) or through the SCBA
+            straps · bring roofers across, spanning multiple rafters, placed at angles in front of the
+            member · <em>cut for life</em> — cut away from the member to pull the fire that direction ·
+            <strong>blowing out rafters</strong> — cut two rafters away in a secured area, blow out that
+            rafter, insert a roofer and use it for leverage to get under the downed member's feet ·
+            on pitched residential, access the attic space away from the member, noting that members in
+            the attic space might be unconscious, needing air and significant assistance getting out.</p>
+            <p><strong>Member THROUGH the roof:</strong> the Mayday could be the single biggest thing the
+            roof team does for them — most rescue work will be interior companies and RIT. Line to the
+            roof, flowing into the area they went in if fire conditions are present. Cut for life, and
+            stay cognisant that lift is still needed inside.</p>
+            <p><strong>Medical emergency on the roof:</strong> call the Mayday; if conscious and mobile,
+            inform the IC and assist the member off. If unresponsive and not breathing, <strong>begin CPR
+            without delay</strong>. Drop-bag rope over two rungs of a ground ladder (friction wrap above
+            the roofline) can lower the member, or lower via Aerial in the stokes.</p>
+            <p class="srcline">2026 OFD Truck Manual Version 3.1, pp.59–61 (Roof Member Rescue) · "RIT" per Orem ruling R-16</p>
+          </div></details>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /sheet -->
+
+  <div class="docfoot">
+    <p><strong>Source.</strong> ADO-Aerial Task Book, September 2024, Evolution 1.0 (printed p.16) —
+    the 13 steps verbatim, in the printed order. Operational depth from the 2026 OFD Truck Manual
+    Version 3.1: Section 5 Ventilation (pp.45–51), Roof Types (pp.55–57), Roof Member Rescue (pp.59–61),
+    Search timings (p.63), Ladders (p.93) and Section 6 Apparatus Positioning (pp.143–144).
+    Page numbers are the manual's own printed page numbers, re-derived from the page footers.
+    Cut-sequence diagram computed from the manual's stated geometry (pp.49–50).
+    Orem-labeled adjustments per rulings SR-4, SR-5, R-9, R-11, R-16, R-20, R-31, R-41, R-43.</p>
+    <p>Version: prototype · Last reviewed 2026-08-30 · Compiled by Engineer Jason Anderson</p>
+  </div>
+
+</div>
+
+<details class="secmenu" id="secMenu">
+  <summary aria-label="Open sections menu">Sections</summary>
+  <nav class="secpanel" aria-label="Jump to section">
+    <a class="s1" href="#position">Position &amp; ladders</a>
+    <a class="s2" href="#ascent">Up the ladder</a>
+    <a class="s3" href="#diagnose">Sound &amp; diagnose</a>
+    <a class="s4" href="#thecut">The cut</a>
+    <a class="s5" href="#openoff">Open &amp; get off</a>
+    <a class="sem" href="#emergency">Emergency ops</a>
+  </nav>
+</details>
+
+<script>
+(function(){
+  // night mode
+  var nb=document.getElementById('nightBtn');
+  var saved=sessionStorage.getItem('theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved)}
+  function lbl(){var d=document.documentElement.getAttribute('data-theme');
+    nb.textContent=(d==='dark')?'Day mode':'Night mode'}
+  lbl();
+  nb.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=(cur==='dark')?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    sessionStorage.setItem('theme',next);lbl();
+  });
+
+  // modes
+  var refBtn=document.getElementById('refBtn'),checkBtn=document.getElementById('checkBtn');
+  var resetBtn=document.getElementById('resetBtn'),prog=document.getElementById('progress');
+  var boxes=[].slice.call(document.querySelectorAll('.tick input'));
+  function setMode(m){
+    document.body.classList.toggle('checkoff',m==='check');
+    refBtn.setAttribute('aria-pressed',m==='ref');
+    checkBtn.setAttribute('aria-pressed',m==='check');
+    sessionStorage.setItem('roofres-mode',m);
+    update();
+  }
+  refBtn.addEventListener('click',function(){setMode('ref')});
+  checkBtn.addEventListener('click',function(){setMode('check')});
+  function update(){
+    var done=0;
+    boxes.forEach(function(b){
+      b.closest('.step').classList.toggle('done',b.checked);
+      if(b.checked)done++;
+    });
+    prog.textContent=done+' / '+boxes.length+' done';
+  }
+  boxes.forEach(function(b,i){
+    b.checked=sessionStorage.getItem('roofres2-s'+i)==='1';
+    b.addEventListener('change',function(){
+      sessionStorage.setItem('roofres2-s'+i,b.checked?'1':'0');update();
+    });
+  });
+  resetBtn.addEventListener('click',function(){
+    boxes.forEach(function(b,i){b.checked=false;sessionStorage.removeItem('roofres2-s'+i)});update();
+  });
+  setMode(sessionStorage.getItem('roofres-mode')||'ref');
+
+  // safety gate acknowledgement
+  var ack=document.getElementById('ackBtn');
+  if(ack){
+    if(sessionStorage.getItem('roofres-ack')==='1'){
+      ack.setAttribute('aria-pressed','true');ack.textContent='Acknowledged';
+    }
+    ack.addEventListener('click',function(){
+      var on=ack.getAttribute('aria-pressed')==='true';
+      ack.setAttribute('aria-pressed',on?'false':'true');
+      ack.textContent=on?'Understood':'Acknowledged';
+      sessionStorage.setItem('roofres-ack',on?'0':'1');
+    });
+  }
+
+  // floating Sections menu — close on link tap (the menu itself works without JS)
+  var secMenu=document.getElementById('secMenu');
+  if(secMenu){
+    secMenu.addEventListener('click',function(e){
+      if(e.target.closest('a')){secMenu.removeAttribute('open')}
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

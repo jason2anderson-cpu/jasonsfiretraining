@@ -1,1209 +1,214 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vehicle Extrication — Jason Anderson</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-  :root {
-    --bg:        #16181c;
-    --bg-2:      #1b1e24;
-    --card:      #20242b;
-    --card-2:    #262b33;
-    --border:    #2e333c;
-    --border-2:  #3a414c;
-    --text:      #e8eaef;
-    --muted:     #9aa1ad;
-    --faint:     #5b626d;
-    --red:       #dc2626;
-    --red-acc:   #e2342b;
-    --red-bright:#ef4444;
-    --amber:     #f59e0b;
-    --blue:      #3b82f6;
-    --green:     #22c55e;
-    --nav-h:     64px;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 16px;
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
-    -webkit-text-size-adjust: 100%;
-  }
-
-  .page {
-    max-width: 880px;
-    margin: 0 auto;
-    padding: 0 18px 64px;
-  }
-
-  /* ============ HEADER ============ */
-  .header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 22px 0 18px;
-  }
-
-  .emblem {
-    width: 56px;
-    height: 56px;
-    flex-shrink: 0;
-    border-radius: 12px;
-    background: linear-gradient(160deg, var(--red-acc), #9b1c14);
-    border: 1px solid #f0726b;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 13px;
-    letter-spacing: 0.5px;
-    color: #fff;
-    text-align: center;
-    line-height: 1.05;
-    box-shadow: 0 4px 14px rgba(226,52,43,0.35);
-  }
-  /* To use a real crest: replace the .emblem div with
-     <img class="emblem" src="orem-fire-logo.png" alt="Orem Fire"> */
-
-  .header h1 { font-size: 40px; font-weight: 900; color: #fff; letter-spacing: -1px; line-height: 1.04; }
-  .header .byline { font-size: 16px; font-weight: 700; color: var(--text); margin-top: 10px; }
-  .header .byrole { font-size: 13px; font-weight: 600; color: var(--red-bright); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .header .sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
-  .header .ver {
-    display: inline-block;
-    margin-top: 7px;
-    font-size: 10.5px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: var(--amber);
-    background: rgba(245,158,11,0.12);
-    border: 1px solid rgba(245,158,11,0.35);
-    padding: 2px 8px;
-    border-radius: 5px;
-  }
-
-  /* ============ STICKY NAV ============ */
-  .nav {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: rgba(22,24,28,0.92);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-bottom: 2px solid var(--red);
-    margin: 0 -18px 22px;
-    padding: 0 18px;
-  }
-  .nav-inner {
-    max-width: 880px;
-    margin: 0 auto;
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    height: var(--nav-h);
-    align-items: center;
-  }
-  .nav-inner::-webkit-scrollbar { display: none; }
-
-  .nav-chip {
-    flex-shrink: 0;
-    min-height: 40px;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 0 15px;
-    border-radius: 999px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 700;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: all 0.15s ease;
-  }
-  .nav-chip .dot {
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    background: var(--border-2);
-    color: var(--text);
-    font-size: 10px; font-weight: 800;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .nav-chip:hover { border-color: var(--border-2); color: var(--text); }
-  .nav-chip.active {
-    background: rgba(226,52,43,0.16);
-    border-color: var(--red);
-    color: #fff;
-  }
-  .nav-chip.active .dot { background: var(--red); }
-  .nav-instr { margin-left: auto; flex-shrink: 0; align-self: center; font-size: 11.5px; font-weight: 700; color: var(--faint); text-decoration: none; padding: 0 4px 0 14px; white-space: nowrap; }
-  .nav-instr:hover { color: var(--text); }
-
-  /* ============ SIDE TABLE OF CONTENTS ============ */
-  .sidenav {
-    position: fixed; top: 84px; right: 8px; width: 184px;
-    max-height: calc(100vh - 100px); overflow-y: auto;
-    background: rgba(27,30,36,0.94);
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    border: 1px solid var(--border); border-radius: 12px;
-    padding: 10px 10px 12px; z-index: 45;
-    transition: transform 0.25s ease, opacity 0.2s ease;
-    scrollbar-width: thin;
-  }
-  .sidenav-head {
-    display: flex; align-items: center; justify-content: space-between;
-    font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
-    color: var(--muted); padding: 2px 4px 8px; margin-bottom: 5px;
-    border-bottom: 1px solid var(--border);
-  }
-  .sidenav-collapse { background: none; border: none; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 2px; }
-  .sidenav-collapse:hover { color: #fff; }
-  .sn-link {
-    display: flex; align-items: center; gap: 9px;
-    padding: 7px 8px; border-radius: 7px;
-    color: var(--text); text-decoration: none; font-size: 13.5px; font-weight: 700;
-  }
-  .sn-link .sn-n {
-    width: 18px; height: 18px; border-radius: 5px; flex-shrink: 0;
-    background: var(--card-2); border: 1px solid var(--border-2); color: var(--text);
-    font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center;
-  }
-  .sn-link:hover { background: var(--card-2); }
-  .sn-link.active { background: rgba(226,52,43,0.16); color: #fff; }
-  .sn-link.active .sn-n { background: var(--red); border-color: var(--red); }
-  .sn-sub { margin: 2px 0 4px 13px; padding-left: 7px; border-left: 1px solid var(--border-2); display: flex; flex-direction: column; }
-  .sn-sublink { padding: 5px 7px; border-radius: 6px; color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 600; }
-  .sn-sublink:hover { background: var(--card-2); color: var(--text); }
-  .sn-sublink.active { color: #fff; background: rgba(226,52,43,0.13); }
-  .sidenav-tab {
-    position: fixed; top: 84px; right: 0; z-index: 45; display: none;
-    align-items: center; justify-content: center;
-    width: 34px; height: 42px; border-radius: 8px 0 0 8px;
-    background: var(--red); color: #fff; border: none; cursor: pointer;
-    font-size: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.45);
-  }
-  body.snav-collapsed .sidenav { transform: translateX(135%); opacity: 0; pointer-events: none; }
-  body.snav-collapsed .sidenav-tab { display: flex; }
-  details.collapse { scroll-margin-top: 72px; }
-  .sidenav-fab {
-    position: fixed; bottom: 20px; right: 18px; z-index: 60;
-    display: none; align-items: center; justify-content: center;
-    width: 54px; height: 54px; border-radius: 50%;
-    background: var(--red); color: #fff; border: none; cursor: pointer;
-    font-size: 22px; box-shadow: 0 4px 16px rgba(0,0,0,0.55);
-  }
-  .snav-backdrop { position: fixed; inset: 0; z-index: 58; display: none; background: rgba(0,0,0,0.6); }
-  @media (max-width: 1279px) {
-    .sidenav-tab { display: none !important; }
-    .sidenav-fab { display: flex; }
-    .sidenav {
-      top: 0; right: 0; height: 100dvh; max-height: 100dvh;
-      width: min(85vw, 300px); border-radius: 0;
-      transform: translateX(100%); opacity: 1; pointer-events: auto;
-      z-index: 62; padding: 18px 14px 24px;
-    }
-    body.snav-open .sidenav { transform: translateX(0); }
-    body.snav-open .snav-backdrop { display: block; }
-    body.snav-open .sidenav-fab { display: none; }
-    body.snav-open { overflow: hidden; }
-    .sn-link { font-size: 16px; padding: 11px 10px; }
-    .sn-sublink { font-size: 14px; padding: 9px 10px; }
-  }
-
-  /* ============ FLOW BAR ============ */
-  .flow-bar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 16px;
-    margin-bottom: 30px;
-    flex-wrap: wrap;
-  }
-  .flow-bar span.step { font-size: 12.5px; font-weight: 700; color: var(--text); }
-  .flow-bar .arrow { color: var(--red); font-size: 15px; font-weight: 800; }
-  .flow-label { text-align: center; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.6px; color: var(--red-bright); margin: 4px 0 9px; }
-
-  /* ============ ROLE SECTIONS ============ */
-  .role-section { scroll-margin-top: calc(var(--nav-h) + 14px); margin-bottom: 40px; }
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    margin-bottom: 16px;
-  }
-  .role-num {
-    width: 42px; height: 42px;
-    flex-shrink: 0;
-    border-radius: 11px;
-    background: var(--red);
-    color: #fff;
-    font-size: 20px; font-weight: 900;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 3px 10px rgba(220,38,38,0.4);
-  }
-  .section-header h2 { font-size: 21px; font-weight: 800; color: #fff; letter-spacing: -0.2px; }
-  .section-header .role-tag { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
-
-  .section-divider { border: none; border-top: 1px solid var(--border); margin: 0 0 26px; }
-
-  /* ============ CARDS / GROUPS ============ */
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 18px;
-    margin-bottom: 14px;
-  }
-  .card-title {
-    font-size: 12px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 0.8px;
-    color: var(--red-bright);
-    margin-bottom: 12px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .card-title .letter {
-    width: 22px; height: 22px; border-radius: 6px;
-    background: rgba(226,52,43,0.16);
-    border: 1px solid rgba(226,52,43,0.4);
-    color: var(--red-bright);
-    font-size: 12px; font-weight: 900;
-    display: flex; align-items: center; justify-content: center;
-  }
-
-  /* checklist */
-  ul.check { list-style: none; }
-  ul.check li {
-    display: flex; gap: 11px; align-items: flex-start;
-    padding: 7px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 16px; color: var(--text);
-  }
-  ul.check li:last-child { border-bottom: none; }
-  ul.check li .mark {
-    flex-shrink: 0; margin-top: 3px;
-    width: 9px; height: 9px; border-radius: 50%;
-    border: 2px solid var(--red); background: transparent;
-  }
-  ul.check li strong { color: #fff; font-weight: 700; }
-  ul.check li .q { color: var(--muted); font-weight: 500; }
-
-  /* hazard / pill badges */
-  .pills { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
-  .pill {
-    font-size: 12.5px; font-weight: 700;
-    padding: 5px 12px; border-radius: 999px;
-    background: rgba(239,68,68,0.13);
-    border: 1px solid rgba(239,68,68,0.4);
-    color: #fda4a0;
-    text-transform: uppercase; letter-spacing: 0.4px;
-  }
-  .pill.soft {
-    background: var(--card-2);
-    border-color: var(--border-2);
-    color: var(--muted);
-  }
-
-  /* entrapment decision grid */
-  .decision-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 10px;
-    margin-top: 4px;
-  }
-  .decision {
-    background: var(--card-2);
-    border: 1px solid var(--border-2);
-    border-radius: 9px;
-    padding: 11px 13px;
-  }
-  .decision .d-q { font-size: 15px; font-weight: 700; color: #fff; }
-  .decision .d-note { font-size: 13px; color: var(--muted); margin-top: 3px; }
-
-  /* ============ CALLOUTS ============ */
-  .callout {
-    border-radius: 0 8px 8px 0;
-    padding: 11px 15px;
-    margin-top: 12px;
-    font-size: 15px;
-    border-left: 4px solid var(--blue);
-    background: rgba(59,130,246,0.1);
-    color: #bcd4ff;
-  }
-  .callout strong { color: #fff; }
-
-  .callout-amber {
-    border-left-color: var(--amber);
-    background: rgba(245,158,11,0.1);
-    color: #ffe0a8;
-  }
-  .callout-green {
-    border-left-color: var(--green);
-    background: rgba(34,197,94,0.1);
-    color: #b6f0c8;
-  }
-
-  .callout .c-label {
-    display: block;
-    font-size: 10.5px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 0.7px;
-    margin-bottom: 3px;
-  }
-
-  /* HARD RULE — the loudest element */
-  .hardrule {
-    background: rgba(239,68,68,0.13);
-    border: 1px solid rgba(239,68,68,0.55);
-    border-left: 5px solid var(--red-bright);
-    border-radius: 0 9px 9px 0;
-    padding: 12px 15px;
-    margin-top: 12px;
-  }
-  .hardrule .hr-label {
-    display: flex; align-items: center; gap: 7px;
-    font-size: 11.5px; font-weight: 900;
-    text-transform: uppercase; letter-spacing: 1px;
-    color: var(--red-bright);
-    margin-bottom: 4px;
-  }
-  .hardrule .hr-label .warn { font-size: 15px; }
-  .hardrule .hr-text { font-size: 16.5px; font-weight: 600; color: #ffd9d6; }
-  .hardrule .hr-text strong { color: #fff; font-weight: 800; }
-
-  /* Declaration of needs — closing block */
-  .declare {
-    background: linear-gradient(135deg, rgba(226,52,43,0.18), rgba(226,52,43,0.07));
-    border: 1px solid rgba(226,52,43,0.45);
-    border-radius: 12px;
-    padding: 16px 18px;
-    margin-top: 16px;
-  }
-  .declare .d-head {
-    font-size: 16.5px; font-weight: 800; color: #fff;
-    display: flex; align-items: center; gap: 8px; margin-bottom: 7px;
-  }
-  .declare p { font-size: 14.5px; color: #f0d6d3; margin-bottom: 9px; }
-  .declare .declare-note {
-    margin: 11px 0 0;
-    font-size: 13.5px; font-style: italic; font-weight: 600;
-    color: #ffd9a8;
-  }
-  .declare .declare-points {
-    list-style: none;
-    margin-top: 12px;
-  }
-  .declare .declare-points li {
-    display: flex; gap: 9px; align-items: flex-start;
-    padding: 4px 0;
-    font-size: 14.5px; font-weight: 600; color: #fff;
-  }
-  .declare .declare-points li::before {
-    content: '';
-    flex-shrink: 0; margin-top: 8px;
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--red-bright);
-  }
-  .declare .examples { display: flex; flex-wrap: wrap; gap: 8px; }
-  .declare .examples .ex {
-    font-size: 14.5px; font-style: italic; font-weight: 600; color: #fff;
-    background: rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 999px; padding: 5px 13px;
-  }
-
-  /* ============ COLLAPSIBLE DETAILS ============ */
-  .toolbar {
-    display: flex; gap: 8px; margin: 0 0 12px;
-    justify-content: center;
-  }
-  .toolbar button {
-    font-family: inherit;
-    font-size: 12px; font-weight: 700;
-    color: var(--muted);
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    padding: 7px 13px;
-    min-height: 36px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-  }
-  .toolbar button:hover { color: #fff; border-color: var(--border-2); }
-
-  details.collapse {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    margin-bottom: 12px;
-    overflow: hidden;
-  }
-  details.collapse[open] { border-color: var(--border-2); }
-  details.collapse > summary {
-    list-style: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 15px 17px;
-    min-height: 56px;
-    user-select: none;
-  }
-  details.collapse > summary::-webkit-details-marker { display: none; }
-  details.collapse > summary:hover { background: var(--card-2); }
-
-  summary .s-num {
-    flex-shrink: 0;
-    width: 28px; height: 28px; border-radius: 8px;
-    background: rgba(226,52,43,0.16);
-    border: 1px solid rgba(226,52,43,0.4);
-    color: var(--red-bright);
-    font-size: 13px; font-weight: 800;
-    display: flex; align-items: center; justify-content: center;
-  }
-  summary .s-letter {
-    flex-shrink: 0;
-    width: 28px; height: 28px; border-radius: 8px;
-    background: rgba(226,52,43,0.16);
-    border: 1px solid rgba(226,52,43,0.4);
-    color: var(--red-bright);
-    font-size: 13px; font-weight: 900;
-    display: flex; align-items: center; justify-content: center;
-  }
-  summary .s-text { flex: 1; }
-  summary .s-title { font-size: 17px; font-weight: 700; color: #fff; }
-  summary .s-sub { font-size: 13px; color: var(--muted); margin-top: 1px; }
-  summary .chev {
-    flex-shrink: 0;
-    color: var(--faint);
-    font-size: 20px;
-    transition: transform 0.2s ease;
-  }
-  details.collapse[open] > summary .chev { transform: rotate(90deg); color: var(--red-bright); }
-
-  .collapse-body {
-    padding: 4px 17px 17px;
-    border-top: 1px solid var(--border);
-  }
-  .collapse-body > *:first-child { margin-top: 12px; }
-
-  /* ordered steps inside stabilization sub-groups */
-  ol.steps { list-style: none; counter-reset: s; }
-  ol.steps > li {
-    counter-increment: s;
-    display: flex; gap: 12px; align-items: flex-start;
-    padding: 8px 0;
-    font-size: 16px;
-  }
-  ol.steps > li .t { flex: 1; }
-  ol.steps > li::before {
-    content: counter(s);
-    flex-shrink: 0;
-    width: 24px; height: 24px; border-radius: 50%;
-    background: var(--card-2); border: 1px solid var(--border-2);
-    color: var(--text);
-    font-size: 12px; font-weight: 800;
-    display: flex; align-items: center; justify-content: center;
-    margin-top: 1px;
-  }
-  ol.steps > li strong { color: #fff; }
-
-  .goal-line {
-    font-size: 16.5px; font-weight: 800; color: var(--green);
-    margin-bottom: 2px;
-  }
-
-  /* ============ TACTIC PLACEHOLDER CARDS ============ */
-  .tactic-body .subtactic {
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 13px 15px;
-    margin-top: 12px;
-  }
-  .tactic-body .subtactic h4 {
-    font-size: 13px; font-weight: 800; color: #fff;
-    text-transform: uppercase; letter-spacing: 0.6px;
-    margin-bottom: 10px;
-    display: flex; align-items: center; gap: 7px;
-  }
-  .tactic-body .subtactic h4::before {
-    content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--red);
-  }
-
-  .slot { margin-top: 14px; }
-  .slot-label {
-    font-size: 11px; font-weight: 800; text-transform: uppercase;
-    letter-spacing: 0.7px; color: var(--muted); margin-bottom: 7px;
-  }
-  .ph-steps { list-style: none; counter-reset: p; }
-  .ph-steps li {
-    counter-increment: p;
-    display: flex; align-items: center; gap: 11px;
-    padding: 7px 0;
-  }
-  .ph-steps li::before {
-    content: counter(p);
-    flex-shrink: 0;
-    width: 22px; height: 22px; border-radius: 50%;
-    border: 1px dashed var(--faint);
-    color: var(--faint);
-    font-size: 11px; font-weight: 800;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .ph-line {
-    flex: 1; height: 0;
-    border-bottom: 1px dashed var(--border-2);
-  }
-  .ph-box {
-    border: 1px dashed var(--border-2);
-    border-radius: 8px;
-    padding: 10px 13px;
-    color: var(--faint);
-    font-size: 13px; font-style: italic;
-  }
-  .diagram-ph {
-    margin-top: 14px;
-    border: 1px dashed var(--border-2);
-    border-radius: 10px;
-    min-height: 92px;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 4px;
-    color: var(--faint);
-    background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.012) 10px, rgba(255,255,255,0.012) 20px);
-  }
-  .diagram-ph .icon { font-size: 22px; opacity: 0.7; }
-  .diagram-ph .lbl { font-size: 12px; font-weight: 600; letter-spacing: 0.3px; }
-
-  /* filled-tactic helpers */
-  .steps .sub { display: block; font-size: 13px; font-weight: 400; color: var(--muted); margin-top: 4px; }
-  .substeps { list-style: none; margin: 8px 0 2px; display: flex; flex-direction: column; gap: 6px; }
-  .substeps > li { display: flex; gap: 9px; font-size: 14px; color: var(--text); }
-  .substeps > li .ltr { flex-shrink: 0; width: 16px; font-weight: 800; color: var(--red-bright); }
-  .tactic-tools { margin-top: 14px; font-size: 13.5px; color: var(--muted); }
-  .tactic-tools .k { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; color: var(--red-bright); margin-right: 7px; }
-  .tphoto { display: block; max-width: 100%; max-height: 520px; width: auto; height: auto; margin: 10px 0 2px; border-radius: 8px; border: 1px solid var(--border-2); }
-  .substeps .tphoto { margin-left: 0; }
-
-  .hardrule.placeholder { border-style: dashed; }
-  .hardrule.placeholder .hr-text { color: var(--faint); font-style: italic; font-weight: 500; }
-
-  /* ============ FOOTER ============ */
-  .footer {
-    margin-top: 40px;
-    padding-top: 18px;
-    border-top: 2px solid var(--red);
-    text-align: center;
-    font-size: 12px;
-    color: var(--faint);
-  }
-  .footer strong { color: var(--muted); }
-
-  /* ============ RESPONSIVE ============ */
-  @media (max-width: 600px) {
-    body { font-size: 15px; }
-    .header h1 { font-size: 30px; }
-    .section-header h2 { font-size: 18px; }
-    .role-num { width: 38px; height: 38px; font-size: 18px; }
-    .decision-grid { grid-template-columns: 1fr 1fr; }
-  }
-
-  /* ============ PRINT ============ */
-  @media print {
-    :root { --nav-h: 0px; }
-    html, body { background: #fff; color: #111; }
-    .nav, .toolbar { display: none !important; }
-    .page { max-width: 100%; }
-    .card, details.collapse, .decision, .subtactic {
-      background: #fff; border-color: #bbb;
-      break-inside: avoid; page-break-inside: avoid;
-    }
-    .section-header h2, .header h1, summary .s-title, ul.check li strong,
-    .decision .d-q { color: #111; }
-    ul.check li, ol.steps > li { color: #222; }
-    .muted, .role-tag, .s-sub { color: #555; }
-    details.collapse > summary .chev { display: none; }
-    .hardrule { background: #fdeaea; border-color: #d33; }
-    .hardrule .hr-text { color: #7a1410; }
-    .emblem { box-shadow: none; }
-    a { color: #111; text-decoration: none; }
-  }
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A1B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F6F5" media="(prefers-color-scheme: light)">
+<meta name="robots" content="index, follow">
+<meta name="description" content="Orem Fire Department engine and truck evolutions, fireground positioning, vehicle extrication and quick reference.">
+<title>Jason's Fire Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
 </head>
 <body>
+<style>
+:root{
+  --canvas:#F3F6F5; --surface:#FFFFFF; --expanded:#E8EFED;
+  --text:#162421; --text2:#53635F; --divider:#D2DDDA;
+  --accent:#0F6F78; --accent-tint:#DCEEEF;
+  --safety:#B42318; --safety-tint:#FDE8E6;
+  --teal-g:#E4EFED;
+  --gold:#8A5800; --gold-g:#F7EEDC;
+  --blue:#3A5BA8; --blue-g:#E7ECF7;
+  --plum:#84457C; --plum-g:#F3E7F2;
+  --ink:#0E1A1B;
+  --head:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --body:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+    --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+    --accent:#6BC6C8; --accent-tint:#15383A;
+    --safety:#FF766D; --safety-tint:#42201D;
+    --teal-g:#12292C;
+    --gold:#DCAF5E; --gold-g:#2E2513;
+    --blue:#9FB6EA; --blue-g:#1A2438;
+    --plum:#D8A3CF; --plum-g:#321F30;
+    --ink:#060E0F;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0C1516; --surface:#132023; --expanded:#203033;
+  --text:#F2F7F5; --text2:#A7B8B4; --divider:#334743;
+  --accent:#6BC6C8; --accent-tint:#15383A;
+  --safety:#FF766D; --safety-tint:#42201D;
+  --teal-g:#12292C;
+  --gold:#DCAF5E; --gold-g:#2E2513;
+  --blue:#9FB6EA; --blue-g:#1A2438;
+  --plum:#D8A3CF; --plum-g:#321F30;
+  --ink:#060E0F;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--text);font-family:var(--body);
+font-size:16.5px;line-height:1.55;-webkit-text-size-adjust:100%}
 
-<!-- ============ STICKY NAV ============ -->
-<nav class="nav">
-  <div class="nav-inner">
-    <a class="nav-chip" href="#sizeup"><span class="dot">1</span>Size-Up</a>
-    <a class="nav-chip" href="#stabilization"><span class="dot">2</span>Stabilization</a>
-    <a class="nav-chip" href="#peelpeek"><span class="dot">3</span>Peel &amp; Peek</a>
-    <a class="nav-chip" href="#tactics"><span class="dot">4</span>Tactics</a>
-    <a class="nav-instr" href="instructor.html" title="Instructor run-sheet">Instructor &rsaquo;</a>
+/* ---- hero ---- */
+.hero{background:var(--ink);color:#EAF3F1;padding:44px 0 40px;
+background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.028) 0 2px,transparent 2px 9px)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+.tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--head);font-weight:700;
+font-size:11.5px;letter-spacing:.19em;text-transform:uppercase;color:#7FD4D2;margin:0 0 16px}
+.tag::before{content:"";width:22px;height:2.5px;background:var(--safety);border-radius:2px}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(31px,8.4vw,54px);line-height:1.02;
+letter-spacing:-.022em;margin:0 0 14px}
+h1 span{color:#7FD4D2;display:block}
+.sub{font-size:16px;line-height:1.5;color:#A9C2BE;margin:0;max-width:47ch}
+.sub b{color:#EAF3F1;font-weight:700}
+
+/* ---- section head ---- */
+.sec{padding:34px 0 8px}
+h2{font-family:var(--head);font-weight:800;font-size:13px;letter-spacing:.15em;text-transform:uppercase;
+color:var(--text2);margin:0 0 15px;display:flex;align-items:center;gap:11px}
+h2::after{content:"";flex:1;height:1px;background:var(--divider)}
+
+/* ---- discipline cards ---- */
+.grid{display:grid;gap:13px;grid-template-columns:1fr;padding-bottom:8px}
+@media (min-width:620px){.grid{grid-template-columns:1fr 1fr}}
+@media (min-width:940px){.grid{grid-template-columns:repeat(3,1fr)}}
+.card{display:block;text-decoration:none;color:inherit;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:17px;padding:19px 19px 17px;position:relative;
+overflow:hidden;transition:border-color .13s,transform .13s}
+.card::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--k,var(--accent))}
+.card:hover{border-color:var(--k,var(--accent));transform:translateY(-2px)}
+.card .n{font-family:var(--head);font-weight:800;font-size:11px;letter-spacing:.15em;
+text-transform:uppercase;color:var(--k,var(--accent));margin:0 0 7px;padding-left:9px}
+.card h3{font-family:var(--head);font-weight:800;font-size:21.5px;letter-spacing:-.012em;
+margin:0 0 8px;padding-left:9px;line-height:1.16}
+.card p{margin:0 0 13px;padding-left:9px;font-size:14.6px;line-height:1.45;color:var(--text2)}
+.card .go{padding-left:9px;font-family:var(--head);font-weight:700;font-size:13.5px;
+color:var(--k,var(--accent));display:inline-flex;align-items:center;gap:6px}
+.card .go::after{content:"\2192";font-size:15px}
+.k-eng{--k:var(--safety)} .k-trk{--k:var(--blue)} .k-fg{--k:var(--accent)}
+.k-ex{--k:var(--gold)} .k-qrg{--k:var(--plum)}
+
+/* ---- soon ---- */
+.soon{display:grid;gap:11px;grid-template-columns:1fr}
+@media (min-width:620px){.soon{grid-template-columns:1fr 1fr}}
+.sc{background:transparent;border:1.5px dashed var(--divider);border-radius:15px;padding:15px 17px}
+.sc b{font-family:var(--head);font-weight:800;font-size:16.5px;display:block;color:var(--text2)}
+.sc span{font-size:13.8px;color:var(--text2);opacity:.85}
+
+/* ---- footer ---- */
+.foot{border-top:1px solid var(--divider);margin-top:30px;padding:20px 0 40px;
+font-size:13.4px;color:var(--text2)}
+.foot b{color:var(--text);font-weight:700}
+
+/* ===== shared site nav ===== */
+.sitenav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--canvas) 88%,transparent);
+backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);
+border-bottom:1px solid var(--divider)}
+@supports not (backdrop-filter:blur(1px)){.sitenav{background:var(--canvas)}}
+.sn-in{max-width:1040px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+justify-content:space-between;gap:12px;min-height:60px}
+.sn-brand{font-family:var(--head);font-weight:800;font-size:16px;letter-spacing:.01em;
+text-decoration:none;color:var(--text);white-space:nowrap}
+.sn-brand b{color:var(--safety);font-weight:800}
+.sn-links{display:flex;gap:2px;align-items:center}
+.sn-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px 13px;border-radius:10px;
+text-decoration:none;color:var(--text2);font-weight:700;font-size:14.5px;white-space:nowrap}
+.sn-links a:hover{background:var(--expanded);color:var(--text)}
+.sn-links a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-more{display:none;position:relative}
+.sn-more>summary{list-style:none;display:inline-flex;align-items:center;gap:9px;min-height:48px;
+padding:8px 16px;border:1.5px solid var(--divider);border-radius:12px;background:var(--surface);
+font-family:var(--head);font-weight:700;font-size:15px;color:var(--text);cursor:pointer}
+.sn-more>summary::-webkit-details-marker{display:none}
+.sn-bars{width:17px;height:12px;position:relative;flex:0 0 auto}
+.sn-bars::before,.sn-bars::after,.sn-bars i{content:"";position:absolute;left:0;right:0;height:2.2px;
+border-radius:2px;background:currentColor}
+.sn-bars::before{top:0}.sn-bars i{top:5px;display:block}.sn-bars::after{bottom:0}
+.sn-more[open]>summary{border-color:var(--accent);color:var(--accent)}
+.sn-panel{position:absolute;right:0;top:calc(100% + 8px);min-width:262px;background:var(--surface);
+border:1.5px solid var(--divider);border-radius:16px;padding:8px;display:grid;gap:2px;
+box-shadow:0 12px 34px -10px rgba(10,30,28,.45)}
+.sn-panel a{display:flex;align-items:center;min-height:52px;padding:8px 15px;border-radius:11px;
+text-decoration:none;color:var(--text);font-weight:700;font-size:16.5px}
+.sn-panel a[aria-current="true"]{background:var(--accent-tint);color:var(--accent)}
+.sn-soon{display:block;padding:9px 15px 4px;font-size:13.5px;color:var(--text2)}
+.sn-soon b{font-weight:700;color:var(--text2)}
+@media (max-width:860px){.sn-links{display:none}.sn-more{display:block}.sn-in{min-height:56px;padding:0 12px}
+.sn-brand{font-size:15px}}
+</style>
+<nav class="sitenav" aria-label="Site"><div class="sn-in"><a class="sn-brand" href="index.html">JASON&rsquo;S <b>FIRE</b> TRAINING</a><div class="sn-links"><a href="index.html" aria-current="true">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a></div><details class="sn-more"><summary><span class="sn-bars"><i></i></span>Menu</summary><div class="sn-panel"><a href="index.html" aria-current="true">Home</a><a href="engine-home.html">Engine Ops</a><a href="truck-home.html">Truck Ops</a><a href="fireground.html">Fireground</a><a href="qrg.html">Quick Reference</a><a href="extrication.html">Vehicle Extrication</a><span class="sn-soon"><b>Rope Rescue</b> &mdash; coming</span><span class="sn-soon"><b>Hazmat</b> &mdash; coming</span></div></details></div></nav>
+
+
+
+<header class="hero">
+  <div class="wrap">
+    <p class="tag">Orem Fire Department</p>
+    <h1>Jason's<span>Fire Training</span></h1>
+    <p class="sub">Engine and truck evolutions, fireground positioning and extrication &mdash; built from the <b>OFD manuals, the Quick&nbsp;Reference&nbsp;Guide</b> and the evolution cards.</p>
   </div>
-</nav>
+</header>
 
-<!-- ============ SIDE TABLE OF CONTENTS ============ -->
-<button class="sidenav-tab" id="sidenavOpen" aria-label="Open contents">&#9776;</button>
-<nav class="sidenav" id="sidenav" aria-label="Contents">
-  <div class="sidenav-head"><span>Contents</span><button class="sidenav-collapse" id="sidenavCollapse" aria-label="Hide contents" title="Hide">&times;</button></div>
-  <a class="sn-link" href="#sizeup" data-sec="sizeup"><span class="sn-n">1</span>Size-Up</a>
-  <a class="sn-link" href="#stabilization" data-sec="stabilization"><span class="sn-n">2</span>Stabilization</a>
-  <a class="sn-link" href="#peelpeek" data-sec="peelpeek"><span class="sn-n">3</span>Peel &amp; Peek</a>
-  <a class="sn-link" href="#tactics" data-sec="tactics"><span class="sn-n">4</span>Tactics</a>
-  <div class="sn-sub">
-    <a class="sn-sublink" href="#tactics" data-tactic="0">Door Removal: Hinge</a>
-    <a class="sn-sublink" href="#tactics" data-tactic="1">Door Removal: Pin</a>
-    <a class="sn-sublink" href="#tactics" data-tactic="2">B-Post Blow Out</a>
-    <a class="sn-sublink" href="#tactics" data-tactic="3">Dash Jack</a>
-    <a class="sn-sublink" href="#tactics" data-tactic="4">Roll Dash</a>
-    <a class="sn-sublink" href="#tactics" data-tactic="5">Roof Removal</a>
-    <a class="sn-sublink" href="#tactics" data-tactic="6">Steering Wheel</a>
-  </div>
-</nav>
-<button class="sidenav-fab" id="sidenavFab" aria-label="Open contents menu">&#9776;</button>
-<div class="snav-backdrop" id="snavBackdrop"></div>
+<main class="wrap">
+  <section class="sec">
+    <h2>Disciplines</h2>
+    <div class="grid">
 
-<div class="page">
+      <a class="card k-eng" href="engine-home.html">
+        <p class="n">Evolutions 1.0 &ndash; 2.0</p>
+        <h3>Engine Operations</h3>
+        <p>Eleven evolutions, the engineer&rsquo;s role, emergency pump operations, water supply, relay pumping, standpipes and master streams.</p>
+        <span class="go">Open</span>
+      </a>
 
-  <!-- ============ HEADER ============ -->
-  <div class="header">
-    <div>
-      <h1>Vehicle Extrication</h1>
-      <div class="byline">By Engineer Jason Anderson</div>
-      <div class="byrole">Heavy Vehicle Extrication Technician</div>
-    </div>
-  </div>
+      <a class="card k-trk" href="truck-home.html">
+        <p class="n">Aerial &amp; ground</p>
+        <h3>Truck Operations</h3>
+        <p>Aerial evolution, ladder placement, residential, steep and commercial roof operations, and search.</p>
+        <span class="go">Open</span>
+      </a>
 
-  <!-- ============ FLOW BAR ============ -->
-  <div class="flow-label">The 4-Step System</div>
-  <div class="flow-bar">
-    <span class="step">Size-Up</span><span class="arrow">&rarr;</span>
-    <span class="step">Stabilization</span><span class="arrow">&rarr;</span>
-    <span class="step">Peel &amp; Peek</span><span class="arrow">&rarr;</span>
-    <span class="step">Tactics</span>
-  </div>
+      <a class="card k-fg" href="fireground.html">
+        <p class="n">Arrival order</p>
+        <h3>Fireground Positioning</h3>
+        <p>Where each due company spots on residential, mid-rise and commercial &mdash; with the doctrine that puts it there.</p>
+        <span class="go">Open</span>
+      </a>
 
-  <!-- ======================================================== -->
-  <!-- SECTION 1 — VEHICLE SIZE-UP -->
-  <!-- ======================================================== -->
-  <section class="role-section" id="sizeup">
-    <div class="section-header">
-      <div class="role-num">1</div>
-      <div>
-        <h2>Vehicle Size-Up</h2>
-        <div class="role-tag">The size-up role &middot; happens as you walk up &middot; <strong>every</strong> accident, minor or serious</div>
-      </div>
-    </div>
-    <hr class="section-divider">
+      <a class="card k-ex" href="extrication.html">
+        <p class="n">Heavy vehicle</p>
+        <h3>Vehicle Extrication</h3>
+        <p>Stabilization, glass management, door and roof evolutions, dash lift and displacement, patient packaging.</p>
+        <span class="go">Open</span>
+      </a>
 
-    <!-- On approach -->
-    <div class="card">
-      <div class="card-title"><span class="letter">i</span> On Approach &mdash; Identify</div>
-      <ul class="check">
-        <li><span class="mark"></span><span><strong>Type of vehicle</strong> <span class="q">&mdash; car, truck, SUV, bus, commercial, EV?</span></span></li>
-        <li><span class="mark"></span><span><strong>Number of vehicles</strong> involved</span></li>
-        <li><span class="mark"></span><span><strong>Number of victims</strong></span></li>
-        <li><span class="mark"></span><span><strong>Ejected victims</strong> <span class="q">&mdash; look beyond the vehicle</span></span></li>
-        <li><span class="mark"></span><span><strong>Car seats</strong></span></li>
-        <li><span class="mark"></span><span><strong>Status of vehicle</strong> <span class="q">&mdash; running? in drive or park? position / orientation?</span></span></li>
-      </ul>
-    </div>
+      <a class="card k-qrg" href="qrg.html">
+        <p class="n">Quick Reference Guide</p>
+        <h3>Assignments by Arrival</h3>
+        <p>Click a rig, see its assignment by occupancy &mdash; the QRG, made interactive.</p>
+        <span class="go">Open</span>
+      </a>
 
-    <!-- Hazards -->
-    <div class="card">
-      <div class="card-title"><span class="letter">!</span> Identify Hazards</div>
-      <div class="pills">
-        <span class="pill">Smoke</span>
-        <span class="pill">Sharp Metal</span>
-        <span class="pill">Debris</span>
-        <span class="pill">Fire</span>
-        <span class="pill">Powerlines</span>
-        <span class="pill">Hazmat</span>
-        <span class="pill">Fuel/Oil Leaks</span>
-        <span class="pill">Traffic</span>
-      </div>
-    </div>
-
-    <!-- Entrapment type -->
-    <div class="card">
-      <div class="card-title"><span class="letter">?</span> Type of Entrapment</div>
-      <div class="decision-grid">
-        <div class="decision">
-          <div class="d-q">Just a door pop?</div>
-          <div class="d-note">Simple, fast access</div>
-        </div>
-        <div class="decision">
-          <div class="d-q">Serious damage?</div>
-          <div class="d-note">Prolonged extrication</div>
-        </div>
-        <div class="decision">
-          <div class="d-q">Upside down?</div>
-          <div class="d-note">Roof / inverted</div>
-        </div>
-        <div class="decision">
-          <div class="d-q">Crushing?</div>
-          <div class="d-note">Patient pinned / compressed</div>
-        </div>
-      </div>
-      <div class="callout callout-green">
-        <span class="c-label">Guiding Principle</span>
-        <strong>Try before you pry.</strong> Check the obvious first &mdash; doors and handles &mdash; before committing tools.
-      </div>
-    </div>
-
-    <!-- Declaration of needs -->
-    <div class="declare">
-      <div class="d-head">Declaration of Needs</div>
-      <p>The size-up role closes by calling out clear needs to the crew so everyone knows the plan.</p>
-      <div class="examples">
-        <span class="ex">&ldquo;We need floor dry.&rdquo;</span>
-        <span class="ex">&ldquo;We&rsquo;ll need to pop a door.&rdquo;</span>
-        <span class="ex">&ldquo;Prolonged extrication &mdash; we&rsquo;ll need cutters, spreaders and a saw.&rdquo;</span>
-      </div>
-      <ul class="declare-points">
-        <li>Call for additional ambulances</li>
-        <li>Call for additional heavy rescue units</li>
-      </ul>
-      <p class="declare-note">*Consider a helicopter for extended extrication times.</p>
     </div>
   </section>
 
-  <!-- ======================================================== -->
-  <!-- SECTION 2 — STABILIZATION -->
-  <!-- ======================================================== -->
-  <section class="role-section" id="stabilization">
-    <div class="section-header">
-      <div class="role-num">2</div>
-      <div>
-        <h2>Stabilization</h2>
-        <div class="role-tag">The stabilization role &middot; simple steps first &middot; gain control of the vehicle</div>
-      </div>
-    </div>
-    <hr class="section-divider">
-
-    <div class="toolbar">
-      <button type="button" data-expand>Expand all</button>
-      <button type="button" data-collapse>Collapse all</button>
-    </div>
-
-    <!-- A: Vehicle Controls -->
-    <details class="collapse" open>
-      <summary>
-        <span class="s-letter">A</span>
-        <span class="s-text">
-          <span class="s-title">Vehicle Controls</span>
-          <span class="s-sub">Put it in park, set the brake</span>
-        </span>
-        <span class="chev">&rsaquo;</span>
-      </summary>
-      <div class="collapse-body">
-        <ol class="steps">
-          <li><span class="t">Put the vehicle in <strong>Park</strong> if possible.</span></li>
-          <li><span class="t">Set the <strong>parking brake</strong> if possible.</span></li>
-        </ol>
-        <div class="hardrule">
-          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule</div>
-          <div class="hr-text">Never put your <strong>head inside the compartment</strong>.</div>
-        </div>
-      </div>
-    </details>
-
-    <!-- B: Electrical System -->
-    <details class="collapse" open>
-      <summary>
-        <span class="s-letter">B</span>
-        <span class="s-text">
-          <span class="s-title">Electrical System</span>
-          <span class="s-sub">Keys, power, and airbag awareness &mdash; in order</span>
-        </span>
-        <span class="chev">&rsaquo;</span>
-      </summary>
-      <div class="collapse-body">
-        <ol class="steps">
-          <li><span class="t">Turn the <strong>ignition off</strong> and remove the keys.</span></li>
-          <li><span class="t">Consider moving the <strong>occupant&rsquo;s electric seat</strong> back and reclining it for easier access.</span></li>
-          <li><span class="t"><strong>Disconnect / cut the battery</strong> power.</span></li>
-        </ol>
-        <div class="callout callout-amber">
-          <span class="c-label">Sequence Matters</span>
-          Electric seats won&rsquo;t move once power is gone &mdash; reposition the seat <strong>first</strong>, then cut power.
-        </div>
-        <div class="hardrule">
-          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule</div>
-          <div class="hr-text">Try not to reach <strong>directly over the steering wheel</strong> &mdash; undeployed airbag.</div>
-        </div>
-      </div>
-    </details>
-
-    <!-- C: Mechanical / Movement -->
-    <details class="collapse" open>
-      <summary>
-        <span class="s-letter">C</span>
-        <span class="s-text">
-          <span class="s-title">Mechanical Stabilization &mdash; Movement</span>
-        </span>
-        <span class="chev">&rsaquo;</span>
-      </summary>
-      <div class="collapse-body">
-        <div class="goal-line">Goal: stop ALL vehicle movement.</div>
-        <ol class="steps">
-          <li><span class="t"><strong>Stabilize the wheels</strong> &mdash; chock them, or deflate the tires (Halligan, or cut the valve stem).</span></li>
-          <li><span class="t">If off-balance / on its side / on its roof, <strong>vertically stabilize with struts</strong> &mdash; make the footprint <strong>wider and stronger</strong>.</span></li>
-        </ol>
-        <div class="hardrule">
-          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule</div>
-          <div class="hr-text">Never more than <strong>ONE knee on the ground</strong>. One knee only &mdash; stay ready to move.</div>
-        </div>
-      </div>
-    </details>
-
-    <!-- D: Stop the Crush -->
-    <details class="collapse" open>
-      <summary>
-        <span class="s-letter">D</span>
-        <span class="s-text">
-          <span class="s-title">Stop the Crush</span>
-          <span class="s-sub">When the vehicle is crushing an occupant</span>
-        </span>
-        <span class="chev">&rsaquo;</span>
-      </summary>
-      <div class="collapse-body">
-        <div class="goal-line">Goal: prevent any further crushing.</div>
-        <ol class="steps">
-          <li><span class="t"><strong>Chock and stabilize</strong> the vehicle to stop it settling or shifting onto the occupant.</span></li>
-          <li><span class="t">Capture the load before any lift so it can&rsquo;t drop back down.</span></li>
-        </ol>
-      </div>
-    </details>
-  </section>
-
-  <!-- ======================================================== -->
-  <!-- SECTION 3 — PEEL & PEEK -->
-  <!-- ======================================================== -->
-  <section class="role-section" id="peelpeek">
-    <div class="section-header">
-      <div class="role-num">3</div>
-      <div>
-        <h2>Peel &amp; Peek</h2>
-        <div class="role-tag">The peel &amp; peek role &middot; open it up and expose hazards before cutting</div>
-      </div>
-    </div>
-    <hr class="section-divider">
-
-    <!-- Glass -->
-    <div class="card">
-      <div class="card-title"><span class="letter">&#9632;</span> Take Glass Safely</div>
-      <ul class="check">
-        <li><span class="mark"></span><span><strong>Protect occupants</strong> <span class="q">&mdash; blankets, or tape the window if the patient is non-emergent</span></span></li>
-        <li><span class="mark"></span><span><strong>Cut / remove the front windshield</strong> out of the way</span></li>
-      </ul>
-      <div class="callout callout-amber">
-        <span class="c-label">Consider</span>
-        The windshield <strong>doesn&rsquo;t always have to be cut</strong> &mdash; on newer vehicles it adds to the structural integrity of the vehicle.
-      </div>
-      <div class="hardrule">
-        <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule</div>
-        <div class="hr-text">Use <strong>breathing protection and eye protection</strong> when cutting the front windshield &mdash; fine glass particles can damage the lungs and eyes.</div>
-      </div>
-    </div>
-
-    <!-- Interior -->
-    <div class="card">
-      <div class="card-title"><span class="letter">&#9636;</span> Pull &amp; Mark</div>
-      <ul class="check">
-        <li><span class="mark"></span><span><strong>Pull interior trim</strong></span></li>
-        <li><span class="mark"></span><span>Identify &amp; <strong>MARK airbag cylinders</strong></span></li>
-        <li><span class="mark"></span><span>Identify &amp; <strong>MARK seatbelt pretensioners</strong></span></li>
-        <li><span class="mark"></span><span><strong>Make all marks on the outside of the vehicle</strong> <span class="q">&mdash; so the whole crew can see them</span></span></li>
-        <li><span class="mark"></span><span>Cut seat belts at a <strong>45&deg; angle</strong> <span class="q">&mdash; cleaner cut</span></span></li>
-      </ul>
-      <div class="hardrule">
-        <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule &mdash; Cylinders</div>
-        <div class="hr-text"><strong>Cylinders</strong> must be identified and marked for the spreaders and cutters. They <strong>will explode and can kill</strong> if we damage them.</div>
-      </div>
-      <div class="callout callout-green">
-        <span class="c-label">Good to know</span>
-        <strong>Airbags themselves are safe to cut through</strong> &mdash; as long as you&rsquo;re not cutting through a cylinder.
-      </div>
+  <section class="sec">
+    <h2>In progress</h2>
+    <div class="soon">
+      <div class="sc"><b>Rope Rescue</b><span>Low and high angle, anchors, patient packaging.</span></div>
+      <div class="sc"><b>Apparatus</b><span>Ladder&nbsp;32, engines and Tiller&nbsp;33 &mdash; specs and inventory.</span></div>
     </div>
   </section>
 
-  <!-- ======================================================== -->
-  <!-- SECTION 4 — TACTICAL OPERATIONS -->
-  <!-- ======================================================== -->
-  <section class="role-section" id="tactics">
-    <div class="section-header">
-      <div class="role-num">4</div>
-      <div>
-        <h2>Tactical Operations</h2>
-        <div class="role-tag">Pick the play the entrapment calls for &middot; each tactic is a standalone section</div>
-      </div>
-    </div>
-    <hr class="section-divider">
-
-    <div class="toolbar">
-      <button type="button" data-expand>Expand all</button>
-      <button type="button" data-collapse>Collapse all</button>
-    </div>
-
-    <!-- TACTIC 1: Door Removal — Hinge Attack -->
-    <details class="collapse">
-      <summary>
-        <span class="s-num">1</span>
-        <span class="s-text">
-          <span class="s-title">Door Removal: Hinge Attack</span>
-          <span class="s-sub">Door removal</span>
-        </span>
-        <span class="chev">&rsaquo;</span>
-      </summary>
-      <div class="collapse-body tactic-body">
-        <ol class="steps">
-          <li><span class="t">Create a purchase point &mdash; crush the front fender.<img class="tphoto" src="images/img-3569-34.jpeg" alt="Crush the front fender to create a purchase point" loading="lazy"></span></li>
-          <li><span class="t">Attack one hinge at a time. Start with the <strong>top hinge</strong> to push the door down, away from the patient.<span class="sub">If needed, come in vertically from the top to use gravity.</span><img class="tphoto" src="images/img-3572-28.jpeg" alt="Attack the top hinge first" loading="lazy"></span></li>
-          <li><span class="t">Attack the <strong>lower hinge</strong>.<img class="tphoto" src="images/img-3573-44.jpeg" alt="Attack the lower hinge" loading="lazy"></span></li>
-          <li><span class="t">Keep spreading until <strong>both hinges are defeated</strong>.<span class="sub">Keep the door intact &mdash; if the spreaders start peeling the outer shell away, reset deeper.</span><img class="tphoto" src="images/img-3570-70.jpeg" alt="Spread until both hinges are defeated" loading="lazy"><img class="tphoto" src="images/img-3574-50.jpeg" alt="Correct way" loading="lazy"></span></li>
-        </ol>
-        <div class="tactic-tools"><span class="k">Tools</span>Spreaders &middot; cutters &middot; webbing</div>
-      </div>
-    </details>
-
-    <!-- TACTIC 2: Door Removal — Pin Attack -->
-    <details class="collapse">
-      <summary>
-        <span class="s-num">2</span>
-        <span class="s-text">
-          <span class="s-title">Door Removal: Pin Attack</span>
-          <span class="s-sub">Latch side</span>
-        </span>
-        <span class="chev">&rsaquo;</span>
-      </summary>
-      <div class="collapse-body tactic-body">
-        <ol class="steps">
-          <li><span class="t">Create a purchase point &mdash; Halligan, spreader in the window, or spreader side-entry.<img class="tphoto" src="images/img-3575-76.jpeg" alt="Purchase point with a Halligan bar" loading="lazy"><img class="tphoto" src="images/img-3580-72.jpeg" alt="Spreader in the window" loading="lazy"><img class="tphoto" src="images/img-3581-86.jpeg" alt="Spreader side-entry" loading="lazy"><span class="sub">Spread a little, then reposition deeper to avoid peeling the frame.</span><img class="tphoto" src="images/img-3582-74.jpeg" alt="Reposition deeper" loading="lazy"><img class="tphoto" src="images/img-3584-24.jpeg" alt="Reposition deeper" loading="lazy"></span></li>
-          <li><span class="t">Keep spreading until the <strong>latch releases</strong>.<img class="tphoto" src="images/pasted-graphic-1-46.jpg" alt="Continue spreading until the latch releases" loading="lazy"></span></li>
-          <li><span class="t">Control the door with <strong>webbing</strong> and pull it away from the patient.<img class="tphoto" src="images/img-3585-68.jpeg" alt="Control the door with webbing and pull away" loading="lazy"></span></li>
-        </ol>
-        <div class="tactic-tools"><span class="k">Tools</span>Halligan &middot; spreaders &middot; cutters &middot; webbing</div>
-      </div>
-    </details>
-
-    <!-- TACTIC 3: B-Post Blow Out -->
-    <details class="collapse">
-      <summary>
-        <span class="s-num">3</span>
-        <span class="s-text">
-          <span class="s-title">B-Post Blow Out</span>
-          <span class="s-sub">Side removal</span>
-        </span>
-        <span class="chev">&rsaquo;</span>
-      </summary>
-      <div class="collapse-body tactic-body">
-        <ol class="steps">
-          <li><span class="t">Create a purchase point with the spreaders &mdash; spread in the window, or pinch the door.<img class="tphoto" src="images/img-3586-40.jpeg" alt="Create a purchase point with the spreaders" loading="lazy"></span></li>
-          <li><span class="t">Pop the door at the <strong>Nader pin</strong> using that purchase point.<img class="tphoto" src="images/img-3592-78.jpeg" alt="Pop the door at the Nader pin" loading="lazy"></span></li>
-          <li><span class="t"><strong>Base cut:</strong> cut the B-post as low as possible, parallel to the rocker panel.<img class="tphoto" src="images/img-3587-30.jpeg" alt="Base cut as low as possible, parallel to the rocker panel" loading="lazy"></span></li>
-          <li><span class="t">Spread the <strong>bottom of the B-post</strong> outward, away from the patient. Stabilize the rocker panel underneath to support the spread.<img class="tphoto" src="images/img-3588-26.jpeg" alt="Spread the bottom of the B-post outward" loading="lazy"><img class="tphoto" src="images/stabilize-62.jpeg" alt="Stabilize the rocker panel underneath" loading="lazy"></span></li>
-          <li><span class="t"><strong>Top cut (last):</strong> once the base is free of the rocker, make the final top cut while keeping door control.</span></li>
-          <li><span class="t">Spread and cut the <strong>front door hinges</strong>, maintaining door control with webbing.<img class="tphoto" src="images/img-3594-48.jpeg" alt="Spread and cut the front door hinges" loading="lazy"><img class="tphoto" src="images/img-3595-90.jpeg" alt="Maintain door control with webbing" loading="lazy"></span></li>
-        </ol>
-        <div class="callout callout-amber">
-          <span class="c-label">Cut order</span>
-          Cut the <strong>bottom first</strong>. If you cut the top first, the top of the pillar can swing inward toward the patient&rsquo;s head as the base blows out. Blow the base out fully (or nearly), leave the top intact, and make the top cut <strong>last</strong>.
-        </div>
-        <div class="hardrule">
-          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule</div>
-          <div class="hr-text">Avoid cutting the <strong>seat-belt pretensioners</strong>.</div>
-        </div>
-        <div class="tactic-tools"><span class="k">Tools</span>Spreaders &middot; cutters &middot; webbing</div>
-      </div>
-    </details>
-
-    <!-- TACTIC 4: Dash Jack -->
-    <details class="collapse">
-      <summary>
-        <span class="s-num">4</span>
-        <span class="s-text">
-          <span class="s-title">Dash Jack</span>
-          <span class="s-sub">Dash displacement &middot; spreaders</span>
-        </span>
-        <span class="chev">&rsaquo;</span>
-      </summary>
-      <div class="collapse-body tactic-body">
-        <ol class="steps">
-          <li><span class="t"><strong>Stabilize under the A-post</strong> &mdash; this strengthens the area you&rsquo;ll leverage to lift the dash.<img class="tphoto" src="images/img-3607-94.jpeg" alt="Stabilize under the A-post" loading="lazy"><img class="tphoto" src="images/stabilize-84.jpeg" alt="Stabilize under the A-post" loading="lazy"></span></li>
-          <li><span class="t"><strong>Relief cuts</strong> &mdash; make three:
-            <ul class="substeps">
-              <li><span class="ltr">A</span><span>Cut the A-pillar twice and take a chunk out, so the metal can&rsquo;t snag.<img class="tphoto" src="images/img-3599-42.jpeg" alt="Cut the A-pillar twice" loading="lazy"><img class="tphoto" src="images/img-3613-58.jpeg" alt="Take a chunk out of the A-pillar" loading="lazy"></span></li>
-              <li><span class="ltr">B</span><span>Front cut: peel back the sheet metal to expose the beam, then cut between the strut and the passenger compartment.<img class="tphoto" src="images/img-3600-38.jpeg" alt="Front relief cut to expose the beam" loading="lazy"></span></li>
-              <li><span class="ltr">C</span><span>Lower cut: parallel to the rocker panel.<img class="tphoto" src="images/img-3598-60.jpeg" alt="Lower cut parallel to the rocker panel" loading="lazy"><img class="tphoto" src="images/img-3619-88.jpeg" alt="Lower relief cut" loading="lazy"></span></li>
-            </ul>
-            <span class="sub">May take several cuts to capture the whole pillar and pierce the firewall. Add a 2nd cut just above or below the first, then pinch the metal between the cuts with the spreaders and roll it out of the way.</span><img class="tphoto" src="images/img-3604-66.jpeg" alt="Several cuts to capture the pillar" loading="lazy"><img class="tphoto" src="images/img-3605-56.jpeg" alt="Second cut above or below the first" loading="lazy"><img class="tphoto" src="images/img-3602-92.jpeg" alt="Capture the pillar and pierce the firewall" loading="lazy"><img class="tphoto" src="images/man-pinch-54.jpeg" alt="Pinch the metal between the cuts" loading="lazy"><img class="tphoto" src="images/img-3615-64.jpeg" alt="Roll the metal out of the way" loading="lazy"></span></li>
-          <li><span class="t"><strong>Jack the dash</strong> with the spreaders.<img class="tphoto" src="images/img-3608-82.jpeg" alt="Jack the dash with the spreaders" loading="lazy"></span></li>
-        </ol>
-        <div class="tactic-tools"><span class="k">Tools</span>Cutters &middot; spreaders</div>
-      </div>
-    </details>
-
-    <!-- TACTIC 5: Roll Dash -->
-    <details class="collapse">
-      <summary>
-        <span class="s-num">5</span>
-        <span class="s-text">
-          <span class="s-title">Roll Dash</span>
-          <span class="s-sub">Dash displacement &middot; ram</span>
-        </span>
-        <span class="chev">&rsaquo;</span>
-      </summary>
-      <div class="collapse-body tactic-body">
-        <ol class="steps">
-          <li><span class="t"><strong>Stabilize under the A-post</strong> &mdash; strengthens the area you&rsquo;ll leverage.<img class="tphoto" src="images/img-3610-36.jpeg" alt="Stabilize under the A-post" loading="lazy"></span></li>
-          <li><span class="t"><strong>Relief cuts</strong> &mdash; make three:<img class="tphoto" src="images/img-3612-52.jpeg" alt="Relief cuts" loading="lazy">
-            <ul class="substeps">
-              <li><span class="ltr">A</span><span>Cut the A-pillar twice and take a chunk out (prevents snagging). Leave room at the <strong>bottom of the A-post</strong> for the ram.<img class="tphoto" src="images/stabilizei-32.jpeg" alt="Cut the A-pillar, leave room at the bottom for the ram" loading="lazy"></span></li>
-              <li><span class="ltr">B</span><span>Front cut: peel back the sheet metal to expose the beam; cut between the strut and the passenger compartment.<img class="tphoto" src="images/img-3620-80.jpeg" alt="Front relief cut" loading="lazy"></span></li>
-              <li><span class="ltr">C</span><span>Lower cut: parallel to the rocker panel.</span></li>
-            </ul>
-            <span class="sub">May take several cuts to capture the pillar and pierce the firewall.</span></span></li>
-          <li><span class="t"><strong>Roll the dash:</strong> set the <strong>ram</strong> from the base of the B-post to the base of the A-post and push the dash away from the patient.</span></li>
-          <li><span class="t">The ram may block patient removal &mdash; <strong>chock as a progress capture</strong>, then remove the ram.</span></li>
-        </ol>
-        <div class="tactic-tools"><span class="k">Tools</span>Cutters &middot; ram &middot; chocks</div>
-      </div>
-    </details>
-
-    <!-- TACTIC 6: Roof Removal -->
-    <details class="collapse">
-      <summary>
-        <span class="s-num">6</span>
-        <span class="s-text">
-          <span class="s-title">Roof Removal</span>
-          <span class="s-sub">Full roof</span>
-        </span>
-        <span class="chev">&rsaquo;</span>
-      </summary>
-      <div class="collapse-body tactic-body">
-        <ol class="steps">
-          <li><span class="t"><strong>Remove all glass first.</strong></span></li>
-          <li><span class="t">Cut the <strong>A-posts low</strong>, near the dash &mdash; avoids sharp edges.</span></li>
-          <li><span class="t">Cut the <strong>B and C posts high</strong>, near the roof.</span></li>
-          <li><span class="t">Use a <strong>Sawzall</strong> for the larger posts.</span></li>
-          <li><span class="t"><strong>Be ready to catch the roof</strong> &mdash; a firefighter on every corner.</span></li>
-        </ol>
-        <div class="hardrule">
-          <div class="hr-label"><span class="warn">&#9888;</span> Hard Rule</div>
-          <div class="hr-text">Biggest hazard is cutting into <strong>airbag cylinders</strong> &mdash; know where they run before you cut.</div>
-        </div>
-        <div class="tactic-tools"><span class="k">Tools</span>Cutters &middot; Sawzall</div>
-      </div>
-    </details>
-
-    <!-- TACTIC 7: Steering Wheel Displacement -->
-    <details class="collapse">
-      <summary>
-        <span class="s-num">7</span>
-        <span class="s-text">
-          <span class="s-title">Steering Wheel Displacement</span>
-          <span class="s-sub">Not yet documented</span>
-        </span>
-        <span class="chev">&rsaquo;</span>
-      </summary>
-      <div class="collapse-body tactic-body">
-        <div class="ph-box">Steps to be added &mdash; not included in the source notes yet.</div>
-      </div>
-    </details>
-
-  </section>
-
-  <!-- ============ FOOTER ============ -->
-  <div class="footer">
-    <p><strong>Vehicle Extrication</strong> &bull; Engineer Jason Anderson &bull; Heavy Vehicle Extrication Technician</p>
+  <div class="foot wrap" style="padding-left:0;padding-right:0">
+    <b>Training reference only.</b> Verify against current Orem Fire Department manuals and department policy before operating.
   </div>
-
-</div>
-
-<script>
-  (function () {
-    var qa = function (s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
-
-    // Expand / collapse all (tactics + stabilization sub-groups)
-    qa('[data-expand]').forEach(function (b){ b.addEventListener('click', function(){ qa('details.collapse').forEach(function(d){ d.open = true; }); }); });
-    qa('[data-collapse]').forEach(function (b){ b.addEventListener('click', function(){ qa('details.collapse').forEach(function(d){ d.open = false; }); }); });
-
-    // Side nav: collapse (desktop) / open-close (mobile drawer)
-    var body = document.body;
-    var col = document.getElementById('sidenavCollapse');
-    var op = document.getElementById('sidenavOpen');
-    var fab = document.getElementById('sidenavFab');
-    var bd = document.getElementById('snavBackdrop');
-    var closeDrawer = function(){ body.classList.remove('snav-open'); };
-    if (col) col.addEventListener('click', function(){ body.classList.add('snav-collapsed'); closeDrawer(); });
-    if (op) op.addEventListener('click', function(){ body.classList.remove('snav-collapsed'); });
-    if (fab) fab.addEventListener('click', function(){ body.classList.add('snav-open'); body.classList.remove('snav-collapsed'); });
-    if (bd) bd.addEventListener('click', closeDrawer);
-    qa('.sn-link').forEach(function(a){ a.addEventListener('click', closeDrawer); });
-
-    // Tactic sub-links: open that tactic and scroll to it
-    var tactics = qa('#tactics details.collapse');
-    qa('.sn-sublink').forEach(function (a){
-      a.addEventListener('click', function (e){
-        e.preventDefault();
-        var d = tactics[+a.getAttribute('data-tactic')];
-        if (!d) return;
-        d.open = true;
-        closeDrawer();
-        d.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
-
-    if (!('IntersectionObserver' in window)) return;
-
-    // Scroll-spy: sections highlight top nav + side nav
-    var chips = {}, snlinks = {};
-    qa('.nav-chip').forEach(function (c){ chips[c.getAttribute('href').slice(1)] = c; });
-    qa('.sn-link').forEach(function (c){ snlinks[c.getAttribute('data-sec')] = c; });
-    var obs = new IntersectionObserver(function (entries){
-      entries.forEach(function (e){
-        if (!e.isIntersecting) return;
-        for (var k in chips) chips[k].classList.remove('active');
-        for (var j in snlinks) snlinks[j].classList.remove('active');
-        if (chips[e.target.id]) chips[e.target.id].classList.add('active');
-        if (snlinks[e.target.id]) snlinks[e.target.id].classList.add('active');
-      });
-    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
-    qa('.role-section').forEach(function (s){ obs.observe(s); });
-
-    // Scroll-spy: active tactic in side nav
-    var subs = qa('.sn-sublink');
-    var tobs = new IntersectionObserver(function (entries){
-      entries.forEach(function (e){
-        if (!e.isIntersecting) return;
-        var idx = tactics.indexOf(e.target);
-        if (idx < 0) return;
-        subs.forEach(function (s){ s.classList.remove('active'); });
-        if (subs[idx]) subs[idx].classList.add('active');
-      });
-    }, { rootMargin: '-25% 0px -65% 0px', threshold: 0 });
-    tactics.forEach(function (d){ tobs.observe(d); });
-  })();
-</script>
+</main>
 
 </body>
 </html>
