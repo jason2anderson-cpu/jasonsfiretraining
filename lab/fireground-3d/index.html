@@ -1,0 +1,128 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fireground · 3D — Residential</title>
+<style>
+  :root { color-scheme: dark; --ink:#eef2f6; --dim:#9aa7b4; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; background: #0e1013;
+    font: 15px/1.45 Manrope, ui-sans-serif, system-ui, -apple-system, sans-serif; color: var(--ink); }
+  #scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+  .hud { position: fixed; pointer-events: none; z-index: 2; }
+  #title { top: 14px; left: 16px; max-width: min(46ch, calc(100% - 32px)); }
+  #title h1 { margin: 0; font-size: 15px; font-weight: 700; letter-spacing: .01em; }
+  #occ { display: flex; gap: 6px; margin-top: 9px; pointer-events: auto; }
+  #occ a { font: 700 11.5px/1 Manrope, system-ui, sans-serif; letter-spacing: .03em; text-decoration: none;
+    color: var(--ink); background: rgba(14,16,19,.7); border: 1px solid rgba(255,255,255,.18);
+    border-radius: 6px; padding: 7px 10px; min-height: 30px; display: inline-flex; align-items: center; }
+  #occ a:hover { background: rgba(255,255,255,.14); }
+  #occ a.is-on { background: #e0343f; border-color: #e0343f; color: #fff; }
+  #title p { margin: 3px 0 0; font-size: 12.5px; color: var(--dim); }
+  #readout { bottom: max(14px, env(safe-area-inset-bottom)); left: 16px; font-size: 12px;
+    color: var(--dim); font-variant-numeric: tabular-nums; }
+  /* was orange-on-sky: unreadable. A chip gives it its own contrast. */
+  #verify { top: 14px; right: 16px; max-width: 32ch; font-size: 11.5px; line-height: 1.35;
+    color: #ffd98a; background: rgba(14,16,19,.82); border: 1px solid rgba(245,165,36,.45);
+    border-left-width: 3px; border-radius: 6px; padding: 7px 10px; }
+  #title h1, #title p, #readout { text-shadow: 0 1px 3px rgba(0,0,0,.7); }
+  #readout { background: rgba(14,16,19,.55); padding: 5px 9px; border-radius: 5px; }
+
+  /* Unit labels — DOM nodes, never baked into the render. */
+  .labels { position: fixed; inset: 0; pointer-events: none; z-index: 3; }
+  .lbl { position: absolute; top: 0; left: 0; white-space: nowrap;
+    background: rgba(14,16,19,.8); border-radius: 5px; padding: 3px 7px 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.4); border-top: 2px solid var(--k); }
+  .lbl b { display: block; font-size: 12.5px; font-weight: 800; letter-spacing: .04em; line-height: 1.15; }
+  .lbl span { display: block; font-size: 10.5px; color: var(--dim); line-height: 1.2; }
+  /* Cut-sequence pins: the number is the content; the text shows only up close. */
+  .pin { position: absolute; top: 0; left: 0; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+  .pin b { width: 22px; height: 22px; border-radius: 50%; background: #ffb41a; color: #16110a;
+    display: grid; place-items: center; font-size: 12px; font-weight: 800; box-shadow: 0 1px 6px rgba(0,0,0,.6); }
+  .pin span { display: none; font-size: 11px; color: #f4e6c8; background: rgba(14,16,19,.78); padding: 2px 7px; border-radius: 4px; }
+  .pin.near span { display: inline; }
+  .lbl.k-engine { --k: #e0343f; } .lbl.k-truck { --k: #e9edf1; } .lbl.k-cmd { --k: #5b8fd6; }
+  @media (max-width: 620px) { .lbl span { display: none; } }
+  /* The UNVERIFIED warning must NEVER be hidden — it is the notice that these
+     dimensions have not been checked by an officer, and the field device is
+     exactly where that matters most. It gets smaller, not absent. */
+  @media (max-width: 620px) {
+    #title { max-width: calc(100% - 32px); }
+    #title { background: rgba(14,16,19,.55); padding: 6px 9px; border-radius: 6px; }
+    #verify { top: auto; bottom: calc(max(14px, env(safe-area-inset-bottom)) + 30px);
+      left: 16px; right: 16px; max-width: none; font-size: 11px; padding: 6px 9px; }
+  }
+
+  /* Hotspots — the manual, placed in the scene. */
+  .hs-layer { position: fixed; inset: 0; pointer-events: none; z-index: 4; }
+  .hs-dot { position: absolute; top: 0; left: 0; pointer-events: auto; cursor: pointer;
+    width: 26px; height: 26px; border-radius: 50%; border: 2px solid rgba(255,255,255,.9);
+    background: var(--k, #fff); color: #0e1013; font: 700 12px/1 Manrope, system-ui, sans-serif;
+    display: grid; place-items: center; padding: 0; box-shadow: 0 2px 10px rgba(0,0,0,.5);
+    transition: transform .12s ease, box-shadow .12s ease; }
+  .hs-dot:hover, .hs-dot.is-active { box-shadow: 0 0 0 6px rgba(255,255,255,.22), 0 2px 10px rgba(0,0,0,.5); }
+  .hs-dot.k-engine  { --k: #e0343f; color: #fff; }
+  .hs-dot.k-truck   { --k: #e9edf1; }
+  .hs-dot.k-hose    { --k: #d8c23a; }
+  .hs-dot.k-ladder  { --k: #63b3ed; }
+  .hs-dot.k-pathway { --k: #7dd3a0; }
+  .hs-dot.k-roof    { --k: #f0a91e; }
+  .hs-dot.k-gap     { --k: #b06cd8; color: #fff; }
+
+  .hs-panel { position: fixed; z-index: 6; left: 16px; bottom: 46px; width: min(430px, calc(100% - 32px));
+    background: rgba(12,14,17,.94); border: 1px solid rgba(255,255,255,.14); border-radius: 10px;
+    padding: 16px 18px 14px; box-shadow: 0 18px 50px rgba(0,0,0,.55); }
+  .hs-panel h2 { margin: 2px 0 10px; font-size: 16px; line-height: 1.25; }
+  .hs-panel blockquote { margin: 0 0 8px; padding: 9px 12px; border-left: 3px solid rgba(255,255,255,.3);
+    background: rgba(255,255,255,.05); border-radius: 0 6px 6px 0; font-size: 13.5px; line-height: 1.5; }
+  .hs-kind { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; font-weight: 800;
+    color: var(--k, #fff); }
+  .hs-kind.k-engine{--k:#ff6b73}.hs-kind.k-truck{--k:#e9edf1}.hs-kind.k-hose{--k:#e4cf49}
+  .hs-kind.k-ladder{--k:#7cc0f5}.hs-kind.k-pathway{--k:#7dd3a0}.hs-kind.k-roof{--k:#f0a91e}
+  .hs-kind.k-gap{--k:#cd8ef0}
+  .hs-cite { margin: 0 0 8px; font-size: 11.5px; color: #8fa0b1; }
+  .hs-teach { margin: 0 0 10px; font-size: 13px; color: #cfd8e0; }
+  .hs-gap { margin: 0 0 10px; font-size: 12.5px; color: #cd8ef0; }
+  .hs-close { position: absolute; top: 8px; right: 10px; background: none; border: 0; color: #93a2b1;
+    font-size: 20px; line-height: 1; cursor: pointer; padding: 4px 6px; }
+  .hs-zoom { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: var(--ink);
+    border-radius: 6px; padding: 6px 12px; font: 600 12.5px Manrope, system-ui, sans-serif; cursor: pointer; }
+  .hs-zoom:hover { background: rgba(255,255,255,.18); }
+  @media (max-width: 620px) { .hs-panel { bottom: 92px; } }
+
+  .lab-flag { position: fixed; z-index: 9; left: 50%; transform: translateX(-50%);
+    top: max(8px, env(safe-area-inset-top)); background: #b06cd8; color: #16101c;
+    font: 700 11px/1 Manrope, ui-sans-serif, system-ui, sans-serif; letter-spacing: .04em;
+    text-decoration: none; padding: 6px 11px; border-radius: 999px; white-space: nowrap;
+    box-shadow: 0 2px 10px rgba(0,0,0,.45); }
+  @media (max-width: 620px) { .lab-flag { font-size: 10px; padding: 5px 9px; } }
+</style>
+
+<a class="lab-flag" href="/">TESTING — work in progress · back to jasonsfiretraining.com</a>
+<canvas id="scene"></canvas>
+
+<!-- Labels live in HTML, never baked into the render: crisp at any zoom,
+     selectable, screen-readable, ~0 bytes, and corrected by editing text. -->
+<div class="hud" id="title">
+  <h1>Residential fireground — apparatus positioning</h1>
+  <p>Orem FD assignment. Side A is the street. Drag to orbit, scroll to zoom.</p>
+  <!-- The QRG's three columns, as three buttons. Each reloads with ?occ= so the
+       whole scene — building, units, hoselines, hotspots — rebuilds from spec. -->
+  <nav id="occ" aria-label="Occupancy">
+    <a href="?occ=res" data-occ="res">Residential</a>
+    <a href="?occ=mid" data-occ="mid">Mid-rise</a>
+    <a href="?occ=com" data-occ="com">Commercial</a>
+  </nav>
+</div>
+<div class="hud" id="verify">⚠ UNVERIFIED — dimensions are illustrative and await officer review. Generic apparatus, not Orem units.</div>
+<div class="hud" id="readout">loading…</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/build/three.module.min.js",
+    "three/addons/": "./vendor/three/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="./src/app.js"></script>
